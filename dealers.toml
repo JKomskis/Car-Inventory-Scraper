@@ -1,0 +1,66 @@
+# dealers.toml — Multi-dealer configuration for car-inventory-scraper
+#
+# Run all dealers at once:
+#   car-inventory-scraper crawl-all
+#   car-inventory-scraper crawl-all --config dealers.toml
+#
+# Each [[dealers]] entry maps to a single spider invocation.
+
+[settings]
+headless = false
+output = "inventory.html"
+
+[[dealers]]
+name = "Toyota of Bellevue"
+spider = "dealeron"
+url = "https://www.toyotaofbellevue.com/searchnew.aspx?year=2026&make=toyota&model=rav4&st=Price+asc"
+
+[[dealers]]
+name = "Toyota of Kirkland"
+spider = "dealercom"
+url = "https://www.toyotaofkirkland.com/new-inventory/index.htm?year=2026&model=RAV4&sortBy=internetPrice%20asc"
+
+[[dealers]]
+name = "Toyota of Seattle"
+spider = "teamvelocity"
+url = "https://www.toyotaofseattle.com/inventory/New/Toyota/RAV4?paymenttype=cash&years=2026&sorttype=priceltoh"
+
+[[dealers]]
+name = "Toyota of Lake City"
+spider = "dealeron"
+url = "https://www.toyotaoflakecity.com/searchnew.aspx?yearrange=2026-2026&Make=Toyota&ModelAndTrim=RAV4&st=Price+asc"
+
+[[dealers]]
+name = "Toyota of Renton"
+spider = "dealercom"
+url = "https://www.toyotaofrenton.com/all-inventory/index.htm?compositeType=new&make=Toyota&model=RAV4&year=2026&sortBy=internetPrice%20asc"
+
+[[dealers]]
+name = "Burien Toyota"
+spider = "dealervenom"
+url = "https://www.burientoyota.com/new-vehicles/?model=RAV4&yr=2026"
+
+[[dealers]]
+name = "Swickard Toyota"
+spider = "dealeron"
+url = "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc"
+
+[[dealers]]
+name = "Doxon Toyota"
+spider = "dealereprocess"
+url = "https://www.doxontoyota.com/search/new-2026-toyota-rav4-auburn-wa/?s:pr=1&ct=12&cy=98002&md=309&mk=63&tp=new&yr=2026"
+
+[[dealers]]
+name = "Toyota of Puyallup"
+spider = "teamvelocity"
+url = "https://www.toyotaofpuyallup.com/inventory/new/toyota/rav4?paymenttype=cash&years=2026&sorttype=priceltoh"
+
+[[dealers]]
+name = "Toyota of Tacoma"
+spider = "dealereprocess"
+url = "https://www.toyotaoftacoma.com/search/new-2026-toyota-rav4-tacoma-wa/?s:pr=1&cy=98409&md=309&mk=63&tp=new&v=3&yr=2026"
+
+[[dealers]]
+name = "Marysville Toyota"
+spider = "dealerinspire"
+url = "https://www.marysvilletoyota.com/new-vehicles/rav4/?_dFR%5Bmake%5D%5B0%5D=Toyota&_dFR%5Bmodel%5D%5B0%5D=RAV4&_dFR%5Bmodel%5D%5B1%5D=RAV4%2520Hybrid&_dFR%5Btype%5D%5B0%5D=New&_dFR%5Byear%5D%5B0%5D=2026"
