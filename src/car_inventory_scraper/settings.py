@@ -41,7 +41,7 @@ PLAYWRIGHT_PROCESS_REQUEST_HEADERS = None
 
 # --- Polite crawling ---
 ROBOTSTXT_OBEY = False
-CONCURRENT_REQUESTS = 4
+CONCURRENT_REQUESTS = 1
 DOWNLOAD_DELAY = 2  # seconds between requests to the same domain
 RANDOMIZE_DOWNLOAD_DELAY = True
 
