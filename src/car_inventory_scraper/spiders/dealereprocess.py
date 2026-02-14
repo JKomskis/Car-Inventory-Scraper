@@ -66,22 +66,17 @@ class DealerEprocessSpider(scrapy.Spider):
             self.start_url,
             meta={
                 "playwright": True,
-                "playwright_include_page": True,
                 "playwright_page_init_callback": apply_stealth,
                 "playwright_page_methods": [
-                    PageMethod("wait_for_selector", self._SRP_SELECTOR, timeout=30_000),
+                    PageMethod("wait_for_selector", self._SRP_SELECTOR),
                 ],
             },
             callback=self.parse_search,
-            errback=self.errback_close_page,
+            errback=self.errback,
         )
 
     async def parse_search(self, response: HtmlResponse):
         """Parse the search results page and follow each vehicle detail link."""
-        page = response.meta.get("playwright_page")
-        if page:
-            await page.close()
-
         base_url = response.url
         dealer_name = (
             self._dealer_name_override
@@ -114,16 +109,15 @@ class DealerEprocessSpider(scrapy.Spider):
                 detail_url,
                 meta={
                     "playwright": True,
-                    "playwright_include_page": True,
                     "playwright_page_init_callback": apply_stealth,
                     "playwright_page_methods": [
-                        PageMethod("wait_for_selector", self._VDP_SELECTOR, timeout=30_000),
+                        PageMethod("wait_for_selector", self._VDP_SELECTOR),
                     ],
                     "dealer_name": dealer_name,
                     "dealer_url": base_url,
                 },
                 callback=self.parse_detail,
-                errback=self.errback_close_page,
+                errback=self.errback,
             )
 
         # --- Pagination ---
@@ -134,14 +128,13 @@ class DealerEprocessSpider(scrapy.Spider):
                 next_url,
                 meta={
                     "playwright": True,
-                    "playwright_include_page": True,
                     "playwright_page_init_callback": apply_stealth,
                     "playwright_page_methods": [
-                        PageMethod("wait_for_selector", self._SRP_SELECTOR, timeout=30_000),
+                        PageMethod("wait_for_selector", self._SRP_SELECTOR),
                     ],
                 },
                 callback=self.parse_search,
-                errback=self.errback_close_page,
+                errback=self.errback,
             )
 
     # ------------------------------------------------------------------
@@ -162,10 +155,6 @@ class DealerEprocessSpider(scrapy.Spider):
            installed options (``.installed_options__item``), stock/VIN
            (``.bolded_label_value``), and the page title.
         """
-        page = response.meta.get("playwright_page")
-        if page:
-            await page.close()
-
         item = CarItem()
         item["detail_url"] = response.url
         item["dealer_name"] = response.meta.get("dealer_name", "")
@@ -274,10 +263,7 @@ class DealerEprocessSpider(scrapy.Spider):
     # Error handler
     # ------------------------------------------------------------------
 
-    async def errback_close_page(self, failure):
-        page = failure.request.meta.get("playwright_page")
-        if page:
-            await page.close()
+    async def errback(self, failure):
         self.logger.error("Request failed: %s", failure.value)
 
 

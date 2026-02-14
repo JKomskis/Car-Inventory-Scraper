@@ -62,22 +62,17 @@ class DealerComSpider(scrapy.Spider):
             self.start_url,
             meta={
                 "playwright": True,
-                "playwright_include_page": True,
                 "playwright_page_init_callback": apply_stealth,
                 "playwright_page_methods": [
-                    PageMethod("wait_for_selector", self._SRP_SELECTOR, timeout=15_000),
+                    PageMethod("wait_for_selector", self._SRP_SELECTOR),
                 ],
             },
             callback=self.parse_search,
-            errback=self.errback_close_page,
+            errback=self.errback,
         )
 
     async def parse_search(self, response: HtmlResponse):
         """Parse the search results page and follow each vehicle detail link."""
-        page = response.meta.get("playwright_page")
-        if page:
-            await page.close()
-
         base_url = response.url
         dealer_name = (
             self._dealer_name_override
@@ -110,11 +105,7 @@ class DealerComSpider(scrapy.Spider):
                 detail_url,
                 meta={
                     "playwright": True,
-                    "playwright_include_page": True,
                     "playwright_page_init_callback": apply_stealth,
-                    # DDC VDP pages load slowly to networkidle; the data we
-                    # need lives in server-rendered <script> tags, so
-                    # domcontentloaded is sufficient.
                     "playwright_page_goto_kwargs": {
                         "wait_until": "domcontentloaded",
                     },
@@ -122,7 +113,7 @@ class DealerComSpider(scrapy.Spider):
                     "dealer_url": base_url,
                 },
                 callback=self.parse_detail,
-                errback=self.errback_close_page,
+                errback=self.errback,
             )
 
         # --- Pagination ---
@@ -136,14 +127,13 @@ class DealerComSpider(scrapy.Spider):
                 next_url,
                 meta={
                     "playwright": True,
-                    "playwright_include_page": True,
                     "playwright_page_init_callback": apply_stealth,
                     "playwright_page_methods": [
-                        PageMethod("wait_for_selector", self._SRP_SELECTOR, timeout=15_000),
+                        PageMethod("wait_for_selector", self._SRP_SELECTOR),
                     ],
                 },
                 callback=self.parse_search,
-                errback=self.errback_close_page,
+                errback=self.errback,
             )
 
     # ------------------------------------------------------------------
@@ -165,10 +155,6 @@ class DealerComSpider(scrapy.Spider):
         Both sources are server-rendered and available without waiting for
         client-side JavaScript to execute.
         """
-        page = response.meta.get("playwright_page")
-        if page:
-            await page.close()
-
         item = CarItem()
         item["detail_url"] = response.url
         item["dealer_name"] = response.meta.get("dealer_name", "")
@@ -308,10 +294,7 @@ class DealerComSpider(scrapy.Spider):
     # Error handler
     # ------------------------------------------------------------------
 
-    async def errback_close_page(self, failure):
-        page = failure.request.meta.get("playwright_page")
-        if page:
-            await page.close()
+    async def errback(self, failure):
         self.logger.error("Request failed: %s", failure.value)
 
 

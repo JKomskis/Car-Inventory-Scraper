@@ -46,8 +46,9 @@ DOWNLOAD_DELAY = 2  # seconds between requests to the same domain
 RANDOMIZE_DOWNLOAD_DELAY = True
 
 # --- Timeouts & retries ---
-DOWNLOAD_TIMEOUT = 90  # Scrapy-level hard cap per request (seconds)
-PLAYWRIGHT_DEFAULT_NAVIGATION_TIMEOUT = 60_000  # ms — Playwright page.goto()
+DOWNLOAD_TIMEOUT = 180  # Scrapy-level hard cap per request (seconds)
+PLAYWRIGHT_DEFAULT_NAVIGATION_TIMEOUT = 180_000  # ms — Playwright page.goto()
+PLAYWRIGHT_MAX_PAGES_PER_CONTEXT = 1
 RETRY_TIMES = 2  # retry transient failures (timeouts, 5xx, etc.)
 RETRY_HTTP_CODES = [500, 502, 503, 504, 408]
 
@@ -55,11 +56,11 @@ RETRY_HTTP_CODES = [500, 502, 503, 504, 408]
 ITEM_PIPELINES = {
     "car_inventory_scraper.pipelines.CleanTextPipeline": 100,
     "car_inventory_scraper.pipelines.TimestampPipeline": 200,
-    "car_inventory_scraper.pipelines.HtmlReportPipeline": 900,
+    "car_inventory_scraper.pipelines.JsonReportPipeline": 900,
 }
 
-# Default output path for the HTML report (override via CLI --output)
-HTML_REPORT_PATH = "inventory.html"
+# Default output path for the JSON data (override via CLI --output)
+JSON_REPORT_PATH = "inventory.json"
 
 # --- Misc ---
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"

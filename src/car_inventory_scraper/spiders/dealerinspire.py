@@ -87,7 +87,7 @@ class DealerInspireSpider(scrapy.Spider):
     def _srp_page_methods(self):
         """Playwright page methods for loading and preparing an SRP."""
         return [
-            PageMethod("wait_for_selector", self._SRP_SELECTOR, timeout=30_000),
+            PageMethod("wait_for_selector", self._SRP_SELECTOR),
             PageMethod("evaluate", self._CLICK_DETAILS_JS),
             # Give the tab content a moment to render.
             PageMethod("wait_for_timeout", 1_000),
@@ -103,7 +103,7 @@ class DealerInspireSpider(scrapy.Spider):
                 "playwright_page_methods": self._srp_page_methods(),
             },
             callback=self.parse_search,
-            errback=self.errback_close_page,
+            errback=self.errback,
         )
 
     async def parse_search(self, response: HtmlResponse):
@@ -141,12 +141,11 @@ class DealerInspireSpider(scrapy.Spider):
                 next_url,
                 meta={
                     "playwright": True,
-                    "playwright_include_page": True,
                     "playwright_page_init_callback": apply_stealth,
                     "playwright_page_methods": self._srp_page_methods(),
                 },
                 callback=self.parse_search,
-                errback=self.errback_close_page,
+                errback=self.errback,
             )
 
     # ------------------------------------------------------------------
@@ -239,10 +238,7 @@ class DealerInspireSpider(scrapy.Spider):
     # Error handler
     # ------------------------------------------------------------------
 
-    async def errback_close_page(self, failure):
-        page = failure.request.meta.get("playwright_page")
-        if page:
-            await page.close()
+    async def errback(self, failure):
         self.logger.error("Request failed: %s", failure.value)
 
 

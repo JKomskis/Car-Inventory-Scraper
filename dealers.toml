@@ -8,7 +8,7 @@
 
 [settings]
 headless = false
-output = "inventory.html"
+output = "inventory/inventory.json"
 
 [[dealers]]
 name = "Toyota of Bellevue"

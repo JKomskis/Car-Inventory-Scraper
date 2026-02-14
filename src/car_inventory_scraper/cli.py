@@ -19,6 +19,7 @@ from pathlib import Path
 import click
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
+from twisted.internet.defer import DeferredSemaphore
 
 
 @click.group()
@@ -71,7 +72,7 @@ def _load_config(config_path: str) -> dict:
 @click.option(
     "--output", "-o",
     default=None,
-    help="Output HTML file path (default: inventory.html).",
+    help="Output JSON file path (default: inventory.json).",
 )
 @click.option(
     "--headless/--no-headless",
@@ -114,7 +115,7 @@ def crawl(
 
         report_path = output or cfg_settings.get("output")
         if report_path:
-            settings.set("HTML_REPORT_PATH", report_path)
+            settings.set("JSON_REPORT_PATH", report_path)
 
         is_headless = cfg_settings.get("headless", headless)
         settings.set("PLAYWRIGHT_LAUNCH_OPTIONS", {"headless": is_headless})
@@ -123,33 +124,30 @@ def crawl(
         settings.set("TOTAL_SPIDER_COUNT", len(dealers))
         click.echo(f"Loaded {len(dealers)} dealer(s) from {config_path}")
 
-        # Run one spider at a time: when each spider closes, start the next.
+        concurrency = settings.getint("CONCURRENT_REQUESTS", 1)
         process = CrawlerProcess(settings)
-        dealer_iter = iter(enumerate(dealers, 1))
+        sem = DeferredSemaphore(concurrency)
 
-        def _start_next_spider():
-            entry = next(dealer_iter, None)
-            if entry is None:
-                return
-            i, dealer = entry
+        for i, dealer in enumerate(dealers, 1):
             label = dealer.get("name", dealer["url"])
             click.echo(f"  ▸ [{i}/{len(dealers)}] {label} (spider={dealer['spider']})")
-            d = process.crawl(
-                dealer["spider"],
-                url=dealer["url"],
-                dealer_name=dealer.get("name"),
-            )
-            d.addCallback(lambda _: _start_next_spider())
 
-        _start_next_spider()
+            def _crawl(d=dealer):
+                return process.crawl(
+                    d["spider"],
+                    url=d["url"],
+                    dealer_name=d.get("name"),
+                )
+
+            sem.run(_crawl)
+
         process.start()
     else:
         # ---------- single-dealer mode ----------
         if output:
-            settings.set("HTML_REPORT_PATH", output)
+            settings.set("JSON_REPORT_PATH", output)
 
         settings.set("PLAYWRIGHT_LAUNCH_OPTIONS", {"headless": headless})
-        settings.set("HIDE_DEALER_COLUMN", True)
 
         process = CrawlerProcess(settings)
         process.crawl(spider_name, url=url)
@@ -166,6 +164,31 @@ def list_spiders():
     for name in sorted(process.spider_loader.list()):
         spider_cls = process.spider_loader.load(name)
         click.echo(f"  {name:20s} {spider_cls.__doc__ or ''}")
+
+
+@main.command()
+@click.argument("input_file", type=click.Path(exists=True))
+@click.option(
+    "--output", "-o",
+    default="inventory.html",
+    help="Output HTML file path (default: inventory.html).",
+)
+@click.option(
+    "--hide-dealer",
+    is_flag=True,
+    default=False,
+    help="Hide the Dealer column in the report.",
+)
+def report(input_file: str, output: str, hide_dealer: bool):
+    """Generate an HTML inventory report from a scraped JSON file.
+
+    Example::
+
+        car-inventory-scraper report inventory.json -o inventory.html
+    """
+    from car_inventory_scraper.tools.build_report import build_report
+
+    build_report(input_file, output, hide_dealer=hide_dealer)
 
 
 if __name__ == "__main__":

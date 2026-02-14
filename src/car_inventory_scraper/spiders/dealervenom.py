@@ -80,7 +80,7 @@ class DealerVenomSpider(scrapy.Spider):
                 "playwright": True,
                 "playwright_page_init_callback": apply_stealth,
                 "playwright_page_methods": [
-                    PageMethod("wait_for_selector", self._SRP_SELECTOR, timeout=30_000),
+                    PageMethod("wait_for_selector", self._SRP_SELECTOR),
                 ],
                 # DealerVenom sites use heavy analytics that prevent
                 # networkidle from resolving; domcontentloaded + selector
@@ -90,7 +90,7 @@ class DealerVenomSpider(scrapy.Spider):
                 },
             },
             callback=self.parse_search,
-            errback=self.errback_close_page,
+            errback=self.errback,
         )
 
     async def parse_search(self, response: HtmlResponse):
@@ -117,19 +117,12 @@ class DealerVenomSpider(scrapy.Spider):
                 detail_url,
                 meta={
                     "playwright": True,
-                    "playwright_include_page": True,
                     "playwright_page_init_callback": apply_stealth,
-                    "playwright_page_goto_kwargs": {
-                        "wait_until": "domcontentloaded",
-                    },
-                    "playwright_page_methods": [
-                        PageMethod("wait_for_timeout", 3_000),
-                    ],
                     "dealer_name": dealer_name,
                     "dealer_url": self.start_url,
                 },
                 callback=self.parse_detail,
-                errback=self.errback_close_page,
+                errback=self.errback,
             )
 
         # --- URL-based pagination ---
@@ -142,10 +135,7 @@ class DealerVenomSpider(scrapy.Spider):
                     "playwright": True,
                     "playwright_page_init_callback": apply_stealth,
                     "playwright_page_methods": [
-                        PageMethod(
-                            "wait_for_selector",
-                            self._SRP_SELECTOR,
-                            timeout=30_000,
+                        PageMethod("wait_for_selector", self._SRP_SELECTOR,
                         ),
                     ],
                     "playwright_page_goto_kwargs": {
@@ -154,7 +144,7 @@ class DealerVenomSpider(scrapy.Spider):
                     "dealer_name": dealer_name,
                 },
                 callback=self.parse_search,
-                errback=self.errback_close_page,
+                errback=self.errback,
             )
 
     # ------------------------------------------------------------------
@@ -168,10 +158,6 @@ class DealerVenomSpider(scrapy.Spider):
         ``data-vehicle`` JSON attribute, JSON-LD (``@type: Car``), and
         rendered DOM elements for packages and pricing.
         """
-        page = response.meta.get("playwright_page")
-        if page:
-            await page.close()
-
         item = CarItem()
         item["detail_url"] = response.url
         item["dealer_name"] = response.meta.get("dealer_name", "")
@@ -297,10 +283,7 @@ class DealerVenomSpider(scrapy.Spider):
     # Error handler
     # ------------------------------------------------------------------
 
-    async def errback_close_page(self, failure):
-        page = failure.request.meta.get("playwright_page")
-        if page:
-            await page.close()
+    async def errback(self, failure):
         self.logger.error("Request failed: %s", failure.value)
 
 

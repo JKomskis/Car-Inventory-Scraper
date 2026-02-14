@@ -62,14 +62,13 @@ class TeamVelocitySpider(scrapy.Spider):
             self.start_url,
             meta={
                 "playwright": True,
-                "playwright_include_page": True,
                 "playwright_page_init_callback": apply_stealth,
                 "playwright_page_methods": [
-                    PageMethod("wait_for_selector", self._SRP_SELECTOR, timeout=15_000),
+                    PageMethod("wait_for_selector", self._SRP_SELECTOR),
                 ],
             },
             callback=self.parse_search,
-            errback=self.errback_close_page,
+            errback=self.errback,
         )
 
     async def parse_search(self, response: HtmlResponse):
@@ -107,13 +106,12 @@ class TeamVelocitySpider(scrapy.Spider):
                 detail_url,
                 meta={
                     "playwright": True,
-                    "playwright_include_page": True,
                     "playwright_page_init_callback": apply_stealth,
                     "dealer_name": dealer_name,
                     "dealer_url": base_url,
                 },
                 callback=self.parse_detail,
-                errback=self.errback_close_page,
+                errback=self.errback,
             )
 
         # --- Pagination ---
@@ -125,14 +123,13 @@ class TeamVelocitySpider(scrapy.Spider):
                 urljoin(base_url, next_page),
                 meta={
                     "playwright": True,
-                    "playwright_include_page": True,
                     "playwright_page_init_callback": apply_stealth,
                     "playwright_page_methods": [
-                        PageMethod("wait_for_selector", self._SRP_SELECTOR, timeout=15_000),
+                        PageMethod("wait_for_selector", self._SRP_SELECTOR),
                     ],
                 },
                 callback=self.parse_search,
-                errback=self.errback_close_page,
+                errback=self.errback,
             )
 
     # ------------------------------------------------------------------
@@ -156,23 +153,23 @@ class TeamVelocitySpider(scrapy.Spider):
         JSON-LD and inline variables are server-rendered, but the OEM
         specifications section requires client-side JS to render.
         """
-        page = response.meta.get("playwright_page")
-        if page:
-            # The packages/options section is Vue.js-rendered and may
-            # not be in the initial DOM.  Wait for it on the live page,
-            # then rebuild the Scrapy response from the updated HTML.
-            # If the element never appears (some dealers omit it) the
-            # TimeoutError is caught and we continue with what we have.
-            try:
-                await page.wait_for_selector(
-                    ".oem-specifications", timeout=5_000,
-                )
-            except Exception:
-                pass  # element absent — packages will be empty
-            # Re-read the (now Vue-hydrated) page content.
-            body = await page.content()
-            response = response.replace(body=body.encode("utf-8"))
-            await page.close()
+        # page = response.meta.get("playwright_page")
+        # if page:
+        #     # The packages/options section is Vue.js-rendered and may
+        #     # not be in the initial DOM.  Wait for it on the live page,
+        #     # then rebuild the Scrapy response from the updated HTML.
+        #     # If the element never appears (some dealers omit it) the
+        #     # TimeoutError is caught and we continue with what we have.
+        #     try:
+        #         await page.wait_for_selector(
+        #             ".oem-specifications", timeout=5_000,
+        #         )
+        #     except Exception:
+        #         pass  # element absent — packages will be empty
+        #     # Re-read the (now Vue-hydrated) page content.
+        #     body = await page.content()
+        #     response = response.replace(body=body.encode("utf-8"))
+        #     await page.close()
 
         item = CarItem()
         item["detail_url"] = response.url
@@ -257,10 +254,7 @@ class TeamVelocitySpider(scrapy.Spider):
     # Error handler
     # ------------------------------------------------------------------
 
-    async def errback_close_page(self, failure):
-        page = failure.request.meta.get("playwright_page")
-        if page:
-            await page.close()
+    async def errback(self, failure):
         self.logger.error("Request failed: %s", failure.value)
 
 

@@ -1,0 +1,51 @@
+name: Scrape Inventory
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Install Playwright browsers
+        run: uv run playwright install --with-deps chromium
+
+      - name: Crawl dealer inventory
+        run: xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" uv run car-inventory-scraper crawl --config dealers.toml
+
+      - name: Generate report
+        run: uv run car-inventory-scraper report inventory/inventory.json -o inventory.html
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: inventory
+          path: |
+            inventory/inventory.json
+            inventory.html
+
+      - name: Commit updated inventory
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add inventory/inventory.json
+          git diff --cached --quiet || git commit -m "Update inventory $(date -u +'%Y-%m-%d')"
+          git push origin main
