@@ -59,6 +59,9 @@ class DealerInspireSpider(scrapy.Spider):
         self,
         url: str | None = None,
         dealer_name: str | None = None,
+        algolia_app_id: str | None = None,
+        algolia_api_key: str | None = None,
+        algolia_index: str | None = None,
         *args,
         **kwargs,
     ):
@@ -72,17 +75,48 @@ class DealerInspireSpider(scrapy.Spider):
         self._dealer_name_override = dealer_name
         self._domain = urlparse(url).netloc
 
+        # Optional direct Algolia API credentials (bypass Cloudflare).
+        self._algolia_app_id = algolia_app_id
+        self._algolia_api_key = algolia_api_key
+        self._algolia_index = algolia_index
+        self._direct_api_mode = all(
+            [algolia_app_id, algolia_api_key, algolia_index]
+        )
+
     # ------------------------------------------------------------------
     # Step 1 — Fetch the SRP page to extract Algolia credentials
     # ------------------------------------------------------------------
 
     async def start(self):
-        yield scrapy.Request(
-            self.start_url,
-            meta={"use_cloudscraper": True},
-            callback=self.parse_srp_for_algolia,
-            errback=self.errback,
-        )
+        if self._direct_api_mode:
+            # Mode B — skip the SRP page; query Algolia directly with
+            # the credentials supplied via the dealer config.
+            self.logger.info(
+                "[%s] Using direct Algolia API mode (skipping SRP page)",
+                self._domain,
+            )
+            algolia = {
+                "app_id": self._algolia_app_id,
+                "api_key": self._algolia_api_key,
+                "index": self._algolia_index,
+            }
+            # Derive facet filters from _dFR query parameters in the URL.
+            url_refinements = _extract_url_refinements(self.start_url)
+            facet_filters = _build_facet_filters(url_refinements)
+
+            dealer_name = self._dealer_name_override or self._domain
+
+            yield self._algolia_request(
+                algolia, facet_filters, _DEFAULT_HITS_PER_PAGE, dealer_name, page=0,
+            )
+        else:
+            # Mode A — fetch the SRP page to extract Algolia credentials.
+            yield scrapy.Request(
+                self.start_url,
+                meta={"use_cloudscraper": True},
+                callback=self.parse_srp_for_algolia,
+                errback=self.errback,
+            )
 
     async def parse_srp_for_algolia(self, response: HtmlResponse):
         """Extract Algolia config from embedded JS and begin API queries."""

@@ -119,10 +119,17 @@ def crawl(
         for i, dealer in enumerate(dealers, 1):
             label = dealer.get("name", dealer["url"])
             click.echo(f"  ▸ [{i}/{len(dealers)}] {label} (spider={dealer['spider']})")
+            # Collect optional spider-specific keyword arguments.
+            extra_kwargs = {
+                k: dealer[k]
+                for k in ("algolia_app_id", "algolia_api_key", "algolia_index")
+                if k in dealer
+            }
             process.crawl(
                 dealer["spider"],
                 url=dealer["url"],
                 dealer_name=dealer.get("name"),
+                **extra_kwargs,
             )
 
         process.start()

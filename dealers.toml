@@ -63,3 +63,9 @@ url = "https://www.toyotaoftacoma.com/search/new-2026-toyota-rav4-tacoma-wa/?s:p
 name = "Marysville Toyota"
 spider = "dealerinspire"
 url = "https://www.marysvilletoyota.com/new-vehicles/rav4/?_dFR%5Bmake%5D%5B0%5D=Toyota&_dFR%5Bmodel%5D%5B0%5D=RAV4&_dFR%5Bmodel%5D%5B1%5D=RAV4%2520Hybrid&_dFR%5Btype%5D%5B0%5D=New&_dFR%5Byear%5D%5B0%5D=2026"
+# Optional: bypass Cloudflare by querying the Algolia API directly.
+# Get these values from the page's JS variables (algoliaConfig /
+# inventoryLightningSettings) via your browser's DevTools.
+algolia_app_id = "SEWJN80HTN"
+algolia_api_key = "179608f32563367799314290254e3e44" # search-only API key from algoliaConfig.apiKeySearch
+algolia_index = "marysvilletoyota-sbm0524_production_inventory_status_price_low_high" # sort index from inventoryLightningSettings.inventoryIndex
