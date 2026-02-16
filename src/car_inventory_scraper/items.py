@@ -24,7 +24,7 @@ class CarItem(scrapy.Item):
     msrp = scrapy.Field()                  # TSRP / total sticker
     base_price = scrapy.Field()             # Base vehicle price (MSRP minus packages)
     total_packages_price = scrapy.Field()   # Sum of all package prices
-    dealer_accessories = scrapy.Field()     # Dealer-installed accessories price
+    dealer_accessories_price = scrapy.Field()     # Dealer-installed accessories price
     adjustments = scrapy.Field()            # Dealer discounts / markups
     total_price = scrapy.Field()            # Final selling / advertised price
 
@@ -33,7 +33,8 @@ class CarItem(scrapy.Item):
     availability_date = scrapy.Field()
 
     # Packages
-    packages = scrapy.Field()  # list of dicts: {name, price}
+    packages = scrapy.Field()  # list of dicts: {name, price (int)}
+    dealer_accessories = scrapy.Field() # list of dicts: {name, price (int)}
 
     # Dealership info
     dealer_name = scrapy.Field()

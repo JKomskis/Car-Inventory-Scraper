@@ -7,13 +7,12 @@
 # Each [[dealers]] entry maps to a single spider invocation.
 
 [settings]
-headless = false
 output = "inventory/inventory.json"
 
 [[dealers]]
 name = "Toyota of Bellevue"
 spider = "dealeron"
-url = "https://www.toyotaofbellevue.com/searchnew.aspx?year=2026&make=toyota&model=rav4&st=Price+asc"
+url = "https://www.toyotaofbellevue.com/searchnew.aspx?year=2026&make=toyota&model=rav4&st=Price+asc&pn=12"
 
 [[dealers]]
 name = "Toyota of Kirkland"
@@ -28,7 +27,7 @@ url = "https://www.toyotaofseattle.com/inventory/New/Toyota/RAV4?paymenttype=cas
 [[dealers]]
 name = "Toyota of Lake City"
 spider = "dealeron"
-url = "https://www.toyotaoflakecity.com/searchnew.aspx?yearrange=2026-2026&Make=Toyota&ModelAndTrim=RAV4&st=Price+asc"
+url = "https://www.toyotaoflakecity.com/searchnew.aspx?yearrange=2026-2026&Make=Toyota&ModelAndTrim=RAV4&st=Price+asc&pn=12"
 
 [[dealers]]
 name = "Toyota of Renton"
@@ -43,7 +42,7 @@ url = "https://www.burientoyota.com/new-vehicles/?model=RAV4&yr=2026"
 [[dealers]]
 name = "Swickard Toyota"
 spider = "dealeron"
-url = "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc"
+url = "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12"
 
 [[dealers]]
 name = "Doxon Toyota"

@@ -61,7 +61,7 @@ def normalize_pkg_name(name: str) -> str:
 # Packages to exclude from scraped results — these are free and/or legally
 # required, so they aren't meaningful pricing add-ons.
 EXCLUDED_PACKAGES: frozenset[str] = frozenset({
-    "50 STATE EMISSIONS",
+    "50 state emissions",
 })
 
 

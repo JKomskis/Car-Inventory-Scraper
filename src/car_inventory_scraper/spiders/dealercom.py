@@ -2,10 +2,16 @@
 
 Dealer.com is one of the most widely used dealership website platforms,
 powering thousands of franchise dealerships across the US and Canada.
-Inventory search pages live at paths like ``/new-inventory/index.htm`` and
-render vehicle cards via React (``ws-inv-listing`` widget).  Vehicle detail
-pages embed rich structured data as JSON-LD and in ``DDC.WS.state`` script
-blocks, which this spider extracts.
+Inventory search pages live at paths like ``/new-inventory/index.htm``.
+
+The search page HTML contains an inline JavaScript ``fetch()`` call to
+``/api/widget/ws-inv-data/getInventory`` with a URL-encoded JSON POST body.
+This spider extracts that payload, replays the POST request to get a JSON
+listing of all matching vehicles, and then follows each vehicle's detail
+link to scrape full pricing, packages, and status information.
+
+Pagination is handled by fetching successive search pages with a ``start``
+query parameter; each page embeds a fresh POST body with the correct offset.
 
 Example usage::
 
@@ -13,26 +19,27 @@ Example usage::
         --url "https://www.toyotaofkirkland.com/new-inventory/index.htm?year=2026&model=RAV4"
 """
 
-from __future__ import annotations
-
 import json
 import re
-from urllib.parse import urljoin, urlparse, parse_qs, urlencode, urlunparse
+from urllib.parse import urljoin, urlparse, parse_qs, urlencode, urlunparse, unquote
 
 import scrapy
-from scrapy.http import HtmlResponse
-from scrapy_playwright.page import PageMethod
+from scrapy.http import HtmlResponse, JsonResponse
 
 from car_inventory_scraper.parsing_helpers import (
-    extract_json_ld_car,
-    format_pkg_price,
-    json_ld_price,
     normalize_drivetrain,
     normalize_pkg_name,
     parse_price,
 )
 from car_inventory_scraper.items import CarItem
-from car_inventory_scraper.stealth import apply_stealth
+
+
+# Regex to locate the encoded POST body inside the page's inline JS.
+_FETCH_BODY_RE = re.compile(
+    r'fetch\("/api/widget/ws-inv-data/getInventory",'
+    r'\{method:"POST",headers:\{"Content-Type":"application/json"\},'
+    r'body:decodeURI\("([^"]+)"\)'
+)
 
 
 class DealerComSpider(scrapy.Spider):
@@ -50,90 +57,116 @@ class DealerComSpider(scrapy.Spider):
             )
         self.start_url = url
         self._dealer_name_override = dealer_name
+        self._domain = urlparse(url).netloc
 
     # ------------------------------------------------------------------
-    # Search results page — collect detail links
+    # 1. Fetch the search page HTML (plain HTTP)
     # ------------------------------------------------------------------
-
-    _SRP_SELECTOR = ".vehicle-card-detailed"
 
     async def start(self):
         yield scrapy.Request(
             self.start_url,
-            meta={
-                "playwright": True,
-                "playwright_page_init_callback": apply_stealth,
-                "playwright_page_methods": [
-                    PageMethod("wait_for_selector", self._SRP_SELECTOR),
-                ],
-            },
-            callback=self.parse_search,
+            callback=self.parse_search_page,
             errback=self.errback,
         )
 
-    async def parse_search(self, response: HtmlResponse):
-        """Parse the search results page and follow each vehicle detail link."""
-        base_url = response.url
+    async def parse_search_page(self, response: HtmlResponse):
+        """Extract the getInventory POST payload from inline JS and call the API."""
+        match = _FETCH_BODY_RE.search(response.text)
+        if not match:
+            self.logger.error(
+                "[%s] Could not find getInventory fetch payload on %s", self._domain, response.url,
+            )
+            return
+
+        post_body_str = unquote(match.group(1))
+        post_body = json.loads(post_body_str)
+
+        # Resolve dealer name
         dealer_name = (
             self._dealer_name_override
             or response.css("title::text").get("").split("|")[-1].strip()
         )
 
-        # Collect detail-page URLs from vehicle cards
-        vehicle_cards = response.css(
-            ".vehicle-card.vehicle-card-detailed, "
-            "li[data-uuid].vehicle-card"
-        )
-        self.logger.info("Found %d vehicle cards on %s", len(vehicle_cards), response.url)
+        # Determine the API endpoint (same origin)
+        parsed = urlparse(response.url)
+        api_url = f"{parsed.scheme}://{parsed.netloc}/api/widget/ws-inv-data/getInventory"
 
-        seen: set[str] = set()
-        for card in vehicle_cards:
-            title_link = card.css(
-                ".vehicle-card-title a, "
-                "h2.vehicle-card-title a, "
-                "a[href$='.htm']"
-            )
-            href = title_link.attrib.get("href", "")
-            if not href or href == "#":
+        yield scrapy.Request(
+            api_url,
+            method="POST",
+            headers={"Content-Type": "application/json"},
+            body=json.dumps(post_body),
+            callback=self.parse_inventory_api,
+            errback=self.errback,
+            meta={
+                "dealer_name": dealer_name,
+                "dealer_url": response.url,
+                "page_start": 0,
+            }
+        )
+
+    # ------------------------------------------------------------------
+    # 2. Parse the JSON inventory API response
+    # ------------------------------------------------------------------
+
+    async def parse_inventory_api(self, response: JsonResponse):
+        """Parse the getInventory JSON and yield detail-page requests."""
+        data = response.json()
+        vehicles = data.get("inventory", [])
+        page_info = data.get("pageInfo", {})
+        dealer_name = response.meta["dealer_name"]
+        dealer_url = response.meta["dealer_url"]
+
+        parsed = urlparse(response.url)
+        base_origin = f"{parsed.scheme}://{parsed.netloc}"
+
+        self.logger.info(
+            "[%s] Found %d vehicles (start: %d, total: %s)",
+            self._domain,
+            len(vehicles),
+            int(response.meta["page_start"]),
+            page_info.get("totalCount"),
+        )
+
+        for vehicle in vehicles:
+            link = vehicle.get("link")
+            if not link:
                 continue
-            detail_url = urljoin(base_url, href)
-            if detail_url in seen:
-                continue
-            seen.add(detail_url)
+            detail_url = urljoin(base_origin, link)
 
             yield scrapy.Request(
                 detail_url,
-                meta={
-                    "playwright": True,
-                    "playwright_page_init_callback": apply_stealth,
-                    "playwright_page_goto_kwargs": {
-                        "wait_until": "domcontentloaded",
-                    },
-                    "dealer_name": dealer_name,
-                    "dealer_url": base_url,
-                },
                 callback=self.parse_detail,
                 errback=self.errback,
+                meta={
+                    "dealer_name": dealer_name,
+                    "dealer_url": dealer_url,
+                },
             )
 
         # --- Pagination ---
-        next_page = response.css(
-            ".pagination-next a::attr(href), "
-            "a[aria-label='Go to next page']::attr(href)"
-        ).get()
-        if next_page:
-            next_url = _merge_query_params(base_url, urljoin(base_url, next_page))
+        total_count = page_info.get("totalCount", 0)
+        page_size = page_info.get("pageSize", 18)
+        current_start = response.meta["page_start"]
+        next_start = current_start + page_size
+
+        if next_start < total_count:
+            post_body = json.loads(response.request.body)
+            post_body["inventoryParameters"]["start"] = str(next_start)
+
             yield scrapy.Request(
-                next_url,
-                meta={
-                    "playwright": True,
-                    "playwright_page_init_callback": apply_stealth,
-                    "playwright_page_methods": [
-                        PageMethod("wait_for_selector", self._SRP_SELECTOR),
-                    ],
-                },
-                callback=self.parse_search,
+                response.url,
+                method="POST",
+                headers={"Content-Type": "application/json"},
+                body=json.dumps(post_body),
+                callback=self.parse_inventory_api,
                 errback=self.errback,
+                meta={
+                    "dealer_name": dealer_name,
+                    "dealer_url": dealer_url,
+                    "page_start": next_start,
+                },
             )
 
     # ------------------------------------------------------------------
@@ -143,17 +176,16 @@ class DealerComSpider(scrapy.Spider):
     async def parse_detail(self, response: HtmlResponse):
         """Extract full vehicle details from a Dealer.com VDP.
 
-        Dealer.com VDP pages embed structured vehicle data in two places:
+        Dealer.com VDP pages embed structured vehicle data in
+        ``DDC.WS.state`` script blocks and ``DDC.dataLayer``:
 
-        1. **JSON-LD** (``<script type="application/ld+json">``) — contains
-           VIN, year, make, model, trim, colors, price, and more.
-        2. **``DDC.WS.state``** script blocks — contain detailed specs
-           (``ws-quick-specs``), pricing breakdown (``ws-detailed-pricing``),
-           packages/options (``ws-packages-options``), and vehicle status
-           (``ws-vehicle-title``).
+        - ``ws-quick-specs`` — VIN, year, trim, colors, drivetrain
+        - ``ws-detailed-pricing`` — MSRP, accessories, adjustments, final price
+        - ``ws-packages-options`` — factory packages and dealer accessories
+        - ``ws-vehicle-title`` — vehicle status (in stock / in transit)
+        - ``DDC.dataLayer['vehicles']`` — delivery date range
 
-        Both sources are server-rendered and available without waiting for
-        client-side JavaScript to execute.
+        All sources are server-rendered in the initial HTML.
         """
         item = CarItem()
         item["detail_url"] = response.url
@@ -161,7 +193,6 @@ class DealerComSpider(scrapy.Spider):
         item["dealer_url"] = response.meta.get("dealer_url", "")
 
         # --- Structured data sources ---
-        json_ld = extract_json_ld_car(response)
         ddc_specs = _extract_ddc_state(response, "ws-quick-specs")
         ddc_pricing = _extract_ddc_state(response, "ws-detailed-pricing")
         ddc_packages = _extract_ddc_state(response, "ws-packages-options")
@@ -171,39 +202,24 @@ class DealerComSpider(scrapy.Spider):
         vehicle = ddc_specs.get("vehicle", {}) if ddc_specs else {}
 
         # --- Core vehicle identifiers ---
-        item["vin"] = (
-            vehicle.get("vin")
-            or json_ld.get("vehicleIdentificationNumber")
-        )
+        item["vin"] = vehicle.get("vin")
         item["stock_number"] = _get_localized(vehicle, "stockNumber") or None
         item["model_code"] = _get_localized(vehicle, "modelCode")
 
         # --- Vehicle info ---
-        item["year"] = (
-            str(vehicle["year"]) if vehicle.get("year") else json_ld.get("vehicleModelDate")
-        )
-        item["trim"] = (
-            _get_localized(vehicle, "trim")
-            or json_ld.get("vehicleConfiguration")
-        )
+        item["year"] = str(vehicle["year"]) if vehicle.get("year") else None
+        item["trim"] = _get_localized(vehicle, "trim")
 
         # --- Colors ---
-        item["exterior_color"] = (
-            _get_localized(vehicle, "exteriorColor")
-            or json_ld.get("color")
-        )
-        item["interior_color"] = (
-            _get_localized(vehicle, "interiorColor")
-            or json_ld.get("vehicleInteriorColor")
-        )
+        item["exterior_color"] = _get_localized(vehicle, "exteriorColor")
+        item["interior_color"] = _get_localized(vehicle, "interiorColor")
 
         # --- Drivetrain ---
-        body_style = _get_localized(vehicle, "bodyStyle") or json_ld.get("bodyType", "")
-        trim = item.get("trim", "") or ""
-        item["drivetrain"] = normalize_drivetrain(body_style, trim)
+        body_style = _get_localized(vehicle, "bodyStyle") or ""
+        item["drivetrain"] = normalize_drivetrain(body_style)
 
         # --- Packages & accessories ---
-        all_raw_packages: list[dict[str, str | None]] = []
+        all_raw_packages: list[dict[str, str | int]] = []
         if ddc_packages:
             for opt in ddc_packages.get("options", []):
                 name = normalize_pkg_name(opt.get("name", ""))
@@ -211,7 +227,7 @@ class DealerComSpider(scrapy.Spider):
                 if name:
                     all_raw_packages.append({
                         "name": name,
-                        "price": format_pkg_price(price),
+                        "price": parse_price(price),
                     })
             for pkg in ddc_packages.get("packages", []):
                 name = normalize_pkg_name(pkg.get("name", ""))
@@ -219,63 +235,38 @@ class DealerComSpider(scrapy.Spider):
                 if name:
                     all_raw_packages.append({
                         "name": name,
-                        "price": format_pkg_price(price),
+                        "price": parse_price(price),
                     })
 
         # Separate dealer-installed accessories from factory packages
-        packages: list[dict[str, str | None]] = []
-        dealer_acc_packages: list[dict[str, str | None]] = []
+        packages: list[dict[str, str | int]] = []
+        dealer_acc_packages: list[dict[str, str | int]] = []
         for pkg in all_raw_packages:
             if _is_dealer_accessory(pkg.get("name", "")):
                 dealer_acc_packages.append(pkg)
             else:
                 packages.append(pkg)
         item["packages"] = packages or None
+        item["dealer_accessories"] = dealer_acc_packages or None
 
         # --- Pricing ---
         dprice_map = _build_dprice_map(ddc_pricing)
+        item["msrp"] = dprice_map.get("Total SRP", {}).get("value")
 
-        # Fall back to DOM-based pricing if DDC state is empty
-        if not dprice_map:
-            dprice_map = _extract_dom_pricing(response)
-
-        msrp = (
-            dprice_map.get("Total SRP", {}).get("value")
-            or json_ld_price(json_ld)
-        )
-        item["msrp"] = msrp
-
-        total_packages_price = sum(
-            parse_price(p.get("price")) or 0 for p in packages
-        )
-        item["total_packages_price"] = total_packages_price or None
-
-        # Dealer-installed accessories — prefer the dprice breakdown value;
-        # fall back to the sum of packages we identified as dealer accessories.
-        dealer_acc_from_pkgs = sum(
-            parse_price(p.get("price")) or 0 for p in dealer_acc_packages
-        )
+        # Dealer accessories — use dprice breakdown value when available;
+        # the CalculatedPricesPipeline will sum from dealer_accessories otherwise.
         dprice_dealer_acc = dprice_map.get("Dealer Accessories", {}).get("value")
-        dealer_acc = dprice_dealer_acc or dealer_acc_from_pkgs or None
-        item["dealer_accessories"] = dealer_acc
-
-        item["base_price"] = (msrp - total_packages_price) if msrp else None
+        if dprice_dealer_acc:
+            item["dealer_accessories_price"] = dprice_dealer_acc
 
         total_price = dprice_map.get("Advertised Price", {}).get("value")
-        if not total_price:
-            total_price = json_ld_price(json_ld)
-        item["total_price"] = total_price if total_price else msrp
+        item["total_price"] = total_price or item["msrp"]
 
-        # Adjustments — only negative (discount) adjustments are recorded.
+        # Adjustments — use explicit Dealer Adjustment from dprice if available;
+        # the CalculatedPricesPipeline will compute from price difference otherwise.
         discount_entry = dprice_map.get("Dealer Adjustment", {})
         if discount_entry.get("value") and discount_entry.get("isDiscount"):
-            adj = -discount_entry["value"]
-        elif msrp and item["total_price"] and item["total_price"] < msrp:
-            adj = item["total_price"] - msrp
-        else:
-            adj = None
-
-        item["adjustments"] = adj
+            item["adjustments"] = -discount_entry["value"]
 
         # --- Status ---
         raw_status = ""
@@ -284,9 +275,10 @@ class DealerComSpider(scrapy.Spider):
         item["status"] = _normalize_ddc_status(raw_status)
 
         # --- Availability date ---
-        item["availability_date"] = _format_date_range(
-            ddc_datalayer.get("deliveryDateRange")
-        )
+        if item["status"] != "In Stock":
+            item["availability_date"] = _format_date_range(
+                ddc_datalayer.get("deliveryDateRange")
+            )
 
         yield item
 
@@ -294,8 +286,8 @@ class DealerComSpider(scrapy.Spider):
     # Error handler
     # ------------------------------------------------------------------
 
-    async def errback(self, failure):
-        self.logger.error("Request failed: %s", failure.value)
+    def errback(self, failure):
+        self.logger.error("[%s] Request failed: %s", self._domain, failure.value)
 
 
 
@@ -418,7 +410,7 @@ def _get_localized(data: dict, key: str) -> str | None:
         return None
     if isinstance(val, dict):
         # Try common locales
-        for locale in ("en_US", "en_CA", "fr_CA"):
+        for locale in ("en_US", "en_CA", "en_GB"):
             if locale in val:
                 return str(val[locale])
         # Fall back to any string value that isn't a metadata key
@@ -429,9 +421,6 @@ def _get_localized(data: dict, key: str) -> str | None:
                 return v
         return None
     return str(val) if val else None
-
-
-
 
 def _build_dprice_map(ddc_pricing: dict | None) -> dict:
     """Build a ``{label: {value, isDiscount}}`` map from DDC pricing data.
@@ -467,35 +456,13 @@ def _build_dprice_map(ddc_pricing: dict | None) -> dict:
     return result
 
 
-def _extract_dom_pricing(response: HtmlResponse) -> dict:
-    """Fall back to scraping pricing from the rendered DOM.
-
-    Uses the same label-based keys as ``_build_dprice_map`` so callers
-    can look up entries identically regardless of the data source.
-    """
-    result: dict = {}
-    for dd in response.css(".pricing-detail dd[data-key]"):
-        key = dd.attrib.get("data-key", "").lower()
-        val_text = dd.css(".price-value::text").get("")
-        val = parse_price(val_text)
-        if "msrp" in key:
-            result["Total SRP"] = {"value": val, "isDiscount": False}
-        elif "internetprice" in key:
-            result["Advertised Price"] = {"value": val, "isDiscount": False}
-        elif "abcrule" in key:
-            is_discount = "text-discount" in (dd.attrib.get("class", ""))
-            result["Dealer Adjustment"] = {"value": val, "isDiscount": is_discount}
-        elif "wholesaleprice" in key:
-            result["Dealer Accessories"] = {"value": val, "isDiscount": False}
-    return result
-
 # ---------------------------------------------------------------------------
 # Helpers — dealer-installed accessories detection
 # ---------------------------------------------------------------------------
 
 # Package names (normalised to lowercase) that are dealer-installed
 # accessories rather than factory packages.  These are excluded from the
-# packages list / total and counted under dealer_accessories & adjustments.
+# packages list / total and counted under dealer_accessories_price & adjustments.
 _DEALER_ACCESSORY_NAMES: set[str] = {
     "pulse",
     "perma plate appearance protection 5yrs coverage",
@@ -517,12 +484,9 @@ def _is_dealer_accessory(name: str) -> bool:
 # ---------------------------------------------------------------------------
 
 _STATUS_MAP = {
-    "IN_STOCK": "In Stock",
+    "LIVE": "In Stock",
     "IN_TRANSIT": "In Transit",
-    "IN_TRANSIT_AT_PORT": "In Transit",
-    "IN_TRANSIT_AT_FACTORY": "In Transit",
-    "IN_PRODUCTION": "In Production",
-    "ORDERED": "Ordered",
+    "IN_TRANSIT_AT_FACTORY": "In Production",
 }
 
 
@@ -531,29 +495,3 @@ def _normalize_ddc_status(raw: str) -> str | None:
     if not raw:
         return None
     return _STATUS_MAP.get(raw.upper().replace(" ", "_"), raw.replace("_", " ").title())
-
-
-# ---------------------------------------------------------------------------
-# Helpers — URL manipulation
-# ---------------------------------------------------------------------------
-
-def _merge_query_params(original_url: str, new_url: str) -> str:
-    """Merge query parameters from *original_url* into *new_url*.
-
-    Dealer.com pagination links only carry the ``start`` offset and drop
-    all filter/sort parameters (``year``, ``model``, ``sortBy``, …).  This
-    helper copies the original parameters into the pagination URL so the
-    search context is preserved.  Parameters already present in *new_url*
-    (e.g. ``start``) take precedence over those from *original_url*.
-    """
-    orig = urlparse(original_url)
-    new = urlparse(new_url)
-
-    orig_params = parse_qs(orig.query, keep_blank_values=True)
-    new_params = parse_qs(new.query, keep_blank_values=True)
-
-    # Start from original params, then overlay whatever the new URL provides
-    merged = {**orig_params, **new_params}
-
-    merged_query = urlencode(merged, doseq=True)
-    return urlunparse(new._replace(query=merged_query))

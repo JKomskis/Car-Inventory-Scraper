@@ -1,27 +1,22 @@
 """Spider for DealerVenom-powered dealership websites.
 
-DealerVenom is a dealership website platform that uses Algolia InstantSearch
-for its inventory search pages.  URLs typically follow the pattern
-``/new-vehicles/`` with query parameters for filters (``model``, ``yr``,
-etc.).  Vehicle cards are rendered client-side and wrapped in
-``.listing-container`` elements with ``data-url`` attributes pointing to
-the vehicle detail page (VDP).
+DealerVenom is a dealership website platform that uses Typesense (via
+InstantSearch.js) for its inventory search pages.  URLs typically follow
+the pattern ``/new-vehicles/`` with query parameters for filters
+(``model``, ``yr``, etc.).
 
-The VDP embeds structured vehicle data in three places:
+**This spider fetches the following:**
 
-1. **``data-vehicle``** attribute — a JSON object on the ``<main>`` element
-   with VIN, stock number, year, make, model, trim, colors, drivetrain,
-   MSRP, and displayed price.
-2. **JSON-LD** (``<script type="application/ld+json">``) — standard
-   ``Car``/``Product`` schema with model code (``mpn``), body type,
-   fuel economy, and an ``offers`` block.
-3. **DOM elements** — rendered packages (``.vdp-package-item``),
-   pricing stack (``.buy-price``), availability dates, and in-transit
-   status (``.in-transit-vehicle``).
-
-The SRP is rendered client-side by Algolia, but pagination uses
-standard ``<a href>`` links with a ``pg`` query parameter, so each
-page is fetched as an independent Playwright request.
+1. **SRP page** — fetched via plain HTTP to extract the Typesense
+   connection details (API key, host, collection/index name) embedded
+   in the page's JavaScript.
+2. **Typesense API** — queried directly over HTTPS to retrieve the full
+   vehicle inventory in JSON.  Each document contains VIN, stock number,
+   model code, year, make, model, trim, colors, drivetrain, MSRP,
+   displayed price, status, and availability information.
+3. **VDP pages** — fetched via plain HTTP only to scrape the
+   server-rendered packages (``.vdp-package-item`` elements), which are
+   not included in the Typesense response.
 
 Example usage::
 
@@ -33,22 +28,23 @@ from __future__ import annotations
 
 import json
 import re
-from html import unescape
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse, parse_qs
 
 import scrapy
-from scrapy.http import HtmlResponse
-from scrapy_playwright.page import PageMethod
+from scrapy.http import HtmlResponse, TextResponse
 
 from car_inventory_scraper.parsing_helpers import (
     EXCLUDED_PACKAGES,
-    extract_json_ld_car,
+    normalize_color,
     normalize_drivetrain,
     parse_price,
     safe_int,
 )
 from car_inventory_scraper.items import CarItem
-from car_inventory_scraper.stealth import apply_stealth
+
+
+# Results per Typesense page — matches the default DealerVenom SRP page size.
+_TYPESENSE_PAGE_SIZE = 24
 
 
 class DealerVenomSpider(scrapy.Spider):
@@ -66,216 +62,130 @@ class DealerVenomSpider(scrapy.Spider):
             )
         self.start_url = url
         self._dealer_name_override = dealer_name
+        self._domain = urlparse(url).netloc
 
     # ------------------------------------------------------------------
-    # Search results page — collect detail links
+    # Step 1 — Fetch the SRP page to extract Typesense credentials
     # ------------------------------------------------------------------
-
-    _SRP_SELECTOR = ".listing-container"
 
     async def start(self):
         yield scrapy.Request(
             self.start_url,
-            meta={
-                "playwright": True,
-                "playwright_page_init_callback": apply_stealth,
-                "playwright_page_methods": [
-                    PageMethod("wait_for_selector", self._SRP_SELECTOR),
-                ],
-                # DealerVenom sites use heavy analytics that prevent
-                # networkidle from resolving; domcontentloaded + selector
-                # wait is sufficient.
-                "playwright_page_goto_kwargs": {
-                    "wait_until": "domcontentloaded",
-                },
-            },
-            callback=self.parse_search,
+            callback=self.parse_srp_for_typesense,
             errback=self.errback,
         )
 
-    async def parse_search(self, response: HtmlResponse):
-        """Extract vehicle detail URLs from the Algolia-rendered SRP.
+    async def parse_srp_for_typesense(self, response: HtmlResponse):
+        """Extract Typesense connection details from embedded JS and query the API."""
+        ts = _extract_typesense_config(response)
+        if not ts:
+            self.logger.error(
+                "[%s] Could not extract Typesense config on %s", self._domain, response.url,
+            )
+            return
 
-        DealerVenom uses URL-based pagination via a ``pg`` query parameter.
-        Each page is fetched as an independent Playwright request and the
-        "next page" link (identified by its right-chevron icon) is
-        followed automatically.
-        """
-        dealer_name = response.meta.get("dealer_name") or (
+        self.logger.info(
+            "[%s] Typesense config: host=%s, index=%s", self._domain, ts["host"], ts["index"],
+        )
+
+        # Derive the dealer name from the page title if not overridden.
+        dealer_name = (
             self._dealer_name_override
             or response.css("title::text").get("").split("|")[-1].strip()
         )
 
-        detail_urls = _extract_detail_urls(response, response.url)
-        self.logger.info(
-            "Found %d vehicle detail URLs on %s",
-            len(detail_urls), response.url,
+        # Build Typesense filter from query-string parameters.
+        filters = _build_typesense_filter(self.start_url)
+
+        # Request page 1 from Typesense.
+        api_url = _typesense_search_url(ts, filters, page=1)
+        yield scrapy.Request(
+            api_url,
+            headers={"X-TYPESENSE-API-KEY": ts["api_key"]},
+            callback=self.parse_typesense_results,
+            errback=self.errback,
+            meta={
+                "typesense": ts,
+                "filters": filters,
+                "dealer_name": dealer_name,
+                "ts_page": 1,
+            },
         )
 
-        for detail_url in detail_urls:
+    # ------------------------------------------------------------------
+    # Step 2 — Parse Typesense JSON results → CarItems + VDP requests
+    # ------------------------------------------------------------------
+
+    async def parse_typesense_results(self, response: TextResponse):
+        """Parse a page of Typesense search results.
+
+        Yields a partially-filled ``CarItem`` for each vehicle, then
+        follows with a plain-HTTP request to the VDP to scrape packages.
+        Handles pagination automatically.
+        """
+        data = json.loads(response.text)
+        hits = data.get("hits", [])
+        found = data.get("found", 0)
+        ts_page = response.meta["ts_page"]
+        dealer_name = response.meta["dealer_name"]
+        ts = response.meta["typesense"]
+        filters = response.meta["filters"]
+
+        self.logger.info(
+            "[%s] Found %d vehicles (page %d, total: %d)",
+            self._domain, len(hits), ts_page, found,
+        )
+
+        base_url = f"https://{urlparse(self.start_url).netloc}"
+
+        for hit in hits:
+            doc = hit.get("document", {})
+            item = _typesense_doc_to_item(doc, dealer_name, self.start_url, base_url)
+
+            # Request the VDP to scrape packages.
+            detail_url = item["detail_url"]
             yield scrapy.Request(
                 detail_url,
-                meta={
-                    "playwright": True,
-                    "playwright_page_init_callback": apply_stealth,
-                    "dealer_name": dealer_name,
-                    "dealer_url": self.start_url,
-                },
-                callback=self.parse_detail,
+                callback=self.parse_vdp_packages,
                 errback=self.errback,
+                meta={"item": item},
             )
 
-        # --- URL-based pagination ---
-        next_url = _extract_next_page_url(response)
-        if next_url:
-            self.logger.info("Following next page: %s", next_url)
+        # --- Pagination ---
+        if ts_page * _TYPESENSE_PAGE_SIZE < found:
+            next_page = ts_page + 1
+            api_url = _typesense_search_url(ts, filters, page=next_page)
             yield scrapy.Request(
-                next_url,
-                meta={
-                    "playwright": True,
-                    "playwright_page_init_callback": apply_stealth,
-                    "playwright_page_methods": [
-                        PageMethod("wait_for_selector", self._SRP_SELECTOR,
-                        ),
-                    ],
-                    "playwright_page_goto_kwargs": {
-                        "wait_until": "domcontentloaded",
-                    },
-                    "dealer_name": dealer_name,
-                },
-                callback=self.parse_search,
+                api_url,
+                headers={"X-TYPESENSE-API-KEY": ts["api_key"]},
+                callback=self.parse_typesense_results,
                 errback=self.errback,
+                meta={
+                    "typesense": ts,
+                    "filters": filters,
+                    "dealer_name": dealer_name,
+                    "ts_page": next_page,
+                },
             )
 
     # ------------------------------------------------------------------
-    # Vehicle detail page — extract all information
+    # Step 3 — Scrape packages from the server-rendered VDP
     # ------------------------------------------------------------------
 
-    async def parse_detail(self, response: HtmlResponse):
-        """Extract full vehicle details from a DealerVenom VDP.
+    async def parse_vdp_packages(self, response: HtmlResponse):
+        """Scrape packages from the VDP and yield the completed CarItem."""
+        item: CarItem = response.meta["item"]
 
-        DealerVenom VDP pages embed structured vehicle data in a
-        ``data-vehicle`` JSON attribute, JSON-LD (``@type: Car``), and
-        rendered DOM elements for packages and pricing.
-        """
-        item = CarItem()
-        item["detail_url"] = response.url
-        item["dealer_name"] = response.meta.get("dealer_name", "")
-        item["dealer_url"] = response.meta.get("dealer_url", "")
-
-        # --- Primary data source: data-vehicle JSON attribute ---
-        vehicle_data = _extract_vehicle_data(response)
-        json_ld = extract_json_ld_car(response)
-
-        # --- Core vehicle identifiers ---
-        item["vin"] = vehicle_data.get("vin") or json_ld.get("vehicleIdentificationNumber")
-        item["stock_number"] = vehicle_data.get("stockNumber") or json_ld.get("sku")
-        # DealerVenom stores model code as ``mpn`` in JSON-LD
-        item["model_code"] = json_ld.get("mpn")
-
-        # --- Vehicle info ---
-        item["year"] = (
-            str(vehicle_data["year"]) if vehicle_data.get("year")
-            else json_ld.get("vehicleModelDate")
-        )
-        item["trim"] = (
-            vehicle_data.get("trim")
-            or json_ld.get("vehicleConfiguration")
-        )
-
-        # --- Drivetrain ---
-        drivetrain_raw = vehicle_data.get("drivetrain", "")
-        item["drivetrain"] = normalize_drivetrain(drivetrain_raw, item.get("trim", ""))
-
-        # --- Colors ---
-        item["exterior_color"] = (
-            vehicle_data.get("exteriorColor")
-            or json_ld.get("color")
-        )
-        item["interior_color"] = (
-            vehicle_data.get("interiorColor")
-            or json_ld.get("vehicleInteriorColor")
-        )
-
-        # --- Packages ---
-        packages: list[dict[str, str | None]] = []
+        packages: list[dict[str, str | int]] = []
         for pkg_el in response.css(".vdp-package-item"):
             name = pkg_el.css(".vdp-package-name::text").get("").strip()
             price_str = pkg_el.css(".vdp-package-price::text").get("").strip()
-            if name and name.upper() not in EXCLUDED_PACKAGES:
+            if name and name.lower() not in EXCLUDED_PACKAGES:
                 packages.append({
                     "name": name,
-                    "price": price_str or None,
+                    "price": parse_price(price_str),
                 })
         item["packages"] = packages or None
-
-        # --- Pricing ---
-        msrp = (
-            safe_int(vehicle_data.get("msrp"))
-            or parse_price(json_ld.get("offers", [{}])[0].get("price")
-                            if isinstance(json_ld.get("offers"), list)
-                            else (json_ld.get("offers") or {}).get("price"))
-        )
-        item["msrp"] = msrp
-
-        total_packages_price = sum(
-            parse_price(p.get("price")) or 0 for p in packages
-        )
-        item["total_packages_price"] = total_packages_price or None
-        item["base_price"] = (msrp - total_packages_price) if msrp else None
-
-        # Displayed / advertised price
-        displayed_price = safe_int(vehicle_data.get("displayedPrice"))
-        if not displayed_price:
-            displayed_price = parse_price(
-                response.css(".buy-price::text").get("")
-            )
-        item["total_price"] = displayed_price if displayed_price else msrp
-
-        # Dealer accessories — not broken out separately on this platform
-        item["dealer_accessories"] = None
-
-        # Adjustments = difference between total price and MSRP
-        if msrp and item["total_price"] and item["total_price"] != msrp:
-            item["adjustments"] = item["total_price"] - msrp
-        else:
-            item["adjustments"] = None
-
-        # --- Status ---
-        # Determine the base stock status from DOM elements.
-        if response.css(".in-transit-vehicle"):
-            status = "In Transit"
-        elif response.css(".allocated-vehicle"):
-            # "Allocated" vehicles are in the build/production phase and
-            # have not yet entered transit.
-            status = "In Production"
-        elif response.css(".in-stock-vehicle"):
-            status = "In Stock"
-        else:
-            # Fall back to data-vehicle status field
-            status_raw = vehicle_data.get("status", "")
-            status = _normalize_dv_status(status_raw)
-
-        # Check for "Sale Pending" prefix in the disclaimer / status text.
-        status_text = " ".join(response.css(
-            ".dv-sp-disclaimer::text, "
-            ".vdp-allocated-veh-text::text"
-        ).getall())
-        if re.search(r"(?i)sale\s+pending", status_text):
-            status = f"Sale Pending - {status}" if status else "Sale Pending"
-
-        item["status"] = status
-
-        # --- Availability date ---
-        avail_text = " ".join(response.css(
-            ".dv-sp-disclaimer::text, "
-            ".vdp-allocated-veh-text::text"
-        ).getall())
-        avail_match = re.search(
-            r"(?i)(?:Estimated\s+)?availability\s+(\d{2}/\d{2}/\d{2,4})",
-            avail_text,
-        )
-        item["availability_date"] = avail_match.group(1) if avail_match else None
 
         yield item
 
@@ -284,74 +194,167 @@ class DealerVenomSpider(scrapy.Spider):
     # ------------------------------------------------------------------
 
     async def errback(self, failure):
-        self.logger.error("Request failed: %s", failure.value)
+        self.logger.error("[%s] Request failed: %s", self._domain, failure.value)
 
 
 # ---------------------------------------------------------------------------
-# Helpers — SRP extraction
+# Helpers — Typesense config extraction
 # ---------------------------------------------------------------------------
 
-def _extract_detail_urls(response: HtmlResponse, base_url: str) -> list[str]:
-    """Extract vehicle detail URLs from ``.listing-container[data-url]`` elements."""
-    urls: list[str] = []
-    for container in response.css(".listing-container[data-url]"):
-        href = container.attrib.get("data-url", "")
-        if href:
-            urls.append(urljoin(base_url, href))
-    return urls
+def _extract_typesense_config(response: HtmlResponse) -> dict | None:
+    """Extract Typesense connection details from the SRP page's JavaScript.
 
-
-def _extract_next_page_url(response: HtmlResponse) -> str | None:
-    """Return the URL of the next SRP page, or *None* if on the last page.
-
-    DealerVenom renders a custom pagination widget inside
-    ``ul.ais-pagination-ul``.  The "next" link is an ``<a>`` tag that
-    wraps an ``<i class="fa-solid fa-chevron-right">`` icon.
+    Returns a dict with ``host``, ``port``, ``protocol``, ``api_key``,
+    and ``index`` keys, or ``None`` if extraction fails.
     """
-    next_href = response.xpath(
-        '//ul[contains(@class,"ais-pagination-ul")]'
-        '//a[contains(@class,"ais-Pagination-link")]'
-        '[.//i[contains(@class,"fa-chevron-right")]]'
-        '/@href'
-    ).get()
-    if next_href:
-        return urljoin(response.url, next_href)
-    return None
+    text = response.text
 
-
-# ---------------------------------------------------------------------------
-# Helpers — VDP data extraction
-# ---------------------------------------------------------------------------
-
-def _extract_vehicle_data(response: HtmlResponse) -> dict:
-    """Extract the ``data-vehicle`` JSON attribute from the VDP.
-
-    DealerVenom encodes the vehicle data object as HTML-entity-escaped
-    JSON in a ``data-vehicle`` attribute (typically on the analytics
-    wrapper or ``<main>`` element).
-    """
-    raw = response.css("[data-vehicle]::attr(data-vehicle)").get("")
-    if not raw:
-        # Fallback: search in the raw HTML for the encoded attribute
-        match = re.search(r'data-vehicle="(\{.*?\})"', response.text)
-        if match:
-            raw = unescape(match.group(1))
-    if raw:
-        try:
-            return json.loads(raw)
-        except (json.JSONDecodeError, TypeError):
-            pass
-    return {}
-
-
-
-def _normalize_dv_status(raw: str) -> str | None:
-    """Map a condition string like ``New`` to a status label.
-
-    DealerVenom stores the *condition* (New/Used) in ``data-vehicle``,
-    not the stock status.  The actual in-transit / in-stock status is
-    determined from DOM elements in the caller.
-    """
-    if not raw or raw.lower() in ("new", "used"):
+    # Index / collection name:  var indexName = "vehicles-TOY46076";
+    m_index = re.search(r'var\s+indexName\s*=\s*"([^"]+)"', text)
+    if not m_index:
         return None
-    return raw
+    index = m_index.group(1)
+
+    # API key:  apiKey: "eQUa8iq30l8Tu908Drz9WKqar6tCJGd4",
+    m_key = re.search(r'apiKey:\s*"([^"]+)"', text)
+    if not m_key:
+        return None
+    api_key = m_key.group(1)
+
+    # Host:  host: 'hjnrb3s21408ezpfp.a1.typesense.net',
+    m_host = re.search(r"host:\s*['\"]([^'\"]+)['\"]", text)
+    if not m_host:
+        return None
+    host = m_host.group(1)
+
+    # Port (default 443):  port: 443,
+    m_port = re.search(r"port:\s*(\d+)", text)
+    port = int(m_port.group(1)) if m_port else 443
+
+    # Protocol (default https):  protocol: 'https'
+    m_proto = re.search(r"protocol:\s*['\"]([^'\"]+)['\"]", text)
+    protocol = m_proto.group(1) if m_proto else "https"
+
+    return {
+        "host": host,
+        "port": port,
+        "protocol": protocol,
+        "api_key": api_key,
+        "index": index,
+    }
+
+
+# ---------------------------------------------------------------------------
+# Helpers — Typesense query building
+# ---------------------------------------------------------------------------
+
+# Map SRP query-string parameters to Typesense field names.
+_QS_TO_TYPESENSE: dict[str, str] = {
+    "model": "model",
+    "yr": "yr",
+    "year": "yr",
+    "make": "make",
+    "body": "body",
+    "condition": "condition",
+}
+
+
+def _build_typesense_filter(srp_url: str) -> str:
+    """Translate the SRP query-string into a Typesense ``filter_by`` string.
+
+    Always includes ``condition:New`` (DealerVenom new-vehicle pages
+    imply this).  Additional filters are derived from recognised
+    query-string parameters (``model``, ``yr``, etc.).
+    """
+    qs = parse_qs(urlparse(srp_url).query)
+    parts: list[str] = []
+
+    for qs_key, ts_field in _QS_TO_TYPESENSE.items():
+        vals = qs.get(qs_key)
+        if vals:
+            parts.append(f"{ts_field}:={vals[0]}")
+
+    # Ensure condition:New is always present.
+    if not any(p.startswith("condition:") for p in parts):
+        parts.insert(0, "condition:=New")
+
+    return " && ".join(parts)
+
+
+def _typesense_search_url(ts: dict, filter_by: str, page: int = 1) -> str:
+    """Build a Typesense multi-search URL."""
+    base = f"{ts['protocol']}://{ts['host']}:{ts['port']}"
+    collection = ts["index"]
+    # Typesense uses 1-based pagination.
+    return (
+        f"{base}/collections/{collection}/documents/search"
+        f"?q=*&query_by=model&filter_by={filter_by}"
+        f"&per_page={_TYPESENSE_PAGE_SIZE}&page={page}"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Helpers — Typesense document → CarItem
+# ---------------------------------------------------------------------------
+
+def _typesense_doc_to_item(
+    doc: dict,
+    dealer_name: str,
+    dealer_url: str,
+    base_url: str,
+) -> CarItem:
+    """Convert a Typesense document (hit) into a partially-filled CarItem.
+
+    Packages are *not* populated here — they require a follow-up VDP
+    request.
+    """
+    item = CarItem()
+
+    # --- Identifiers ---
+    item["vin"] = doc.get("vin")
+    item["stock_number"] = doc.get("stockNumber")
+    item["model_code"] = doc.get("modelCode")
+
+    # --- Vehicle info ---
+    item["year"] = str(doc["year"]) if doc.get("year") else doc.get("yr") and str(doc["yr"])
+    item["trim"] = doc.get("trim")
+    item["drivetrain"] = normalize_drivetrain(doc.get("drivetrain", ""))
+
+    # --- Colors ---
+    item["exterior_color"] = normalize_color(doc.get("exteriorColor"))
+    item["interior_color"] = normalize_color(doc.get("interiorColor"))
+
+    # --- Pricing ---
+    item["msrp"] = parse_price(doc.get("msrp"))
+    item["total_price"] = (
+        safe_int(doc.get("finalPriceInt"))
+        or parse_price(doc.get("finalPrice"))
+        or item["msrp"]
+    )
+
+    # --- Detail URL ---
+    vdp_path = doc.get("vdpUrl", "")
+    item["detail_url"] = urljoin(base_url, vdp_path) if vdp_path else ""
+
+    # --- Dealer info ---
+    item["dealer_name"] = dealer_name
+    item["dealer_url"] = dealer_url
+
+    # --- Status ---
+    status = doc.get("status", "")
+
+    # Check smartpathDisclaimer for "Sale Pending" and availability date.
+    disclaimer = doc.get("smartpathDisclaimer", "")
+    if re.search(r"(?i)sale\s+pending", disclaimer):
+        status = f"Sale Pending - {status}" if status else "Sale Pending"
+
+    item["status"] = status
+
+    # --- Availability date ---
+    avail_match = re.search(
+        r"(?i)(?:Estimated\s+)?availability\s+(\d{2}/\d{2}/\d{2,4})",
+        disclaimer,
+    )
+    item["availability_date"] = avail_match.group(1) if avail_match else None
+
+    return item

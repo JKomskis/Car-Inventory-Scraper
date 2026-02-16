@@ -13,12 +13,14 @@ Example usage::
 
 from __future__ import annotations
 
+import json
+import math
 import re
-from urllib.parse import parse_qs, urlencode, urljoin, urlparse, urlunparse
+from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
 import scrapy
 from scrapy.http import HtmlResponse
-from scrapy_playwright.page import PageMethod
+from scrapy.spidermiddlewares.httperror import HttpError
 
 from car_inventory_scraper.parsing_helpers import (
     EXCLUDED_PACKAGES,
@@ -26,7 +28,9 @@ from car_inventory_scraper.parsing_helpers import (
     parse_price,
 )
 from car_inventory_scraper.items import CarItem
-from car_inventory_scraper.stealth import apply_stealth
+
+# Number of vehicles DealerOn displays per search-results page.
+_VEHICLES_PER_PAGE = 12
 
 
 class DealerOnSpider(scrapy.Spider):
@@ -44,65 +48,48 @@ class DealerOnSpider(scrapy.Spider):
             )
         self.start_url = url
         self._dealer_name_override = dealer_name
+        self._domain = urlparse(url).netloc
 
     # ------------------------------------------------------------------
     # Search results page — collect detail links
     # ------------------------------------------------------------------
 
-    _SRP_SELECTOR = ".vehicle-card, .vehicleCard, .srp-vehicle-card"
-    _VDP_SELECTOR = ".vdp[data-vehicle-information], .vehicle-info, .vdp-content"
-
     async def start(self):
         yield scrapy.Request(
             self.start_url,
-            meta={
-                "playwright": True,
-                "playwright_page_init_callback": apply_stealth,
-                "playwright_page_methods": [
-                    PageMethod("wait_for_selector", self._SRP_SELECTOR),
-                ],
-            },
             callback=self.parse_search,
             errback=self.errback,
         )
 
     async def parse_search(self, response: HtmlResponse):
-        """Parse the search results page and follow each vehicle detail link."""
+        """Parse the search results page using embedded JSON script tags.
+
+        DealerOn search pages embed two useful ``<script>`` blocks that
+        are present in the static HTML (no JavaScript rendering needed):
+
+        * ``#dealeron_tagging_data`` — contains ``itemCount`` (total
+          number of vehicles matching the search) used for pagination.
+        * ``#dlron-srp-model`` — contains ``ItemListJson``, a
+          schema.org ``ItemList`` with the URL, name, and VIN of every
+          vehicle on the current page.
+        """
         base_url = response.url
         dealer_name = (
             self._dealer_name_override
             or response.css("title::text").get("").split("|")[-1].strip()
         )
 
-        # Collect detail-page URLs from vehicle cards
-        vehicle_cards = response.css(
-            ".vehicle-card, .vehicleCard, .srp-vehicle-card, "
-            "[data-vehicle-card], .vehicle-card-details-container"
+        # --- Extract vehicle list from dlron-srp-model ---
+        detail_urls = _extract_vehicle_urls(response, base_url)
+        self.logger.info(
+            "[%s] Found %d vehicles on %s",
+            self._domain, len(detail_urls), response.url,
         )
-        self.logger.info("Found %d vehicle cards on %s", len(vehicle_cards), response.url)
 
-        seen = set()
-        for card in vehicle_cards:
-            title_link = card.css(
-                "a[href*='/new-'], a[href*='/used-'], "
-                ".vehicle-card__title a, h2 a, .vehicleCardTitle a"
-            )
-            href = title_link.attrib.get("href", "")
-            if not href:
-                continue
-            detail_url = urljoin(base_url, href)
-            if detail_url in seen:
-                continue
-            seen.add(detail_url)
-
+        for detail_url in detail_urls:
             yield scrapy.Request(
                 detail_url,
                 meta={
-                    "playwright": True,
-                    "playwright_page_init_callback": apply_stealth,
-                    "playwright_page_methods": [
-                        PageMethod("wait_for_selector", self._VDP_SELECTOR),
-                    ],
                     "dealer_name": dealer_name,
                     "dealer_url": base_url,
                 },
@@ -111,32 +98,28 @@ class DealerOnSpider(scrapy.Spider):
             )
 
         # --- Pagination ---
-        # DealerOn SRP 2.0 renders pagination links with href="#" and
-        # handles page changes client-side.  The actual page number is
-        # communicated via a ``pt`` query parameter in the URL (e.g.
-        # ``&pt=2``).  We detect whether a non-disabled "Next" button
-        # exists and, if so, build the next page URL ourselves.
-        next_url = _build_next_page_url(response)
-        if next_url:
-            self.logger.info("Following next page: %s", next_url)
-            yield scrapy.Request(
-                next_url,
-                meta={
-                    "playwright": True,
-                    "playwright_page_init_callback": apply_stealth,
-                    "playwright_page_methods": [
-                        PageMethod("wait_for_selector", self._SRP_SELECTOR, timeout=180_000),
-                    ],
-                },
-                callback=self.parse_search,
-                errback=self.errback,
-            )
+        # Only the first page triggers pagination requests.  We read
+        # ``itemCount`` from the tagging-data script and calculate how
+        # many pages exist (12 vehicles per page).  Pages 2+ are
+        # fetched by appending ``&pt=<page>`` to the start URL.
+        current_page = _current_page_number(response.url)
+        if current_page == 1:
+            item_count = _extract_item_count(response)
+            if item_count is not None:
+                total_pages = math.ceil(item_count / _VEHICLES_PER_PAGE)
+                for page in range(2, total_pages + 1):
+                    next_url = _build_page_url(self.start_url, page)
+                    yield scrapy.Request(
+                        next_url,
+                        callback=self.parse_search,
+                        errback=self.errback,
+                    )
 
     # ------------------------------------------------------------------
     # Vehicle detail page — extract all information
     # ------------------------------------------------------------------
 
-    async def parse_detail(self, response: HtmlResponse):
+    def parse_detail(self, response: HtmlResponse):
         """Extract full vehicle details from a VDP (Vehicle Detail Page).
 
         DealerOn VDP pages store all structured vehicle data as ``data-*``
@@ -170,7 +153,7 @@ class DealerOnSpider(scrapy.Spider):
             feature_upper = feature.strip().upper()
             for token in ("AWD", "4WD", "FWD", "RWD", "4X4", "4X2"):
                 if token in feature_upper:
-                    drivetrain = feature.strip()
+                    drivetrain = token
                     break
             if drivetrain:
                 break
@@ -185,60 +168,26 @@ class DealerOnSpider(scrapy.Spider):
         item["drivetrain"] = drivetrain
 
         # --- Packages & Accessories (CSS class: .package-info) ---
-        packages = []
-        dealer_acc_packages: list[dict[str, str | None]] = []
+        packages: list[dict[str, str | int]] = []
+        dealer_acc_packages: list[dict[str, str | int]] = []
         for pkg in response.css(".package-info"):
             pkg_name = pkg.css(".package-info__name::text").get("").strip()
             price_str = pkg.css(".package-info__price::text").get("").strip()
-            if not pkg_name or pkg_name.upper() in EXCLUDED_PACKAGES:
+            if not pkg_name or pkg_name.lower() in EXCLUDED_PACKAGES:
                 continue
-            entry = {"name": pkg_name, "price": price_str or None}
+            entry = {"name": pkg_name, "price": parse_price(price_str)}
             if _is_dealer_accessory(pkg_name):
                 dealer_acc_packages.append(entry)
             else:
                 packages.append(entry)
         item["packages"] = packages or None
+        item["dealer_accessories"] = dealer_acc_packages or None
 
-        dealer_acc_total = sum(
-            parse_price(p.get("price")) or 0 for p in dealer_acc_packages
-        )
-        item["dealer_accessories"] = dealer_acc_total or None
+        # --- Pricing ---
+        item["msrp"] = parse_price(vdp.attrib.get("data-msrp"))
 
-        # --- Pricing from price stack ---
-        price_stack = {}
-        for pi in response.css(
-            ".priceBlockResponsiveDesktop .priceBlockItemPrice"
-        ):
-            label = pi.css(".priceBlocItemPriceLabel::text").get("").strip().rstrip(":")
-            val = pi.css(".priceBlocItemPriceValue::text").get("").strip()
-            if label and val:
-                price_stack[label.upper()] = val
-
-        msrp = (
-            parse_price(price_stack.get("TSRP"))
-            or parse_price(price_stack.get("MSRP"))
-            or parse_price(vdp.attrib.get("data-msrp"))
-        )
-        item["msrp"] = msrp
-
-        total_packages_price = sum(
-            parse_price(p.get("price")) or 0 for p in packages
-        )
-        item["total_packages_price"] = total_packages_price or None
-        item["base_price"] = (msrp - total_packages_price) if msrp else None
-
-        total_price = parse_price(price_stack.get("PRICE"))
-        if not total_price:
-            total_price = parse_price(vdp.attrib.get("data-price"))
-        item["total_price"] = total_price if total_price else msrp
-
-        # Adjustments = difference between total price and sticker, minus
-        # dealer accessories (which are already broken out separately).
-        if msrp and item["total_price"] and item["total_price"] != msrp:
-            adj = item["total_price"] - msrp - (dealer_acc_total or 0)
-            item["adjustments"] = adj if adj else None
-        else:
-            item["adjustments"] = None
+        total_price = parse_price(vdp.attrib.get("data-price"))
+        item["total_price"] = total_price if total_price else item["msrp"]
 
         # --- Status from data attributes ---
         if vdp.attrib.get("data-instock", "").lower() == "true":
@@ -264,8 +213,12 @@ class DealerOnSpider(scrapy.Spider):
     # Error handler
     # ------------------------------------------------------------------
 
-    async def errback(self, failure):
-        self.logger.error("Request failed: %s", failure.value)
+    def errback(self, failure):
+        self.logger.error("[%s] Request failed: %s", self._domain, failure.value)
+
+        if failure.check(HttpError):
+            response = failure.value.response
+            self.logger.error("[%s] HttpError on %s: status %s", self._domain, response.url, response.status)
 
 
 # ---------------------------------------------------------------------------
@@ -274,7 +227,7 @@ class DealerOnSpider(scrapy.Spider):
 
 # Package names (normalised to lowercase) that are dealer-installed
 # accessories rather than factory packages.  These are excluded from the
-# packages list / total and counted under dealer_accessories & adjustments.
+# packages list / total and counted under dealer_accessories_price & adjustments.
 _DEALER_ACCESSORY_NAMES: set[str] = {
     "360shield -paintshield and interiorshield",
     "z360shield -paintshield and interiorshield",
@@ -292,6 +245,7 @@ def _is_dealer_accessory(name: str) -> bool:
 
 _HTML_TAG_RE = re.compile(r"<a\b[^>]*>.*?</a>|<[^>]+>", re.DOTALL)
 _BRACKET_TAG_RE = re.compile(r"\s*\[Extra_Cost_Color\]", re.IGNORECASE)
+_TRADEMARK_SUFFIX_RE = re.compile(r"\s*[®]", re.IGNORECASE)
 
 
 def _strip_html(value: str) -> str | None:
@@ -301,49 +255,80 @@ def _strip_html(value: str) -> str | None:
 
     * Disclaimer anchor elements (``<a …><sup>60</sup></a>``)
     * Bracket-enclosed metadata like ``[Extra_Cost_Color]``
+    * Copyright suffixes like ``©`` or ``© Mixed Media``
 
-    This helper strips both, returning only the clean color name.
+    This helper strips all of these, returning only the clean color name.
     """
     if not value:
         return None
     cleaned = _HTML_TAG_RE.sub("", value)
-    cleaned = _BRACKET_TAG_RE.sub("", cleaned).strip()
+    cleaned = _BRACKET_TAG_RE.sub("", cleaned)
+    cleaned = _TRADEMARK_SUFFIX_RE.sub("", cleaned).strip()
     return cleaned or None
 
 
 # ---------------------------------------------------------------------------
-# Helpers — pagination
+# Helpers — search-page JSON extraction
 # ---------------------------------------------------------------------------
 
-def _build_next_page_url(response: HtmlResponse) -> str | None:
-    """Build the URL for the next SRP page, or return *None* on the last page.
+def _extract_vehicle_urls(response: HtmlResponse, base_url: str) -> list[str]:
+    """Extract vehicle detail URLs from the ``#dlron-srp-model`` script tag.
 
-    DealerOn SRP 2.0 uses a Vue-rendered pagination widget
-    (``.srp-pagination``) where every ``<a>`` has ``href="#"`` — page
-    changes are handled via JavaScript.  The actual page number is
-    passed as the ``pt`` query-string parameter.
-
-    This helper checks for a non-disabled "Next" pagination item and,
-    when found, increments ``pt`` in the current URL to produce the
-    next page URL.
+    The tag contains a JSON object whose ``ItemListJson`` value is itself
+    a JSON-encoded schema.org ``ItemList``.  Each ``ListItem`` has a
+    ``url`` field pointing to the vehicle detail page.
     """
-    # The "Next" <li> has class ``pagination__item--next``.
-    # When on the last page it also carries the ``disabled`` class.
-    next_li = response.css("li.pagination__item--next")
-    if not next_li:
+    raw = response.css("script#dlron-srp-model::text").get()
+    if not raw:
+        return []
+    try:
+        model = json.loads(raw)
+        item_list = json.loads(model["ItemListJson"])
+        return [
+            item["url"]
+            for item in item_list.get("itemListElement", [])
+            if item.get("url")
+        ]
+    except (json.JSONDecodeError, KeyError, TypeError) as exc:
+        import logging
+        logging.getLogger(__name__).warning(
+            "[%s] Failed to parse dlron-srp-model: %s", urlparse(base_url).netloc, exc,
+        )
+        return []
+
+
+def _extract_item_count(response: HtmlResponse) -> int | None:
+    """Extract total vehicle count from ``#dealeron_tagging_data``.
+
+    Returns ``None`` if the script tag is missing or unparseable.
+    """
+    raw = response.css("script#dealeron_tagging_data::text").get()
+    if not raw:
         return None
-    li_classes = next_li[0].attrib.get("class", "")
-    if "disabled" in li_classes:
+    try:
+        data = json.loads(raw)
+        return int(data["itemCount"])
+    except (json.JSONDecodeError, KeyError, TypeError, ValueError):
         return None
 
-    # Determine the current page number from the ``pt`` query parameter.
-    parsed = urlparse(response.url)
+
+def _current_page_number(url: str) -> int:
+    """Return the current page number from the ``pt`` query parameter.
+
+    Defaults to 1 when ``pt`` is absent.
+    """
+    qs = parse_qs(urlparse(url).query)
+    try:
+        return int(qs["pt"][0])
+    except (KeyError, IndexError, ValueError):
+        return 1
+
+
+def _build_page_url(base_url: str, page: int) -> str:
+    """Return *base_url* with the ``pt`` query parameter set to *page*."""
+    parsed = urlparse(base_url)
     qs = parse_qs(parsed.query)
-    current_page = int(qs.get("pt", ["1"])[0])
-
-    # Build the next page URL by setting ``pt`` to current + 1.
-    qs["pt"] = [str(current_page + 1)]
+    qs["pt"] = [str(page)]
     new_query = urlencode({k: v[0] for k, v in qs.items()})
-    next_url = urlunparse(parsed._replace(query=new_query))
-    return next_url
+    return urlunparse(parsed._replace(query=new_query))
 

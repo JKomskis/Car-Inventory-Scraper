@@ -18,16 +18,7 @@ You are an expert Scrapy developer specialising in adding support for new car de
 
 ## Your tools
 
-You have access to a **Playwright page-fetching tool** that renders JavaScript-heavy pages and returns their full HTML.
-Run it from the workspace root:
-
-```bash
-uv run python -m car_inventory_scraper.tools.fetch_page "<URL>"
-```
-
-Add `--wait-for "<CSS selector>"` if the page lazy-loads vehicle cards.
-
-Use this tool liberally — fetch both the **search/results page** and at least one **vehicle detail page (VDP)** so you can inspect their DOM structures.
+You have access to standard file reading, editing, and terminal tools to inspect pages and create spiders.
 
 ## Inputs you will receive
 
@@ -83,11 +74,9 @@ Create a new file `src/car_inventory_scraper/spiders/<platform_name>.py` followi
 
 - **Naming**: the file and spider `name` should reflect the *platform*, not the individual dealer, so it can be reused (e.g. `dealercom`, `dealerinspire`).
 - **Constructor**: accept `url` and optional `dealer_name` keyword arguments, matching the `DealerOnSpider` pattern.
-- **Playwright integration**: use `scrapy-playwright` with `PageMethod` for `wait_for_selector` calls, matching the patterns in `dealeron.py`.
-- **Async `start()` method**: yield the initial request with Playwright meta.
+- **CloudScraper integration**: set `meta={"use_cloudscraper": True}` on requests for sites with bot detection.
 - **`parse_search()`**: extract vehicle card links and handle pagination.
 - **`parse_detail()`**: populate every `CarItem` field you can find.
-- **`errback_close_page()`**: always close the Playwright page on errors.
 - **Helper functions**: keep price parsing, title parsing, etc. as module-level helpers.
 - **Docstring**: include a module-level docstring explaining the platform and example usage, mirroring the style in `dealeron.py`.
 - Keep selectors **as general as possible** so the spider works across multiple dealers on the same platform.

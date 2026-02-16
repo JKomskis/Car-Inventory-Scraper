@@ -33,7 +33,7 @@ COLUMNS = [
     ("Base Price", "base_price"),
     ("Pkgs Total", "total_packages_price"),
     ("MSRP", "msrp"),
-    ("Dlr Accessories", "dealer_accessories"),
+    ("Dlr Accessories", "dealer_accessories_price"),
     ("Adjustments", "adjustments"),
     ("Advertised Price", "total_price"),
     ("Status", "status"),
@@ -109,13 +109,13 @@ def build_report(
                 )
             elif key in (
                 "base_price", "total_packages_price", "msrp",
-                "dealer_accessories", "total_price",
+                "dealer_accessories_price", "total_price",
             ):
                 raw = item.get(key)
                 val = f"${raw:,}" if isinstance(raw, (int, float)) else ""
                 if key == "total_price":
                     cls = ' class="price"'
-                elif key == "dealer_accessories" and raw:
+                elif key == "dealer_accessories_price" and raw:
                     cls = ' class="adj-pos"'
                 else:
                     cls = ""

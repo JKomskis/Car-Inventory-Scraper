@@ -25,11 +25,8 @@ jobs:
       - name: Install dependencies
         run: uv sync
 
-      - name: Install Playwright browsers
-        run: uv run playwright install --with-deps chromium
-
       - name: Crawl dealer inventory
-        run: xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" uv run car-inventory-scraper crawl --config dealers.toml
+        run: uv run car-inventory-scraper crawl --config dealers.toml
 
       - name: Generate report
         run: uv run car-inventory-scraper report inventory/inventory.json -o inventory.html

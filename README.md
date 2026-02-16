@@ -1,6 +1,6 @@
 # Car Inventory Scraper
 
-Scrape car dealership websites to build an inventory database. Uses [Scrapy](https://scrapy.org/) with [Playwright](https://playwright.dev/) for JavaScript-heavy sites.
+Scrape car dealership websites to build an inventory database.
 
 ## Quick Start with `uvx`
 
@@ -16,7 +16,6 @@ Create a `dealers.toml` file listing all the dealerships you want to scrape:
 
 ```toml
 [settings]
-headless = true
 output = "inventory.html"
 
 [[dealers]]
@@ -45,9 +44,6 @@ uvx car-inventory-scraper crawl --config my-dealers.toml
 cd Car-Inventory-Scraper
 uv sync
 
-# Install Playwright browsers (required once):
-uv run playwright install chromium
-
 # Run a crawl:
 uv run car-inventory-scraper crawl dealeron \
     --url "https://www.toyotaofbellevue.com/searchnew.aspx?Make=Toyota&ModelAndTrim=RAV4"
@@ -59,8 +55,9 @@ uv run car-inventory-scraper crawl dealeron \
 car-inventory-scraper [OPTIONS] COMMAND [ARGS]...
 
 Commands:
-  crawl   Scrape dealership inventory (single URL or config file).
-  list    List available spiders.
+  crawl    Scrape dealership inventory (single URL or config file).
+  list     List available spiders.
+  report   Generate an HTML inventory report from a scraped JSON file.
 ```
 
 ### `crawl`
@@ -86,33 +83,63 @@ Options:
   -u, --url TEXT           Starting URL (single-dealer mode)
   -c, --config PATH        TOML config file (multi-dealer mode)
   -o, --output TEXT        Output file path (default: inventory.html)
-  --headless / --no-headless
-                           Run browser headless (default: headless)
 ```
 
 ## Output
 
-By default, results are written to `inventory.jsonl` — one JSON object per vehicle:
+By default, results are written to `inventory.json` — a JSON array of vehicle objects:
 
 ```json
 {
-  "vin": "JTM6CRAV0TD002084",
+  "detail_url": "https://www.toyotaoflakecity.com/new-Seattle-2026-Toyota-RAV4-XLE+Premium-2T16CRAV7TC06D725",
+  "dealer_name": "Toyota of Lake City",
+  "dealer_url": "https://www.toyotaoflakecity.com/searchnew.aspx?...",
+  "vin": "2T16CRAV7TC06D725",
   "stock_number": null,
+  "model_code": "4444",
   "year": "2026",
-  "make": "Toyota",
-  "model": "RAV4",
-  "trim": "SE",
-  "exterior_color": "Storm Cloud",
-  "interior_color": null,
-  "msrp": 38264,
-  "price": 38264,
-  "status": "In Transit",
-  "availability_date": "03/05/26",
-  "dealer_name": "Toyota of Bellevue",
-  "dealer_url": "https://www.toyotaofbellevue.com/searchnew.aspx?...",
-  "detail_url": "https://www.toyotaofbellevue.com/new-Bellevue-2026-Toyota-RAV4-SE-JTM6CRAV0TD002084",
-  "scraped_at": "2026-02-07T12:00:00+00:00"
+  "trim": "XLE Premium",
+  "exterior_color": "Meteor Shower",
+  "interior_color": "Black Softex",
+  "drivetrain": "AWD",
+  "packages": [
+    { "name": "Weather Package", "price": 375 },
+    { "name": "All-Weather Liner Package", "price": 339 }
+  ],
+  "dealer_accessories": null,
+  "msrp": 39664,
+  "total_price": 39664,
+  "status": "In Production",
+  "availability_date": "03/19/26",
+  "total_packages_price": 714,
+  "dealer_accessories_price": null,
+  "base_price": 38950,
+  "adjustments": null,
+  "scraped_at": "2026-02-16T06:47:11.528762+00:00"
 }
+```
+
+### `report`
+
+Generate a styled, sortable HTML report from a previously scraped JSON file:
+
+```
+car-inventory-scraper report INPUT_FILE [OPTIONS]
+```
+
+```
+Arguments:
+  INPUT_FILE               Path to the JSON inventory file.
+
+Options:
+  -o, --output TEXT        Output HTML file path (default: inventory.html)
+  --hide-dealer            Hide the Dealer column in the report.
+```
+
+Example:
+
+```bash
+uvx car-inventory-scraper report inventory/inventory.json -o inventory.html
 ```
 
 ## Adding New Spiders
@@ -131,12 +158,22 @@ src/car_inventory_scraper/
 ├── __init__.py
 ├── __main__.py          # python -m support
 ├── cli.py               # Click CLI entry-point
+├── handler.py           # Scrapy signal handlers
 ├── items.py             # CarItem definition
+├── parsing_helpers.py   # Shared parsing utilities
 ├── pipelines.py         # Text cleaning, timestamps
-├── settings.py          # Scrapy + Playwright config
-└── spiders/
+├── settings.py          # Scrapy config
+├── spiders/
+│   ├── __init__.py
+│   ├── dealercom.py     # Spider for Dealer.com sites
+│   ├── dealereprocess.py
+│   ├── dealerinspire.py # Spider for DealerInspire sites
+│   ├── dealeron.py      # Spider for DealerOn sites
+│   ├── dealervenom.py   # Spider for DealerVenom sites
+│   └── teamvelocity.py  # Spider for TeamVelocity sites
+└── tools/
     ├── __init__.py
-    └── dealeron.py      # Spider for DealerOn-powered sites
+    └── build_report.py  # HTML report generator
 ```
 
 ## License

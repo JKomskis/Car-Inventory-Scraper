@@ -2,9 +2,16 @@
 
 Team Velocity is a dealership website platform powering franchise dealerships
 across the US.  Inventory search pages live at paths like ``/inventory/New/``
-and render vehicle cards as Vue.js components (``standard-inventory`` divs).
-Vehicle detail pages (VDPs) embed rich structured data as JSON-LD, inline
-JavaScript variables, and a ``vehicleBadgesInfo`` JSON block for status/ETA.
+and render vehicle cards as server-rendered HTML with CSS class
+``.standard-inventory``.
+
+This spider:
+
+1. Fetches the search-results page and extracts ``accountId`` and per-vehicle
+   VINs from the ``.standard-inventory`` card ``data-itemid`` attributes.
+2. Calls the JSON API ``/api/Inventory/vehicle?vin=…&accountid=…`` for each
+   vehicle to obtain full details, including package names with prices.
+3. Follows pagination links (``.inventory-pagination a[rel='next']``).
 
 Example usage::
 
@@ -16,23 +23,25 @@ from __future__ import annotations
 
 import json
 import re
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 
 import scrapy
-from scrapy.http import HtmlResponse
-from scrapy_playwright.page import PageMethod
+from scrapy.http import HtmlResponse, JsonResponse
 
 from car_inventory_scraper.parsing_helpers import (
     EXCLUDED_PACKAGES,
-    extract_json_ld_car,
-    json_ld_price,
     normalize_color,
     normalize_drivetrain,
     normalize_pkg_name,
     parse_price,
 )
 from car_inventory_scraper.items import CarItem
-from car_inventory_scraper.stealth import apply_stealth
+
+
+# ---------------------------------------------------------------------------
+# Regex for extracting ``var accountId = '<digits>'`` from inline <script>s.
+# ---------------------------------------------------------------------------
+_ACCOUNT_ID_RE = re.compile(r"var\s+accountId\s*=\s*'(\d+)'")
 
 
 class TeamVelocitySpider(scrapy.Spider):
@@ -50,68 +59,71 @@ class TeamVelocitySpider(scrapy.Spider):
             )
         self.start_url = url
         self._dealer_name_override = dealer_name
+        self._domain = urlparse(url).netloc
 
     # ------------------------------------------------------------------
-    # Search results page — collect detail links
+    # Search results page — collect VINs, then use the Vehicle API
     # ------------------------------------------------------------------
-
-    _SRP_SELECTOR = ".standard-inventory"
 
     async def start(self):
         yield scrapy.Request(
             self.start_url,
-            meta={
-                "playwright": True,
-                "playwright_page_init_callback": apply_stealth,
-                "playwright_page_methods": [
-                    PageMethod("wait_for_selector", self._SRP_SELECTOR),
-                ],
-            },
             callback=self.parse_search,
             errback=self.errback,
         )
 
     async def parse_search(self, response: HtmlResponse):
-        """Parse the search results page and follow each vehicle detail link."""
-        page = response.meta.get("playwright_page")
-        if page:
-            await page.close()
-
+        """Extract VINs and accountId from the search page, then request the API."""
         base_url = response.url
         dealer_name = (
             self._dealer_name_override
             or response.css("title::text").get("").split("|")[-1].strip()
         )
 
-        # Collect detail-page URLs from vehicle cards
-        vehicle_cards = response.css(".standard-inventory")
-        self.logger.info("Found %d vehicle cards on %s", len(vehicle_cards), response.url)
+        # --- Extract accountId from inline JS ---
+        account_id = None
+        for script in response.css("script::text").getall():
+            m = _ACCOUNT_ID_RE.search(script)
+            if m:
+                account_id = m.group(1)
+                break
+        if not account_id:
+            self.logger.error("[%s] Could not find accountId on %s", self._domain, response.url)
+            return
 
-        seen: set[str] = set()
+        # --- Collect VINs from vehicle cards ---
+        vehicle_cards = response.css(".standard-inventory")
+        self.logger.info("[%s] Found %d vehicles on %s", self._domain, len(vehicle_cards), response.url)
+
         for card in vehicle_cards:
-            # Each card wraps a single <a> with class ``si-vehicle-box``
+            # data-itemid looks like "Toyota-RAV4-SE-JTM6CRAV5TD304101"
+            # — the VIN is the last segment.
+            data_item = card.attrib.get("data-itemid", "")
+            vin = data_item.rsplit("-", 1)[-1] if data_item else ""
+            if not vin:
+                self.logger.warning("[%s] Could not extract VIN from card with data-itemid=%r", self._domain, data_item)
+                continue
+
+            # Build the detail-page URL for the ``detail_url`` field.
             href = card.css(
                 "a.si-vehicle-box::attr(href), "
                 "a[href*='/viewdetails/']::attr(href)"
             ).get("")
-            if not href or href == "#":
-                continue
-            # Strip fragment (#Transact, etc.) — we only need the base VDP URL
-            detail_url = urljoin(base_url, href.split("#")[0])
-            if detail_url in seen:
-                continue
-            seen.add(detail_url)
+            detail_url = urljoin(base_url, href.split("#")[0]) if href else ""
 
+            api_url = urljoin(
+                base_url,
+                f"/api/Inventory/vehicle?vin={vin}&accountid={account_id}",
+            )
             yield scrapy.Request(
-                detail_url,
+                api_url,
+                callback=self.parse_api,
+                errback=self.errback,
                 meta={
-                    "playwright": True,
-                    "playwright_page_init_callback": apply_stealth,
                     "dealer_name": dealer_name,
                     "dealer_url": base_url,
+                    "detail_url": detail_url,
                 },
-                callback=self.parse_detail,
-                errback=self.errback,
             )
 
         # --- Pagination ---
@@ -121,132 +133,63 @@ class TeamVelocitySpider(scrapy.Spider):
         if next_page:
             yield scrapy.Request(
                 urljoin(base_url, next_page),
-                meta={
-                    "playwright": True,
-                    "playwright_page_init_callback": apply_stealth,
-                    "playwright_page_methods": [
-                        PageMethod("wait_for_selector", self._SRP_SELECTOR),
-                    ],
-                },
                 callback=self.parse_search,
                 errback=self.errback,
             )
 
     # ------------------------------------------------------------------
-    # Vehicle detail page — extract all information
+    # Vehicle API response — extract all information
     # ------------------------------------------------------------------
 
-    async def parse_detail(self, response: HtmlResponse):
-        """Extract full vehicle details from a Team Velocity VDP.
-
-        Team Velocity VDP pages embed structured vehicle data in several places:
-
-        1. **JSON-LD** (``<script type="application/ld+json">``) — contains
-           VIN, year, make, model, colors, price, body type, and transmission.
-        2. **Inline JavaScript variables** — ``var vin``, ``var trim``,
-           ``var driveTrain``, ``var model``, ``var stockNumber``, etc.
-        3. **``vehicleBadgesInfo``** — a JSON string variable containing
-           InTransit / InStock / InProduction status and ETA dates.
-        4. **``.oem-specifications``** — Vue.js-rendered sections including
-           "Packages and Options" with package/accessory names (no prices).
-
-        JSON-LD and inline variables are server-rendered, but the OEM
-        specifications section requires client-side JS to render.
-        """
-        # page = response.meta.get("playwright_page")
-        # if page:
-        #     # The packages/options section is Vue.js-rendered and may
-        #     # not be in the initial DOM.  Wait for it on the live page,
-        #     # then rebuild the Scrapy response from the updated HTML.
-        #     # If the element never appears (some dealers omit it) the
-        #     # TimeoutError is caught and we continue with what we have.
-        #     try:
-        #         await page.wait_for_selector(
-        #             ".oem-specifications", timeout=5_000,
-        #         )
-        #     except Exception:
-        #         pass  # element absent — packages will be empty
-        #     # Re-read the (now Vue-hydrated) page content.
-        #     body = await page.content()
-        #     response = response.replace(body=body.encode("utf-8"))
-        #     await page.close()
+    async def parse_api(self, response: JsonResponse):
+        """Build a CarItem from the ``/api/Inventory/vehicle`` JSON response."""
+        data = json.loads(response.text)
 
         item = CarItem()
-        item["detail_url"] = response.url
-        item["dealer_name"] = response.meta.get("dealer_name", "")
+        item["detail_url"] = response.meta.get("detail_url", "")
+        item["dealer_name"] = (
+            response.meta.get("dealer_name")
+            or data.get("clientName", "")
+        )
         item["dealer_url"] = response.meta.get("dealer_url", "")
 
-        # --- Structured data sources ---
-        json_ld = extract_json_ld_car(response)
-        js_vars = _extract_js_vars(response)
-        badges = _extract_badges_info(response)
-
         # --- Core vehicle identifiers ---
-        item["vin"] = (
-            js_vars.get("vin", "").upper()
-            or json_ld.get("vehicleIdentificationNumber")
-        ) or None
-        stock = js_vars.get("stockNumber") or json_ld.get("sku") or None
-        # Some listings use the VIN (or a prefix of it) as a placeholder
-        # stock number — discard those so we only keep real dealer stock #s.
-        vin_upper = (item["vin"] or "").upper()
+        item["vin"] = (data.get("vin") or "").upper() or None
+        stock = data.get("stock")
+        vin_upper = (item["vin"] or "")
         if stock and vin_upper and vin_upper.startswith(stock.upper()):
             stock = None
-        item["stock_number"] = stock
-        item["model_code"] = None  # populated from DOM below
+        item["stock_number"] = stock or None
+        item["model_code"] = data.get("modelNumber") or None
 
         # --- Vehicle info ---
-        item["year"] = js_vars.get("year") or json_ld.get("vehicleModelDate")
-        item["trim"] = js_vars.get("trim") or None
+        item["year"] = data.get("year")
+        item["trim"] = data.get("trim") or None
 
         # --- Colors ---
-        item["exterior_color"] = normalize_color(json_ld.get("color"))
-        item["interior_color"] = normalize_color(json_ld.get("vehicleInteriorColor"))
+        item["exterior_color"] = normalize_color(data.get("exteriorColor"))
+        item["interior_color"] = normalize_color(data.get("interiorColor"))
 
         # --- Drivetrain ---
-        drive_train_raw = js_vars.get("driveTrain", "")
-        item["drivetrain"] = normalize_drivetrain(drive_train_raw)
-
-        # --- Model code from rendered DOM ---
-        model_code_text = response.css("#modelcode span::text").getall()
-        for text in model_code_text:
-            m = re.match(r"Model Code:\s*(.+)", text.strip())
-            if m:
-                item["model_code"] = m.group(1).strip()
-                break
-
-        # --- MPG from rendered DOM ---
-        mpg_text = response.css("#highwaymileage span::text").get("")
-        mpg_city, mpg_highway = _parse_mpg(mpg_text)
-        # CarItem doesn't have mpg fields currently, but we extract from
-        # the DOM for potential future use.  (Not yielded.)
+        item["drivetrain"] = normalize_drivetrain(data.get("drivetrain", ""))
 
         # --- Pricing ---
-        # TSRP / MSRP from the pricing section
-        msrp_text = response.css("#msrp-strike-out-text::text").get("")
-        msrp = parse_price(msrp_text)
-        if not msrp:
-            msrp = json_ld_price(json_ld)
+        msrp = parse_price(data.get("msrp"))
         item["msrp"] = msrp
 
-        # --- Packages from the "Packages and Options" OEM section ---
-        packages = _extract_packages(response)
-        item["packages"] = packages or None
-        item["total_packages_price"] = None  # prices not listed on this platform
-        item["base_price"] = msrp  # No per-package price breakdown available
-        item["dealer_accessories"] = None
+        selling = parse_price(data.get("sellingPrice"))
+        buy_fors = data.get("buyFors") or []
+        buy_for_price = parse_price(buy_fors[0].get("buyForPrice")) if buy_fors else None
+        item["total_price"] = buy_for_price or selling or msrp
 
-        # Total / advertised price — on this platform TSRP is the only
-        # price shown; there is no separate "internet price" or
-        # "advertised price" line.
-        item["total_price"] = msrp
-        item["adjustments"] = None
+        # --- Packages from oeM_InstalledPackages ---
+        item["packages"] = _parse_oem_packages(data.get("oeM_InstalledPackages", "")) or None
 
         # --- Status ---
-        item["status"] = _extract_status(badges)
+        item["status"] = _status_from_api(data)
 
         # --- Availability date ---
-        item["availability_date"] = _extract_availability_date(badges)
+        item["availability_date"] = _format_eta(data.get("eta"))
 
         yield item
 
@@ -255,87 +198,72 @@ class TeamVelocitySpider(scrapy.Spider):
     # ------------------------------------------------------------------
 
     async def errback(self, failure):
-        self.logger.error("Request failed: %s", failure.value)
-
+        self.logger.error("[%s] Request failed: %s", self._domain, failure.value)
 
 
 # ---------------------------------------------------------------------------
-# Helpers — inline JavaScript variable extraction
+# Helpers — OEM installed packages parsing
 # ---------------------------------------------------------------------------
 
-# Matches ``var <name> = '<value>';`` or ``var <name> = "<value>";``
-_JS_VAR_RE = re.compile(
-    r"var\s+(\w+)\s*=\s*['\"]([^'\"]*?)['\"]"
-)
+def _parse_oem_packages(raw: str) -> list[dict[str, str | int | None]]:
+    """Parse the pipe-delimited ``oeM_InstalledPackages`` string from the API.
 
-# The specific variable names we care about on VDP pages
-_INTERESTING_VARS = frozenset({
-    "vin", "stockNumber", "year", "make", "model", "trim",
-    "driveTrain", "bodyType", "colorCode", "inventoryVdpName",
-    "vehicleType", "inventoryType", "styleId",
-})
+    Format::
 
+        marketingName:Weather Package~@marketingLongName:…~@msrp:375~@ImageUrl:|
+        marketingName:Door Sill Protectors~@marketingLongName:…~@msrp:199~@ImageUrl:|…
 
-def _extract_js_vars(response: HtmlResponse) -> dict[str, str]:
-    """Extract inline ``var <name> = '<value>'`` declarations from <script> tags.
-
-    Team Velocity pages define vehicle attributes as top-level JavaScript
-    variables inside ``<script>`` blocks.  This helper collects the ones we
-    care about into a flat dict.
+    Each package is separated by ``|``.  Within a package the fields are
+    separated by ``~@``.  Returns a list of ``{"name": …, "price": …}`` dicts.
     """
-    result: dict[str, str] = {}
-    for script in response.css("script::text").getall():
-        for m in _JS_VAR_RE.finditer(script):
-            name, value = m.group(1), m.group(2)
-            if name in _INTERESTING_VARS and value:
-                result[name] = value
-    return result
+    if not raw:
+        return []
+
+    packages: list[dict[str, str | int | None]] = []
+    for entry in raw.split("|"):
+        entry = entry.strip()
+        if not entry:
+            continue
+        fields: dict[str, str] = {}
+        for part in entry.split("~@"):
+            if ":" in part:
+                key, _, value = part.partition(":")
+                fields[key.strip()] = value.strip()
+
+        name = fields.get("marketingName", "").strip()
+        if not name:
+            continue
+        name = normalize_pkg_name(name)
+        if name.lower() in EXCLUDED_PACKAGES:
+            continue
+
+        price = parse_price(fields.get("msrp"))
+        packages.append({"name": name, "price": price})
+
+    return packages
 
 
 # ---------------------------------------------------------------------------
-# Helpers — vehicleBadgesInfo extraction
+# Helpers — status from API booleans
 # ---------------------------------------------------------------------------
 
-_BADGES_RE = re.compile(
-    r"var\s+vehicleBadgesInfo\s*=\s*'(.*?)'"
-)
+def _status_from_api(data: dict) -> str | None:
+    """Determine vehicle status from API boolean fields.
 
-
-def _extract_badges_info(response: HtmlResponse) -> dict:
-    """Extract and parse the ``vehicleBadgesInfo`` JSON variable.
-
-    This variable is an HTML-entity-encoded JSON string containing vehicle
-    status (In Transit, In Stock, In Production) and estimated arrival dates.
+    Uses ``reserved``, ``inTransit``, ``inProduction``, and the implicit
+    "in stock" state (none of the transit/production flags set).
     """
-    for script in response.css("script::text").getall():
-        m = _BADGES_RE.search(script)
-        if m:
-            raw = m.group(1)
-            # Decode HTML entities used in the inline JSON
-            raw = raw.replace("&quot;", '"').replace("&amp;", "&")
-            try:
-                return json.loads(raw)
-            except json.JSONDecodeError:
-                continue
-    return {}
-
-
-def _extract_status(badges: dict) -> str | None:
-    """Determine vehicle status from the badges info dict.
-
-    Checks ``IsReserved`` for sale-pending state and combines it with
-    the availability status (In Stock / In Transit / In Production) when
-    both are present, e.g. ``"Sale Pending - In Transit"``.
-    """
-    is_reserved = badges.get("IsReserved", {}).get("IsReservedStatus", False)
+    is_reserved = data.get("reserved", False)
 
     availability = None
-    if badges.get("InStock", {}).get("InStockStatus"):
-        availability = "In Stock"
-    elif badges.get("InTransit", {}).get("InTransitStatus"):
+    if data.get("inTransit"):
         availability = "In Transit"
-    elif badges.get("InProduction", {}).get("InProductionStatus"):
+    elif data.get("inProduction"):
         availability = "In Production"
+    elif not data.get("inTransit") and not data.get("inProduction"):
+        # If neither in-transit nor in-production, it's in stock
+        # (provided dateInStock is set or we simply infer it).
+        availability = "In Stock"
 
     if is_reserved and availability:
         return f"Sale Pending - {availability}"
@@ -344,20 +272,18 @@ def _extract_status(badges: dict) -> str | None:
     return availability
 
 
-def _extract_availability_date(badges: dict) -> str | None:
-    """Extract estimated availability date range from badges info.
+# ---------------------------------------------------------------------------
+# Helpers — ETA formatting
+# ---------------------------------------------------------------------------
 
-    The ``ETA`` field contains a string like ``"02/16/2026 and 02/28/2026"``.
-    We normalise it to ``"MM/DD/YY - MM/DD/YY"`` format for consistency with
-    other spiders.
+def _format_eta(eta: str | None) -> str | None:
+    """Format the API ``eta`` field to ``"MM/DD/YY - MM/DD/YY"``.
+
+    The raw value looks like ``"02/16/2026 and 02/28/2026"``.
     """
-    eta = badges.get("InTransit", {}).get("ETA")
-    if not eta:
-        eta = badges.get("InProduction", {}).get("ETA")
     if not eta:
         return None
 
-    # Parse "MM/DD/YYYY and MM/DD/YYYY" → "MM/DD/YY - MM/DD/YY"
     parts = [p.strip() for p in eta.split(" and ")]
     formatted: list[str] = []
     for part in parts:
@@ -368,66 +294,4 @@ def _extract_availability_date(badges: dict) -> str | None:
         else:
             formatted.append(part)
     return " - ".join(formatted) if formatted else None
-
-
-# ---------------------------------------------------------------------------
-# Helpers — packages & options extraction
-# ---------------------------------------------------------------------------
-
-
-def _extract_packages(response: HtmlResponse) -> list[dict[str, str | None]]:
-    """Extract package/option names from the OEM specifications section.
-
-    Team Velocity VDPs list packages under an ``.oem-specifications`` block
-    titled "Packages and Options".  Each package is an ``<li>`` whose inner
-    ``<span>`` elements contain the name.  Prices are **not** shown on this
-    platform, so each entry has ``price: None``.
-
-    Items whose normalised name appears in :data:`EXCLUDED_PACKAGES` (e.g.
-    "50 State Emissions") are filtered out.
-    """
-    packages: list[dict[str, str | None]] = []
-
-    for section in response.css(".oem-specifications"):
-        title = section.css(".oem-specifications-title h3::text").get("")
-        if "package" not in title.lower() and "option" not in title.lower():
-            continue
-
-        for li in section.css("ul li"):
-            # The package name lives in nested <span> elements; grab all
-            # text, strip whitespace, and ignore "Details" link text.
-            texts = li.css("span::text").getall()
-            name = ""
-            for t in texts:
-                t = t.strip()
-                if t and t.lower() != "details":
-                    name = t
-                    break
-            if not name:
-                continue
-            name = normalize_pkg_name(name)
-            if name.upper() in EXCLUDED_PACKAGES:
-                continue
-            packages.append({"name": name, "price": None})
-
-    return packages
-
-
-# ---------------------------------------------------------------------------
-# Helpers — pricing & parsing
-# ---------------------------------------------------------------------------
-
-
-
-def _parse_mpg(text: str) -> tuple[int | None, int | None]:
-    """Parse MPG from a Team Velocity string like ``MPG/MPGe : 46/39/0``.
-
-    The format is ``highway/city/electric`` (or similar).  Returns
-    ``(city, highway)`` as integers, or ``(None, None)`` if unparseable.
-    """
-    m = re.search(r"(\d+)/(\d+)", text)
-    if m:
-        # The format appears to be highway/city based on observed data
-        return int(m.group(2)), int(m.group(1))
-    return None, None
 

@@ -17,9 +17,8 @@ import tomllib
 from pathlib import Path
 
 import click
-from scrapy.crawler import CrawlerProcess
+from scrapy.crawler import AsyncCrawlerProcess
 from scrapy.utils.project import get_project_settings
-from twisted.internet.defer import DeferredSemaphore
 
 
 @click.group()
@@ -74,17 +73,11 @@ def _load_config(config_path: str) -> dict:
     default=None,
     help="Output JSON file path (default: inventory.json).",
 )
-@click.option(
-    "--headless/--no-headless",
-    default=True,
-    help="Run browser in headless mode (default: headless).",
-)
 def crawl(
     spider_name: str | None,
     url: str | None,
     config_path: str | None,
     output: str | None,
-    headless: bool,
 ):
     """Run spiders to scrape dealership inventory.
 
@@ -117,29 +110,20 @@ def crawl(
         if report_path:
             settings.set("JSON_REPORT_PATH", report_path)
 
-        is_headless = cfg_settings.get("headless", headless)
-        settings.set("PLAYWRIGHT_LAUNCH_OPTIONS", {"headless": is_headless})
-
         dealers = config["dealers"]
         settings.set("TOTAL_SPIDER_COUNT", len(dealers))
         click.echo(f"Loaded {len(dealers)} dealer(s) from {config_path}")
 
-        concurrency = settings.getint("CONCURRENT_REQUESTS", 1)
-        process = CrawlerProcess(settings)
-        sem = DeferredSemaphore(concurrency)
+        process = AsyncCrawlerProcess(settings)
 
         for i, dealer in enumerate(dealers, 1):
             label = dealer.get("name", dealer["url"])
             click.echo(f"  ▸ [{i}/{len(dealers)}] {label} (spider={dealer['spider']})")
-
-            def _crawl(d=dealer):
-                return process.crawl(
-                    d["spider"],
-                    url=d["url"],
-                    dealer_name=d.get("name"),
-                )
-
-            sem.run(_crawl)
+            process.crawl(
+                dealer["spider"],
+                url=dealer["url"],
+                dealer_name=dealer.get("name"),
+            )
 
         process.start()
     else:
@@ -147,9 +131,7 @@ def crawl(
         if output:
             settings.set("JSON_REPORT_PATH", output)
 
-        settings.set("PLAYWRIGHT_LAUNCH_OPTIONS", {"headless": headless})
-
-        process = CrawlerProcess(settings)
+        process = AsyncCrawlerProcess(settings)
         process.crawl(spider_name, url=url)
         process.start()
 
@@ -158,7 +140,7 @@ def crawl(
 def list_spiders():
     """List available spiders."""
     settings = get_project_settings()
-    process = CrawlerProcess(settings)
+    process = AsyncCrawlerProcess(settings)
 
     click.echo("Available spiders:")
     for name in sorted(process.spider_loader.list()):

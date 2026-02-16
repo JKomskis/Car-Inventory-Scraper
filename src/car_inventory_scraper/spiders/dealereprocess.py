@@ -2,13 +2,12 @@
 
 Dealer eProcess is a dealership website platform that serves many Toyota
 (and other brand) dealerships.  Inventory search pages live at paths like
-``/search/new-…`` and render JavaScript-heavy vehicle cards via the DEP
-``dep_require`` module system.  Vehicle detail pages embed JSON-LD
-``Vehicle`` schema data as well as a ``data-vehicle`` attribute with
-URL-encoded JSON metadata.
+``/search/new-…`` and server-side render vehicle cards.  Vehicle detail
+pages embed JSON-LD ``Vehicle`` schema data as well as a ``data-vehicle``
+attribute with URL-encoded JSON metadata.
 
-The platform uses Cloudflare protection which typically requires a
-non-headless browser and anti-automation-detection flags to bypass.
+Cloudflare protection is bypassed via the ``use_cloudscraper`` request
+meta key (using the ``cloudscraper`` library) — no browser automation required.
 
 Example usage::
 
@@ -24,18 +23,15 @@ from urllib.parse import parse_qs, urlencode, urljoin, urlparse, urlunparse
 
 import scrapy
 from scrapy.http import HtmlResponse
-from scrapy_playwright.page import PageMethod
 
 from car_inventory_scraper.items import CarItem
 from car_inventory_scraper.parsing_helpers import (
     EXCLUDED_PACKAGES,
-    format_pkg_price,
     normalize_color,
     normalize_drivetrain,
     normalize_pkg_name,
     parse_price,
 )
-from car_inventory_scraper.stealth import apply_stealth
 
 
 class DealerEprocessSpider(scrapy.Spider):
@@ -53,24 +49,16 @@ class DealerEprocessSpider(scrapy.Spider):
             )
         self.start_url = url
         self._dealer_name_override = dealer_name
+        self._domain = urlparse(url).netloc
 
     # ------------------------------------------------------------------
     # Search results page — collect detail links
     # ------------------------------------------------------------------
 
-    _SRP_SELECTOR = ".vehicle_item"
-    _VDP_SELECTOR = ".vdp_content, .veh_pricing_container, .bolded_label_value"
-
     async def start(self):
         yield scrapy.Request(
             self.start_url,
-            meta={
-                "playwright": True,
-                "playwright_page_init_callback": apply_stealth,
-                "playwright_page_methods": [
-                    PageMethod("wait_for_selector", self._SRP_SELECTOR),
-                ],
-            },
+            meta={"use_cloudscraper": True},
             callback=self.parse_search,
             errback=self.errback,
         )
@@ -85,34 +73,21 @@ class DealerEprocessSpider(scrapy.Spider):
 
         # Collect detail-page URLs from vehicle cards
         vehicle_cards = response.css(".vehicle_item")
-        self.logger.info("Found %d vehicle cards on %s", len(vehicle_cards), response.url)
+        self.logger.info("[%s] Found %d vehicles on %s", self._domain, len(vehicle_cards), response.url)
 
-        seen: set[str] = set()
         for card in vehicle_cards:
             # Primary: dedicated vehicle link element
             href = card.css(".vehicle_item__vehicle_link::attr(href)").get("")
             if not href:
-                # Fallback: title link inside the card
-                href = card.css("h2.vehicle_title a::attr(href)").get("")
-            if not href:
-                # Final fallback: data-vehicle JSON has vdpHref
-                href = _extract_vdp_href_from_data(card)
-            if not href:
+                self.logger.warning("[%s] No vehicle link found in card: %s", self._domain, card.css(".vehicle_item__title::text").get(""))
                 continue
 
             detail_url = urljoin(base_url, href)
-            if detail_url in seen:
-                continue
-            seen.add(detail_url)
 
             yield scrapy.Request(
                 detail_url,
                 meta={
-                    "playwright": True,
-                    "playwright_page_init_callback": apply_stealth,
-                    "playwright_page_methods": [
-                        PageMethod("wait_for_selector", self._VDP_SELECTOR),
-                    ],
+                    "use_cloudscraper": True,
                     "dealer_name": dealer_name,
                     "dealer_url": base_url,
                 },
@@ -123,16 +98,9 @@ class DealerEprocessSpider(scrapy.Spider):
         # --- Pagination ---
         next_url = _build_next_page_url(response)
         if next_url:
-            self.logger.info("Following next page: %s", next_url)
             yield scrapy.Request(
                 next_url,
-                meta={
-                    "playwright": True,
-                    "playwright_page_init_callback": apply_stealth,
-                    "playwright_page_methods": [
-                        PageMethod("wait_for_selector", self._SRP_SELECTOR),
-                    ],
-                },
+                meta={"use_cloudscraper": True},
                 callback=self.parse_search,
                 errback=self.errback,
             )
@@ -167,17 +135,10 @@ class DealerEprocessSpider(scrapy.Spider):
         data_vehicle = _extract_data_vehicle(response)
 
         # --- Core vehicle info ---
-        item["vin"] = (
-            json_ld.get("vehicleIdentificationNumber")
-            or data_vehicle.get("vin")
-            or _bolded_label_value(response, "VIN")
-        )
-        item["stock_number"] = (
-            json_ld.get("sku")
-            or _bolded_label_value(response, "STOCK")
-        )
+        item["vin"] = json_ld.get("vehicleIdentificationNumber")
+        item["stock_number"] = json_ld.get("sku") or None
         item["model_code"] = data_vehicle.get("modelCd") or None
-        item["year"] = json_ld.get("vehicleModelDate") or str(data_vehicle.get("year", "")) or None
+        item["year"] = json_ld.get("vehicleModelDate") or None
         item["trim"] = json_ld.get("vehicleConfiguration") or None
 
         # --- Colors ---
@@ -185,71 +146,37 @@ class DealerEprocessSpider(scrapy.Spider):
         item["interior_color"] = normalize_color(json_ld.get("vehicleInteriorColor"))
 
         # --- Drivetrain ---
-        # DEP stores drivetrain in the page title / name field rather than
+        # DEP stores drivetrain in the name field rather than
         # a dedicated JSON-LD property.
         name = json_ld.get("name", "")
-        engine_name = ""
-        engine_spec = json_ld.get("vehicleEngine")
-        if isinstance(engine_spec, dict):
-            engine_name = engine_spec.get("name", "")
-        item["drivetrain"] = normalize_drivetrain(name, engine_name)
+        item["drivetrain"] = normalize_drivetrain(name)
 
         # --- Packages / installed options ---
         packages = []
-        dealer_acc_packages: list[dict[str, str | None]] = []
+        dealer_acc_packages: list[dict[str, str | int]] = []
         for opt in response.css(".installed_options__item"):
             opt_name = opt.css(".installed_options__title::text").get("").strip()
             opt_price_raw = opt.css(".installed_options__cost::text").get("").strip()
             if not opt_name:
                 continue
-            if opt_name.upper() in EXCLUDED_PACKAGES:
+            if opt_name.lower() in EXCLUDED_PACKAGES:
                 continue
-            opt_price = format_pkg_price(opt_price_raw) if opt_price_raw else None
-            pkg = {"name": normalize_pkg_name(opt_name), "price": opt_price}
+            pkg = {"name": normalize_pkg_name(opt_name), "price": parse_price(opt_price_raw)}
             if _is_dealer_accessory(opt_name):
                 dealer_acc_packages.append(pkg)
             else:
                 packages.append(pkg)
         item["packages"] = packages or None
-
-        total_packages_price = sum(
-            parse_price(p.get("price")) or 0 for p in packages
-        )
-        item["total_packages_price"] = total_packages_price or None
+        item["dealer_accessories"] = dealer_acc_packages or None
 
         # --- Pricing ---
         # TSRP / MSRP from the pricing container
-        msrp = _extract_pricing_label(response, "TSRP")
-        if not msrp:
-            msrp = _extract_pricing_label(response, "MSRP")
-        if not msrp:
-            # Fall back to JSON-LD offers price
-            msrp = _json_ld_offer_price(json_ld)
+        msrp = _extract_pricing_label(response, "TSRP") or None
         item["msrp"] = msrp
-        item["base_price"] = (msrp - total_packages_price) if msrp else None
 
-        # Total / advertised price — look for an e-price or advertised
-        # price label first, then fall back to MSRP.
-        total_price = _extract_pricing_label(response, "PRICE")
-        if not total_price:
-            total_price = _extract_pricing_label(response, "EPRICE")
-        if not total_price:
-            total_price = parse_price(data_vehicle.get("advertisedPrice"))
-        if not total_price:
-            total_price = parse_price(data_vehicle.get("ePrice"))
+        # Total / advertised price — look for an advertised price label first, then fall back to MSRP.
+        total_price = _extract_pricing_label(response, "ADVERTISED PRICE")
         item["total_price"] = total_price if total_price else msrp
-
-        # Adjustments
-        if msrp and item["total_price"] and item["total_price"] != msrp:
-            item["adjustments"] = item["total_price"] - msrp
-        else:
-            item["adjustments"] = None
-
-        # Dealer accessories
-        dealer_acc_total = sum(
-            parse_price(p.get("price")) or 0 for p in dealer_acc_packages
-        )
-        item["dealer_accessories"] = dealer_acc_total or None
 
         # --- Status ---
         item["status"] = _extract_status(response, json_ld)
@@ -264,7 +191,7 @@ class DealerEprocessSpider(scrapy.Spider):
     # ------------------------------------------------------------------
 
     async def errback(self, failure):
-        self.logger.error("Request failed: %s", failure.value)
+        self.logger.error("[%s] Request failed: %s", self._domain, failure.value)
 
 
 # ---------------------------------------------------------------------------
@@ -273,7 +200,7 @@ class DealerEprocessSpider(scrapy.Spider):
 
 # Package names (normalised to lowercase) that are dealer-installed
 # accessories rather than factory packages.  These are excluded from the
-# packages list / total and counted under dealer_accessories & adjustments.
+# packages list / total and counted under dealer_accessories_price & adjustments.
 _DEALER_ACCESSORY_NAMES: set[str] = {
     "pulse",
 }
@@ -308,16 +235,6 @@ def _extract_json_ld_vehicle(response: HtmlResponse) -> dict:
     return {}
 
 
-def _json_ld_offer_price(json_ld: dict) -> int | None:
-    """Extract the numeric price from a JSON-LD ``offers`` block."""
-    offers = json_ld.get("offers")
-    if isinstance(offers, dict):
-        return parse_price(offers.get("price"))
-    if isinstance(offers, list) and offers:
-        return parse_price(offers[0].get("price"))
-    return None
-
-
 # ---------------------------------------------------------------------------
 # Helpers — data-vehicle attribute
 # ---------------------------------------------------------------------------
@@ -335,42 +252,6 @@ def _extract_data_vehicle(response: HtmlResponse) -> dict:
         return {}
 
 
-def _extract_vdp_href_from_data(card) -> str | None:
-    """Extract ``vdpHref`` from a card's ``data-vehicle`` attribute."""
-    import urllib.parse
-
-    raw = card.css("[data-vehicle]::attr(data-vehicle)").get("")
-    if not raw:
-        return None
-    try:
-        data = json.loads(urllib.parse.unquote(raw))
-        return data.get("vdpHref")
-    except (json.JSONDecodeError, TypeError):
-        return None
-
-
-# ---------------------------------------------------------------------------
-# Helpers — bolded label/value pairs
-# ---------------------------------------------------------------------------
-
-def _bolded_label_value(response: HtmlResponse, label: str) -> str | None:
-    """Extract the value from a ``.bolded_label_value`` block with the given label.
-
-    DEP VDPs display stock number and VIN in ``<div class="bolded_label_value">``
-    elements with structure::
-
-        <span class="bolded_label_value__label">STOCK</span>
-        <span>41631</span>
-    """
-    for el in response.css(".bolded_label_value"):
-        lbl = el.css(".bolded_label_value__label::text").get("").strip()
-        if lbl.upper() == label.upper():
-            # The value is in the next <span> sibling
-            val = el.css("span:not(.bolded_label_value__label)::text").get("").strip()
-            return val or None
-    return None
-
-
 # ---------------------------------------------------------------------------
 # Helpers — pricing
 # ---------------------------------------------------------------------------
@@ -378,18 +259,21 @@ def _bolded_label_value(response: HtmlResponse, label: str) -> str | None:
 def _extract_pricing_label(response: HtmlResponse, label: str) -> int | None:
     """Extract a price value from the pricing container by its ``<dt>`` label.
 
-    DEP VDPs display pricing as ``<dl>`` definition lists inside
-    ``.veh_pricing_container``::
+    DEP VDPs display pricing as a single ``<dl>`` with paired ``<dt>``/``<dd>``
+    elements inside ``.veh_pricing_container``::
 
         <dl>
           <dt>TSRP</dt>
           <dd>$45,703</dd>
+          <dt>ADVERTISED PRICE</dt>
+          <dd>$44,200</dd>
         </dl>
     """
-    for dl in response.css(".veh_pricing_container dl"):
-        dt_text = dl.css("dt::text").get("").strip().upper()
-        if dt_text == label.upper():
-            dd_text = dl.css("dd::text").get("").strip()
+    for dt in response.css(".veh_pricing_container dl dt"):
+        dt_text = dt.css("::text").get("").strip().upper()
+        if dt_text.startswith(label.upper()):
+            dd = dt.xpath("following-sibling::dd[1]")
+            dd_text = dd.css("::text").get("").strip()
             return parse_price(dd_text)
     return None
 
@@ -398,35 +282,33 @@ def _extract_pricing_label(response: HtmlResponse, label: str) -> int | None:
 # Helpers — status
 # ---------------------------------------------------------------------------
 
-def _extract_status(response: HtmlResponse, json_ld: dict) -> str | None:
+def _extract_status(response: HtmlResponse, json_ld: dict) -> str:
     """Determine vehicle availability status.
 
-    Checks for the ``.intransit`` CSS class first (used by DEP for
-    "in transit" / "sale pending" badges), then falls back to JSON-LD
-    ``offers.availability``.
+    Checks for the ``.intransit`` CSS class (used by DEP for status badges).
+    Returns a status string like ``"In Stock"``, ``"In Transit"``,
+    ``"In Production"``, optionally prefixed with ``"Sale Pending - "``.
     """
     intransit_el = response.css(".intransit")
     if intransit_el:
-        # The status text may live in a child <span> rather than as a
-        # direct text node, so collect *all* descendant text.
         text = " ".join(
             t.strip() for t in intransit_el.css("*::text").getall() if t.strip()
         ).lower()
-        if "sale pending" in text:
-            return "Sale Pending"
-        return "In Transit"
 
-    # Check JSON-LD availability
-    offers = json_ld.get("offers")
-    offer = offers[0] if isinstance(offers, list) and offers else offers
-    if isinstance(offer, dict):
-        avail = offer.get("availability", "")
-        if "InStock" in avail:
-            return "In Stock"
-        if "PreOrder" in avail or "PreSale" in avail:
-            return "In Transit"
+        sale_pending = "sale pending" in text
 
-    return None
+        if "build phase" in text or "in production" in text:
+            status = "In Production"
+        elif "in transit" in text:
+            status = "In Transit"
+        else:
+            status = "In Stock"
+
+        if sale_pending:
+            return f"Sale Pending - {status}"
+        return status
+
+    return "In Stock"
 
 
 # ---------------------------------------------------------------------------

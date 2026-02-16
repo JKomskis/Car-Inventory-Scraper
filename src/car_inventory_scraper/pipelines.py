@@ -43,7 +43,7 @@ class CleanTextPipeline:
             item["drivetrain"] = self._DRIVETRAIN_ALIASES.get(dt.upper(), dt)
 
         # Normalise prices to plain integers
-        for price_field in ("msrp", "base_price", "total_packages_price", "dealer_accessories", "total_price"):
+        for price_field in ("msrp", "base_price", "total_packages_price", "dealer_accessories_price", "total_price"):
             raw = item.get(price_field)
             if isinstance(raw, str):
                 digits = re.sub(r"[^\d]", "", raw)
@@ -56,6 +56,56 @@ class CleanTextPipeline:
             digits = re.sub(r"[^\d]", "", adj)
             if digits:
                 item["adjustments"] = -int(digits) if negative else int(digits)
+            else:
+                item["adjustments"] = None
+
+        return item
+
+
+class CalculatedPricesPipeline:
+    """Compute derived pricing fields from raw item data.
+
+    Calculates fields that follow the same formula across all spiders:
+
+    - ``total_packages_price`` — sum of package prices from the *packages* list.
+    - ``dealer_accessories_price`` — sum of prices from the
+      *dealer_accessories* list.
+    - ``base_price`` — ``msrp − total_packages_price``.
+    - ``adjustments`` — ``total_price − msrp − dealer_accessories_price``
+      (dealer discounts / markups not explained by accessories).
+
+    Spiders may pre-set any of these fields to override the default
+    calculation (e.g. when a platform-specific data source provides a
+    more accurate value).
+    """
+
+    def process_item(self, item, spider):
+        # --- total_packages_price ---
+        if item.get("total_packages_price") is None:
+            packages = item.get("packages") or []
+            total = sum(p.get("price") or 0 for p in packages)
+            item["total_packages_price"] = total or None
+
+        # --- dealer_accessories_price ---
+        if item.get("dealer_accessories_price") is None:
+            accessories = item.get("dealer_accessories") or []
+            total = sum(p.get("price") or 0 for p in accessories)
+            item["dealer_accessories_price"] = total or None
+
+        # --- base_price ---
+        if item.get("base_price") is None:
+            msrp = item.get("msrp")
+            total_pkg = item.get("total_packages_price") or 0
+            item["base_price"] = (msrp - total_pkg) if msrp else None
+
+        # --- adjustments ---
+        if item.get("adjustments") is None:
+            msrp = item.get("msrp")
+            total_price = item.get("total_price")
+            if msrp and total_price and total_price != msrp:
+                dealer_acc = item.get("dealer_accessories_price") or 0
+                adj = total_price - msrp - dealer_acc
+                item["adjustments"] = adj if adj else None
             else:
                 item["adjustments"] = None
 
@@ -117,6 +167,9 @@ class JsonReportPipeline:
         if not items:
             self.logger.info("No items scraped \u2014 skipping JSON output.")
             return
+
+        # Sort by VIN for consistent ordering
+        items.sort(key=lambda x: x.get("vin") or "")
 
         Path(self.output_path).write_text(
             json.dumps(items, indent=2, default=str),

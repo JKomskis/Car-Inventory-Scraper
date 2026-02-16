@@ -1,37 +1,28 @@
 """Spider for DealerInspire-powered dealership websites.
 
 DealerInspire is a dealership website platform that uses Algolia
-InstantSearch for its inventory search pages.  Vehicle search result
-pages render client-side cards wrapped in
-``.result-wrap.new-vehicle`` elements, each carrying a ``data-vehicle``
-JSON attribute with the core vehicle metadata (VIN, stock number, year,
-make, model, trim, exterior color, MSRP, advertised price, and
-expected arrival date).
+InstantSearch for its inventory search pages.  The Algolia credentials
+(application ID, search-only API key, and index name) are embedded in
+the page's inline JavaScript, along with the active refinements
+(make, model, year, type, etc.).
 
-Additional DOM elements provide:
+This spider:
 
-- **Status** (``.hit-status span``) — "In Transit", "Build Phase", etc.
-- **TSRP / price** (``.hit-price__value .ashallow``) — the
-  Total Suggested Retail Price shown on the card.
-- **Title** (``.title-bottom``) — encodes year, model, trim, and
-  drivetrain (e.g. "2026  RAV4 XLE Premium AWD").
-- **Detail link** (``a.hit-link``) — URL to the vehicle detail page.
+1. **Fetches the SRP page** with ``use_cloudscraper`` meta
+   to bypass Cloudflare bot-detection and extract the Algolia config from
+   embedded ``<script>`` variables (``algoliaConfig``,
+   ``inventoryLightningSettings``, ``PARAMS``).
+2. **Queries the Algolia search API** directly over HTTPS to retrieve
+   the full vehicle inventory in JSON.
+3. **Maps each Algolia hit** to a :class:`CarItem`.
 
-Unlike other platforms, the search results page already contains all
-the information available for each vehicle, so this spider does **not**
-follow links to individual vehicle detail pages.
-
-The platform is protected by Cloudflare bot-detection and requires a
-non-headless browser with stealth patches to bypass.  Prefix the
-command with ``xvfb-run`` when running on a headless server::
-
-    xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \\
-        car-inventory-scraper crawl dealerinspire --no-headless \\
-            --url "https://www.marysvilletoyota.com/new-vehicles/rav4/…"
+Unlike other platforms, packages are not available in the Algolia
+response (they only appear on the factory window sticker), so the
+``packages`` field is always ``None``.
 
 Example usage::
 
-    car-inventory-scraper crawl dealerinspire --no-headless \\
+    car-inventory-scraper crawl dealerinspire \\
         --url "https://www.marysvilletoyota.com/new-vehicles/rav4/…"
 """
 
@@ -39,11 +30,10 @@ from __future__ import annotations
 
 import json
 import re
-from urllib.parse import parse_qs, urlencode, urljoin, urlparse, urlunparse
+from urllib.parse import parse_qs, urlparse
 
 import scrapy
-from scrapy.http import HtmlResponse
-from scrapy_playwright.page import PageMethod
+from scrapy.http import HtmlResponse, JsonResponse
 
 from car_inventory_scraper.items import CarItem
 from car_inventory_scraper.parsing_helpers import (
@@ -51,7 +41,10 @@ from car_inventory_scraper.parsing_helpers import (
     normalize_drivetrain,
     parse_price,
 )
-from car_inventory_scraper.stealth import apply_stealth
+
+# Default Algolia page size — overridden from the ``PARAMS`` JS variable
+# when available.
+_DEFAULT_HITS_PER_PAGE = 20
 
 
 class DealerInspireSpider(scrapy.Spider):
@@ -60,7 +53,13 @@ class DealerInspireSpider(scrapy.Spider):
     name = "dealerinspire"
 
     # Passed via ``-a url=…`` or the CLI wrapper.
-    def __init__(self, url: str | None = None, dealer_name: str | None = None, *args, **kwargs):
+    def __init__(
+        self,
+        url: str | None = None,
+        dealer_name: str | None = None,
+        *args,
+        **kwargs,
+    ):
         super().__init__(*args, **kwargs)
         if url is None:
             raise ValueError(
@@ -69,286 +68,363 @@ class DealerInspireSpider(scrapy.Spider):
             )
         self.start_url = url
         self._dealer_name_override = dealer_name
+        self._domain = urlparse(url).netloc
 
     # ------------------------------------------------------------------
-    # Search results page — parse all vehicles directly
+    # Step 1 — Fetch the SRP page to extract Algolia credentials
     # ------------------------------------------------------------------
-
-    _SRP_SELECTOR = ".new-vehicle"
-
-    # After the vehicle cards load, click every "Details" tab so the
-    # interior-color elements are rendered into the DOM.
-    _CLICK_DETAILS_JS = """
-    document.querySelectorAll(
-        '.new-vehicle button[aria-label="details tab"]'
-    ).forEach(btn => btn.click());
-    """
-
-    def _srp_page_methods(self):
-        """Playwright page methods for loading and preparing an SRP."""
-        return [
-            PageMethod("wait_for_selector", self._SRP_SELECTOR),
-            PageMethod("evaluate", self._CLICK_DETAILS_JS),
-            # Give the tab content a moment to render.
-            PageMethod("wait_for_timeout", 1_000),
-        ]
 
     async def start(self):
         yield scrapy.Request(
             self.start_url,
-            meta={
-                "playwright": True,
-                "playwright_include_page": True,
-                "playwright_page_init_callback": apply_stealth,
-                "playwright_page_methods": self._srp_page_methods(),
-            },
-            callback=self.parse_search,
+            meta={"use_cloudscraper": True},
+            callback=self.parse_srp_for_algolia,
             errback=self.errback,
         )
 
-    async def parse_search(self, response: HtmlResponse):
-        """Extract vehicle data directly from search result cards.
+    async def parse_srp_for_algolia(self, response: HtmlResponse):
+        """Extract Algolia config from embedded JS and begin API queries."""
+        algolia = _extract_algolia_config(response)
+        if not algolia:
+            self.logger.error(
+                "[%s] Could not extract Algolia config on %s", self._domain, response.url,
+            )
+            return
 
-        DealerInspire embeds a ``data-vehicle`` JSON attribute on each
-        vehicle card (``.result-wrap.new-vehicle``) containing the core
-        metadata.  Supplementary info (status, TSRP, drivetrain) is
-        pulled from DOM elements within the card.
-        """
-        page = response.meta.get("playwright_page")
-        if page:
-            await page.close()
+        self.logger.info(
+            "[%s] Algolia config: appId=%s, index=%s",
+            self._domain,
+            algolia["app_id"],
+            algolia["index"],
+        )
 
+        # Derive dealer name from the page title if not overridden.
         dealer_name = (
             self._dealer_name_override
             or response.css("title::text").get("").split("|")[-1].strip()
         )
 
-        vehicle_cards = response.css(".result-wrap.new-vehicle")
-        self.logger.info(
-            "Found %d vehicle cards on %s", len(vehicle_cards), response.url,
+        # Build facet filters from the refinements embedded in
+        # ``inventoryLightningSettings``.
+        facet_filters = _build_facet_filters(algolia.get("refinements", {}))
+
+        hits_per_page = algolia.get("hits_per_page", _DEFAULT_HITS_PER_PAGE)
+
+        # Request page 0 from Algolia (zero-indexed).
+        yield self._algolia_request(
+            algolia, facet_filters, hits_per_page, dealer_name, page=0,
         )
 
-        for card in vehicle_cards:
-            item = self._parse_card(card, dealer_name, response.url)
+    # ------------------------------------------------------------------
+    # Step 2 — Parse Algolia JSON results → CarItems
+    # ------------------------------------------------------------------
+
+    async def parse_algolia_results(self, response: JsonResponse):
+        """Parse a page of Algolia search results.
+
+        Yields a :class:`CarItem` for each vehicle hit and follows with
+        the next page if more results are available.
+        """
+        data = json.loads(response.text)
+        hits = data.get("hits", [])
+        page = data.get("page", 0)
+        nb_pages = data.get("nbPages", 1)
+        nb_hits = data.get("nbHits", 0)
+        dealer_name = response.meta["dealer_name"]
+        algolia = response.meta["algolia"]
+
+        self.logger.info(
+            "[%s] Found %d vehicles (page %d/%d, total: %d)",
+            self._domain,
+            len(hits),
+            page + 1,
+            nb_pages,
+            nb_hits,
+        )
+
+        for hit in hits:
+            item = _algolia_hit_to_item(hit, dealer_name, self.start_url)
             if item is not None:
                 yield item
 
         # --- Pagination ---
-        next_url = _build_next_page_url(response, len(vehicle_cards))
-        if next_url:
-            self.logger.info("Following next page: %s", next_url)
-            yield scrapy.Request(
-                next_url,
-                meta={
-                    "playwright": True,
-                    "playwright_page_init_callback": apply_stealth,
-                    "playwright_page_methods": self._srp_page_methods(),
-                },
-                callback=self.parse_search,
-                errback=self.errback,
+        if page + 1 < nb_pages:
+            yield self._algolia_request(
+                algolia,
+                response.meta["facet_filters"],
+                response.meta["hits_per_page"],
+                dealer_name,
+                page=page + 1,
             )
 
     # ------------------------------------------------------------------
-    # Card parsing
+    # Algolia request builder
     # ------------------------------------------------------------------
 
-    def _parse_card(
+    def _algolia_request(
         self,
-        card,
+        algolia: dict,
+        facet_filters: list[list[str]],
+        hits_per_page: int,
         dealer_name: str,
-        page_url: str,
-    ) -> CarItem | None:
-        """Parse a single vehicle card into a :class:`CarItem`."""
-        raw = card.attrib.get("data-vehicle", "")
-        if not raw:
-            self.logger.warning("Card missing data-vehicle attribute, skipping")
-            return None
+        page: int,
+    ) -> scrapy.Request:
+        """Build a Scrapy request to the Algolia search API."""
+        url = (
+            f"https://{algolia['app_id']}-dsn.algolia.net"
+            f"/1/indexes/{algolia['index']}/query"
+        )
+        # Algolia expects the search parameters as a URL-encoded string
+        # inside a JSON body.
+        filters_json = json.dumps(facet_filters, separators=(",", ":"))
+        params = f"facetFilters={filters_json}&hitsPerPage={hits_per_page}&page={page}"
+        body = json.dumps({"params": params})
 
-        try:
-            data = json.loads(raw)
-        except (json.JSONDecodeError, TypeError):
-            self.logger.warning("Failed to parse data-vehicle JSON, skipping")
-            return None
-
-        item = CarItem()
-
-        # --- Identifiers ---
-        item["vin"] = data.get("vin")
-        item["stock_number"] = data.get("stock") or None
-        item["model_code"] = None  # not available on SRP
-
-        # --- Vehicle info ---
-        item["year"] = str(data.get("year", "")) or None
-        item["trim"] = data.get("trim") or None
-
-        # Drivetrain: extract from the card title (e.g. "2026  RAV4 XSE AWD")
-        title = card.css(".title-bottom::text").get("")
-        item["drivetrain"] = normalize_drivetrain(title)
-
-        # --- Colors ---
-        item["exterior_color"] = normalize_color(data.get("ext_color"))
-        item["interior_color"] = _extract_color(card, "interior-color")
-
-        # --- Pricing ---
-        # data-vehicle carries ``msrp`` and ``price`` — on this platform
-        # they are typically the same (the advertised / TSRP value).
-        # The DOM ``hit-price`` block mirrors the TSRP.
-        msrp = parse_price(data.get("msrp"))
-        advertised_price = parse_price(data.get("price"))
-
-        # Fall back to the DOM TSRP if the JSON values are missing.
-        if not advertised_price:
-            advertised_price = parse_price(
-                card.css(".hit-price__value .ashallow::text").get()
-            )
-        if not msrp:
-            msrp = advertised_price
-
-        item["msrp"] = msrp
-        item["total_price"] = advertised_price
-        item["base_price"] = None  # no package breakdown on SRP
-        item["total_packages_price"] = None
-        item["dealer_accessories"] = None
-
-        # Adjustments (difference between MSRP and advertised price)
-        if msrp and advertised_price and advertised_price != msrp:
-            item["adjustments"] = advertised_price - msrp
-        else:
-            item["adjustments"] = None
-
-        # --- Packages ---
-        item["packages"] = None  # not available on SRP
-
-        # --- Status ---
-        item["status"] = _extract_status(card)
-
-        # --- Availability date ---
-        item["availability_date"] = _extract_availability_date(card)
-
-        # --- Dealer / links ---
-        item["dealer_name"] = dealer_name
-        item["dealer_url"] = page_url
-
-        detail_href = card.css("a.hit-link::attr(href)").get("")
-        item["detail_url"] = urljoin(page_url, detail_href) if detail_href else None
-
-        return item
+        return scrapy.Request(
+            url,
+            method="POST",
+            headers={
+                "X-Algolia-Application-Id": algolia["app_id"],
+                "X-Algolia-API-Key": algolia["api_key"],
+                "Content-Type": "application/json",
+            },
+            body=body,
+            callback=self.parse_algolia_results,
+            errback=self.errback,
+            meta={
+                "algolia": algolia,
+                "facet_filters": facet_filters,
+                "hits_per_page": hits_per_page,
+                "dealer_name": dealer_name,
+            },
+        )
 
     # ------------------------------------------------------------------
     # Error handler
     # ------------------------------------------------------------------
 
     async def errback(self, failure):
-        self.logger.error("Request failed: %s", failure.value)
+        self.logger.error("[%s] Request failed: %s", self._domain, failure.value)
 
 
 # ---------------------------------------------------------------------------
-# Helpers
+# Helpers — Algolia config extraction
 # ---------------------------------------------------------------------------
 
-def _extract_color(card, testid: str) -> str | None:
-    """Extract a colour value from the Details tab by ``data-testid``.
+def _extract_algolia_config(response: HtmlResponse) -> dict | None:
+    """Extract Algolia connection details from the SRP page's JavaScript.
 
-    The rendered text looks like ``"Interior: Black SofTex® [softex]"``.
-    This helper strips the label prefix, registered-trademark symbols,
-    and bracketed annotations.
+    Looks for the ``algoliaConfig`` and ``inventoryLightningSettings``
+    JS variables embedded in ``<script>`` blocks.
+
+    Returns a dict with ``app_id``, ``api_key``, ``index``,
+    ``refinements``, and ``hits_per_page`` keys, or ``None`` if
+    extraction fails.
     """
-    el = card.css(f'[data-testid="{testid}"]')
-    if not el:
-        return None
-    texts = el.css("::text").getall()
-    raw = " ".join(t.strip() for t in texts if t.strip())
-    if not raw:
-        return None
-    # Strip "Interior: " / "Exterior: " prefix
-    if ":" in raw:
-        raw = raw.split(":", 1)[1].strip()
-    # Truncate at bracketed annotations like "[softex]" — everything
-    # after the bracket (e.g. "Mixed Media") is redundant.
-    raw = re.sub(r"\s*\[.*", "", raw)
-    return normalize_color(raw)
+    text = response.text
 
-
-_AVAIL_DATE_RE = re.compile(
-    r"(?:estimated\s+)?availability\s+(\d{1,2}/\d{1,2}/\d{2,4})"
-    r"(?:\s*-\s*(\d{1,2}/\d{1,2}/\d{2,4}))?",
-    re.IGNORECASE,
-)
-
-
-def _extract_availability_date(card) -> str | None:
-    """Extract an estimated availability date from the card's disclaimer.
-
-    The disclaimer text may contain a date or date-range like:
-
-    - ``Estimated availability 02/14/26-02/28/26.``
-    - ``Estimated availability 03/01/26.``
-
-    When a range is present the full range is returned (e.g.
-    ``"02/14/26-02/28/26"``).  Returns ``None`` when no date is found
-    (e.g. "Contact dealer to confirm availability date.").
-    """
-    disclaimer = card.css(".disclaimer::text").get("")
-    m = _AVAIL_DATE_RE.search(disclaimer)
+    # --- algoliaConfig ---
+    # var algoliaConfig = {"appId":"…","apiKeySearch":"…","indexName":"…"};
+    m = re.search(r"var\s+algoliaConfig\s*=\s*(\{[^}]+\})", text)
     if not m:
         return None
-    if m.group(2):
-        return f"{m.group(1)}-{m.group(2)}"
-    return m.group(1)
-
-
-def _extract_status(card) -> str | None:
-    """Determine vehicle availability status from the card's DOM.
-
-    DealerInspire displays a status badge inside ``.hit-status`` with
-    values like "In Transit" or "Build Phase".
-    """
-    status_text = card.css(".hit-status span:first-child::text").get("")
-    status_text = status_text.strip()
-    if not status_text:
+    try:
+        cfg = json.loads(m.group(1))
+    except json.JSONDecodeError:
         return None
-    # Normalise common labels
-    lower = status_text.lower()
+
+    app_id = cfg.get("appId")
+    api_key = cfg.get("apiKeySearch")
+    base_index = cfg.get("indexName")
+    if not (app_id and api_key and base_index):
+        return None
+
+    # --- inventoryLightningSettings ---
+    # Contains the sort index (with a ``_status_price_low_high`` suffix)
+    # and the pre-selected refinements.
+    refinements: dict[str, list[str]] = {}
+    sort_index = base_index  # default to the base index
+
+    m_ils = re.search(
+        r"var\s+inventoryLightningSettings\s*=\s*(\{.+?\})\s*;\s*\n",
+        text,
+        re.DOTALL,
+    )
+    if m_ils:
+        try:
+            ils = json.loads(m_ils.group(1))
+            refinements = ils.get("refinements", {})
+            sort_index = ils.get("inventoryIndex", base_index)
+        except json.JSONDecodeError:
+            pass
+
+    # --- PARAMS (hitsPerPage) ---
+    hits_per_page = _DEFAULT_HITS_PER_PAGE
+    m_params = re.search(r"var\s+PARAMS\s*=\s*(\{.+?\})\s*;", text)
+    if m_params:
+        try:
+            params = json.loads(m_params.group(1))
+            hits_per_page = int(params.get("hitsPerPage", _DEFAULT_HITS_PER_PAGE))
+        except (json.JSONDecodeError, ValueError, TypeError):
+            pass
+
+    # --- URL _dFR query parameters ---
+    # The URL may carry additional refinements (e.g. year) as
+    # ``_dFR[field][index]=value`` query parameters that are *not*
+    # present in ``inventoryLightningSettings.refinements``.
+    url_refinements = _extract_url_refinements(response.url)
+    for field, vals in url_refinements.items():
+        if field not in refinements:
+            refinements[field] = vals
+        else:
+            # Merge without duplicates, preserving order.
+            existing = set(refinements[field])
+            for v in vals:
+                if v not in existing:
+                    refinements[field].append(v)
+
+    return {
+        "app_id": app_id,
+        "api_key": api_key,
+        "index": sort_index,
+        "refinements": refinements,
+        "hits_per_page": hits_per_page,
+    }
+
+
+def _extract_url_refinements(url: str) -> dict[str, list[str]]:
+    """Parse ``_dFR[field][index]=value`` query parameters into a refinements dict.
+
+    DealerInspire encodes active facet filters in the URL as
+    ``_dFR[year][0]=2026&_dFR[model][0]=RAV4``, etc.  This function
+    extracts them so they can be merged with the refinements from
+    ``inventoryLightningSettings``.
+    """
+    refinements: dict[str, list[str]] = {}
+    qs = parse_qs(urlparse(url).query)
+    # Keys look like ``_dFR[year][0]``, ``_dFR[model][1]``, etc.
+    pattern = re.compile(r"^_dFR\[([^\]]+)\]\[\d+\]$")
+    for key, values in qs.items():
+        m = pattern.match(key)
+        if m:
+            field = m.group(1)
+            refinements.setdefault(field, [])
+            for v in values:
+                if v not in refinements[field]:
+                    refinements[field].append(v)
+    return refinements
+
+
+# ---------------------------------------------------------------------------
+# Helpers — Facet filter building
+# ---------------------------------------------------------------------------
+
+
+def _build_facet_filters(
+    refinements: dict[str, list[str]],
+) -> list[list[str]]:
+    """Build Algolia ``facetFilters`` from ``inventoryLightningSettings``.
+
+    The ``refinements`` dict maps field names to lists of values, e.g.::
+
+        {"type": ["New"], "make": ["Toyota"],
+         "model": ["RAV4", "RAV4 Hybrid"]}
+
+    This is translated to the Algolia ``facetFilters`` format::
+
+        [["type:New"], ["make:Toyota"], ["model:RAV4","model:RAV4 Hybrid"]]
+
+    Each field group is an OR array; the groups are AND'd together.
+    """
+    return [
+        [f"{field}:{v}" for v in vals]
+        for field, vals in refinements.items()
+    ]
+
+
+# ---------------------------------------------------------------------------
+# Helpers — Algolia hit → CarItem
+# ---------------------------------------------------------------------------
+
+def _algolia_hit_to_item(
+    hit: dict,
+    dealer_name: str,
+    dealer_url: str,
+) -> CarItem | None:
+    """Convert an Algolia hit into a :class:`CarItem`."""
+    vin = hit.get("vin")
+    if not vin:
+        return None
+
+    item = CarItem()
+
+    # --- Identifiers ---
+    item["vin"] = vin
+    item["stock_number"] = hit.get("stock") or None
+    item["model_code"] = hit.get("model_code") or hit.get("model_number") or None
+
+    # --- Vehicle info ---
+    item["year"] = str(hit["year"]) if hit.get("year") else None
+    item["trim"] = hit.get("trim") or None
+    item["drivetrain"] = normalize_drivetrain(hit.get("drivetrain", ""))
+
+    # --- Colors ---
+    item["exterior_color"] = normalize_color(hit.get("ext_color"))
+    item["interior_color"] = normalize_color(hit.get("int_color"))
+
+    # --- Pricing ---
+    msrp = parse_price(hit.get("msrp"))
+    our_price = (
+        hit.get("our_price")
+        if isinstance(hit.get("our_price"), int)
+        else parse_price(hit.get("our_price"))
+    )
+    item["msrp"] = msrp
+    item["total_price"] = our_price or msrp
+
+    # --- Packages ---
+    item["packages"] = None  # not available in Algolia
+
+    # --- Status ---
+    lightning = hit.get("lightning") or {}
+    item["status"] = _extract_status(hit, lightning)
+
+    # --- Availability date ---
+    item["availability_date"] = lightning.get("statusETA") or None
+
+    # --- Dealer / links ---
+    item["dealer_name"] = dealer_name
+    item["dealer_url"] = dealer_url
+    item["detail_url"] = hit.get("link") or None
+
+    return item
+
+
+def _extract_status(hit: dict, lightning: dict) -> str | None:
+    """Determine vehicle availability status from the Algolia hit.
+
+    Prefers ``lightning.statusLabel`` (human-readable, e.g.
+    "In Transit", "Build Phase") over ``vehicle_status`` (e.g.
+    "In-Transit").
+    """
+    label = lightning.get("statusLabel", "")
+    if label:
+        return _normalize_status(label)
+
+    raw = hit.get("vehicle_status", "")
+    if raw:
+        return _normalize_status(raw)
+
+    return None
+
+
+def _normalize_status(text: str) -> str:
+    """Normalise common status labels to a consistent form."""
+    lower = text.strip().lower().replace("-", " ")
     if "transit" in lower:
         return "In Transit"
     if "build" in lower:
         return "Build Phase"
     if "stock" in lower:
         return "In Stock"
-    if "sale pending" in lower:
-        return "Sale Pending"
-    return status_text
-
-
-def _extract_hits_per_page(response: HtmlResponse) -> int:
-    """Extract the Algolia ``hitsPerPage`` value from inline scripts.
-
-    Falls back to 20 (the Algolia default) if not found.
-    """
-    for script in response.css("script::text").getall():
-        m = re.search(r'"hitsPerPage"\s*:\s*"?(\d+)"?', script)
-        if m:
-            return int(m.group(1))
-    return 20
-
-
-def _build_next_page_url(response: HtmlResponse, card_count: int) -> str | None:
-    """Build the URL for the next SRP page, or return *None* on the last page.
-
-    DealerInspire uses a ``_p`` query parameter for zero-indexed
-    pagination (page 0 is the first page, ``_p=1`` is the second, etc.).
-    If the current page has fewer cards than ``hitsPerPage``, we're on
-    the last page.
-    """
-    hits_per_page = _extract_hits_per_page(response)
-    if card_count < hits_per_page:
-        return None
-
-    parsed = urlparse(response.url)
-    qs = parse_qs(parsed.query)
-
-    current_page = int(qs.get("_p", ["0"])[0])
-    qs["_p"] = [str(current_page + 1)]
-
-    new_query = urlencode({k: v[0] for k, v in qs.items()}, safe="%")
-    return urlunparse(parsed._replace(query=new_query))
+    return text.strip()
