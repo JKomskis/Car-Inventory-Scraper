@@ -24,6 +24,8 @@ import re
 from urllib.parse import urljoin, urlparse, parse_qs, urlencode, urlunparse, unquote
 
 import scrapy
+
+from car_inventory_scraper.spiders import log_request_failure
 from scrapy.http import HtmlResponse, JsonResponse
 
 from car_inventory_scraper.parsing_helpers import (
@@ -287,7 +289,7 @@ class DealerComSpider(scrapy.Spider):
     # ------------------------------------------------------------------
 
     def errback(self, failure):
-        self.logger.error("[%s] Request failed: %s", self._domain, failure.value)
+        log_request_failure(failure, self._domain, self.logger)
 
 
 

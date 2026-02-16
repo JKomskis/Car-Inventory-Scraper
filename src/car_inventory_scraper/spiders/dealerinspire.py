@@ -35,6 +35,8 @@ from urllib.parse import parse_qs, urlparse
 import scrapy
 from scrapy.http import HtmlResponse, JsonResponse
 
+from car_inventory_scraper.spiders import log_request_failure
+
 from car_inventory_scraper.items import CarItem
 from car_inventory_scraper.parsing_helpers import (
     normalize_color,
@@ -204,7 +206,7 @@ class DealerInspireSpider(scrapy.Spider):
     # ------------------------------------------------------------------
 
     async def errback(self, failure):
-        self.logger.error("[%s] Request failed: %s", self._domain, failure.value)
+        log_request_failure(failure, self._domain, self.logger)
 
 
 # ---------------------------------------------------------------------------

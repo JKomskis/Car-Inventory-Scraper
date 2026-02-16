@@ -20,8 +20,8 @@ from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
 import scrapy
 from scrapy.http import HtmlResponse
-from scrapy.spidermiddlewares.httperror import HttpError
 
+from car_inventory_scraper.spiders import log_request_failure
 from car_inventory_scraper.parsing_helpers import (
     EXCLUDED_PACKAGES,
     normalize_pkg_name,
@@ -214,11 +214,7 @@ class DealerOnSpider(scrapy.Spider):
     # ------------------------------------------------------------------
 
     def errback(self, failure):
-        self.logger.error("[%s] Request failed: %s", self._domain, failure.value)
-
-        if failure.check(HttpError):
-            response = failure.value.response
-            self.logger.error("[%s] HttpError on %s: status %s", self._domain, response.url, response.status)
+        log_request_failure(failure, self._domain, self.logger)
 
 
 # ---------------------------------------------------------------------------
