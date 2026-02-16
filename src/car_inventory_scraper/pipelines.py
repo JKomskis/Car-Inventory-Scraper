@@ -5,7 +5,6 @@ from __future__ import annotations
 import json
 import logging
 import re
-from datetime import datetime, timezone
 from pathlib import Path
 
 
@@ -109,14 +108,6 @@ class CalculatedPricesPipeline:
             else:
                 item["adjustments"] = None
 
-        return item
-
-
-class TimestampPipeline:
-    """Add a UTC timestamp to every item."""
-
-    def process_item(self, item):
-        item["scraped_at"] = datetime.now(timezone.utc).isoformat()
         return item
 
 

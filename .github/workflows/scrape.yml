@@ -2,7 +2,7 @@ name: Scrape Inventory
 
 on:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 8 * * *"  # midnight PST (UTC-8)
   workflow_dispatch:
 
 permissions:
@@ -31,6 +31,14 @@ jobs:
       - name: Generate report
         run: uv run car-inventory-scraper report inventory/inventory.json -o inventory.html
 
+      - name: Compress inventory to dated archive
+        run: |
+          YEAR=$(date -u +'%Y')
+          MONTH=$(date -u +'%m')
+          DAY=$(date -u +'%d')
+          mkdir -p "inventory/${YEAR}/${MONTH}"
+          gzip -9 -c inventory/inventory.json > "inventory/${YEAR}/${MONTH}/inventory_${YEAR}_${MONTH}_${DAY}.json.gz"
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -43,6 +51,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add inventory/inventory.json
+          git add inventory/
           git diff --cached --quiet || git commit -m "Update inventory $(date -u +'%Y-%m-%d')"
           git push origin main

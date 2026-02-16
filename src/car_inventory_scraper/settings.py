@@ -35,7 +35,6 @@ DOWNLOAD_HANDLERS = {
 ITEM_PIPELINES = {
     "car_inventory_scraper.pipelines.CleanTextPipeline": 100,
     "car_inventory_scraper.pipelines.CalculatedPricesPipeline": 150,
-    "car_inventory_scraper.pipelines.TimestampPipeline": 200,
     "car_inventory_scraper.pipelines.JsonReportPipeline": 900,
 }
 
