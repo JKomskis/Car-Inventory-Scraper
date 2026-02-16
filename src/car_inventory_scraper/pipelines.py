@@ -29,6 +29,11 @@ class CleanTextPipeline:
         "4WD/AWD": "AWD",
     }
 
+    _TRIM_ALIASES = {
+        "WOODLAND": "Woodland",
+        "XLE": "XLE Premium",
+    }
+
     def process_item(self, item):
         for field in self.TEXT_FIELDS:
             value = item.get(field)
@@ -40,6 +45,11 @@ class CleanTextPipeline:
         dt = item.get("drivetrain")
         if isinstance(dt, str):
             item["drivetrain"] = self._DRIVETRAIN_ALIASES.get(dt.upper(), dt)
+
+        # Normalise trim values
+        trim = item.get("trim")
+        if isinstance(trim, str):
+            item["trim"] = self._TRIM_ALIASES.get(trim, trim)
 
         # Normalise prices to plain integers
         for price_field in ("msrp", "base_price", "total_packages_price", "dealer_accessories_price", "total_price"):

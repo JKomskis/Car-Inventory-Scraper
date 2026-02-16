@@ -19,6 +19,7 @@ from __future__ import annotations
 import argparse
 import html
 import json
+from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -131,15 +132,80 @@ def build_report(
 
     headers = "".join(f"<th>{h}</th>" for h, _ in columns)
 
+    trim_table = _build_trim_by_dealer_table(data)
+
     page = _HTML_TEMPLATE.format(
         timestamp=ts,
         count=len(data),
         headers=headers,
         rows="\n".join(rows),
+        trim_by_dealer_table=trim_table,
     )
 
     Path(output_path).write_text(page, encoding="utf-8")
     print(f"HTML report written to {output_path} ({len(data)} vehicles)")
+
+
+def _build_trim_by_dealer_table(data: list[dict]) -> str:
+    """Return an HTML table aggregating vehicle counts by dealer and trim."""
+    counts: Counter[tuple[str, str]] = Counter()
+    dealers_set: set[str] = set()
+    trim_min_price: dict[str, float] = {}
+
+    for item in data:
+        dealer = item.get("dealer_name") or "Unknown"
+        trim = item.get("trim") or "Unknown"
+        counts[(dealer, trim)] += 1
+        dealers_set.add(dealer)
+        bp = item.get("base_price")
+        if isinstance(bp, (int, float)):
+            if trim not in trim_min_price or bp < trim_min_price[trim]:
+                trim_min_price[trim] = bp
+
+    dealers = sorted(dealers_set)
+    # Order trims by their minimum base price; trims without a price go last.
+    trims = sorted(
+        trim_min_price.keys() | (set(counts.keys()) and {t for _, t in counts}),
+        key=lambda t: (t not in trim_min_price, trim_min_price.get(t, 0), t),
+    )
+
+    if not dealers or not trims:
+        return ""
+
+    # Header row
+    hdr = "<th>Dealer</th>" + "".join(f"<th>{html.escape(t)}</th>" for t in trims) + "<th>Total</th>"
+
+    # Body rows
+    body_rows: list[str] = []
+    trim_totals = {t: 0 for t in trims}
+    for dealer in dealers:
+        cells = [f"      <td>{html.escape(dealer)}</td>"]
+        row_total = 0
+        for trim in trims:
+            n = counts.get((dealer, trim), 0)
+            row_total += n
+            trim_totals[trim] += n
+            cells.append(f"      <td>{n if n else ''}</td>")
+        cells.append(f'      <td class="price">{row_total}</td>')
+        body_rows.append("    <tr>\n" + "\n".join(cells) + "\n    </tr>")
+
+    # Footer totals row
+    grand_total = sum(trim_totals.values())
+    footer_cells = ['      <td class="price">Total</td>']
+    for trim in trims:
+        footer_cells.append(f'      <td class="price">{trim_totals[trim]}</td>')
+    footer_cells.append(f'      <td class="price">{grand_total}</td>')
+    footer_row = "    <tr>\n" + "\n".join(footer_cells) + "\n    </tr>"
+
+    return (
+        '<table id="trim-table">\n'
+        f"    <thead><tr>{hdr}</tr></thead>\n"
+        "    <tbody>\n"
+        + "\n".join(body_rows) + "\n"
+        + footer_row + "\n"
+        "    </tbody>\n"
+        "</table>"
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -200,6 +266,13 @@ _HTML_TEMPLATE = """\
 <body>
   <h1>Vehicle Inventory</h1>
   <p class="meta">{count} vehicles &middot; scraped {timestamp}</p>
+
+  <h2>Vehicles by Trim &amp; Dealer</h2>
+  <div style="overflow-x: auto;">
+  {trim_by_dealer_table}
+  </div>
+
+  <h2 style="margin-top:2.5rem;">Full Inventory</h2>
   <div style="overflow-x: auto;">
   <table id="inv-table">
     <thead><tr>{headers}</tr></thead>
@@ -208,6 +281,7 @@ _HTML_TEMPLATE = """\
     </tbody>
   </table>
   </div>
+
   <script>
   (function () {{
     var table = document.getElementById('inv-table');
