@@ -71,6 +71,45 @@ class CleanTextPipeline:
         return item
 
 
+class PackageFilterPipeline:
+    """Exclude unwanted packages and classify dealer accessories.
+
+    Runs after text cleaning but before price calculations so that
+    ``CalculatedPricesPipeline`` sees the final package lists.
+
+    1. Drops any package whose normalised name is in ``EXCLUDED_PACKAGES``.
+    2. Moves packages whose normalised name is in ``DEALER_ACCESSORY_NAMES``
+       from ``packages`` into ``dealer_accessories``.
+    """
+
+    def process_item(self, item, spider):
+        from car_inventory_scraper.parsing_helpers import (
+            DEALER_ACCESSORY_NAMES,
+            EXCLUDED_PACKAGES,
+            normalize_pkg_name,
+        )
+
+        raw_packages = item.get("packages") or []
+        if not raw_packages:
+            return item
+
+        kept: list[dict] = []
+        dealer_acc: list[dict] = list(item.get("dealer_accessories") or [])
+
+        for pkg in raw_packages:
+            name = normalize_pkg_name(pkg.get("name", "")).lower()
+            if name in EXCLUDED_PACKAGES:
+                continue
+            if name in DEALER_ACCESSORY_NAMES:
+                dealer_acc.append(pkg)
+            else:
+                kept.append(pkg)
+
+        item["packages"] = kept or None
+        item["dealer_accessories"] = dealer_acc or None
+        return item
+
+
 class CalculatedPricesPipeline:
     """Compute derived pricing fields from raw item data.
 
@@ -141,6 +180,20 @@ class JsonReportPipeline:
         cls._total_expected = crawler.settings.getint("TOTAL_SPIDER_COUNT", 1)
         return cls(output_path=output)
 
+    @staticmethod
+    def _normalise(obj):
+        """Recursively sort arrays of objects for deterministic output."""
+        if isinstance(obj, dict):
+            return {k: JsonReportPipeline._normalise(v) for k, v in obj.items()}
+        if isinstance(obj, list):
+            normalised = [JsonReportPipeline._normalise(item) for item in obj]
+            try:
+                normalised.sort(key=lambda x: json.dumps(x, sort_keys=True, default=str))
+            except TypeError:
+                pass
+            return normalised
+        return obj
+
     def open_spider(self, spider):
         pass
 
@@ -172,8 +225,12 @@ class JsonReportPipeline:
         # Sort by VIN for consistent ordering
         items.sort(key=lambda x: x.get("vin") or "")
 
+        # Normalise for deterministic output: sort object keys and
+        # nested arrays so diffs stay minimal across runs.
+        items = [self._normalise(item) for item in items]
+
         Path(self.output_path).write_text(
-            json.dumps(items, indent=2, default=str),
+            json.dumps(items, indent=2, sort_keys=True, default=str),
             encoding="utf-8",
         )
         self.logger.info(

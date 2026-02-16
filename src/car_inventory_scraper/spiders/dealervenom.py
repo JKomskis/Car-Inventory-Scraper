@@ -36,7 +36,6 @@ from car_inventory_scraper.spiders import log_request_failure
 from scrapy.http import HtmlResponse, TextResponse
 
 from car_inventory_scraper.parsing_helpers import (
-    EXCLUDED_PACKAGES,
     normalize_color,
     normalize_drivetrain,
     parse_price,
@@ -182,7 +181,7 @@ class DealerVenomSpider(scrapy.Spider):
         for pkg_el in response.css(".vdp-package-item"):
             name = pkg_el.css(".vdp-package-name::text").get("").strip()
             price_str = pkg_el.css(".vdp-package-price::text").get("").strip()
-            if name and name.lower() not in EXCLUDED_PACKAGES:
+            if name:
                 packages.append({
                     "name": name,
                     "price": parse_price(price_str),

@@ -240,16 +240,7 @@ class DealerComSpider(scrapy.Spider):
                         "price": parse_price(price),
                     })
 
-        # Separate dealer-installed accessories from factory packages
-        packages: list[dict[str, str | int]] = []
-        dealer_acc_packages: list[dict[str, str | int]] = []
-        for pkg in all_raw_packages:
-            if _is_dealer_accessory(pkg.get("name", "")):
-                dealer_acc_packages.append(pkg)
-            else:
-                packages.append(pkg)
-        item["packages"] = packages or None
-        item["dealer_accessories"] = dealer_acc_packages or None
+        item["packages"] = all_raw_packages or None
 
         # --- Pricing ---
         dprice_map = _build_dprice_map(ddc_pricing)
@@ -458,28 +449,6 @@ def _build_dprice_map(ddc_pricing: dict | None) -> dict:
     return result
 
 
-# ---------------------------------------------------------------------------
-# Helpers — dealer-installed accessories detection
-# ---------------------------------------------------------------------------
-
-# Package names (normalised to lowercase) that are dealer-installed
-# accessories rather than factory packages.  These are excluded from the
-# packages list / total and counted under dealer_accessories_price & adjustments.
-_DEALER_ACCESSORY_NAMES: set[str] = {
-    "pulse",
-    "perma plate appearance protection 5yrs coverage",
-    "permaplate appearance protection 5yrs coverage",
-    "permaplate windshield protection 5yrs coverage",
-    "door edge and cup guards",
-    "door edge & cup guards",
-    "tint",
-    "chiprotect 10yrs coverage",
-}
-
-
-def _is_dealer_accessory(name: str) -> bool:
-    """Return ``True`` if *name* matches a known dealer-installed accessory."""
-    return normalize_pkg_name(name).lower() in _DEALER_ACCESSORY_NAMES
 
 # ---------------------------------------------------------------------------
 # Helpers — DDC status normalisation

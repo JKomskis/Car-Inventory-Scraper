@@ -62,6 +62,24 @@ def normalize_pkg_name(name: str) -> str:
 # required, so they aren't meaningful pricing add-ons.
 EXCLUDED_PACKAGES: frozenset[str] = frozenset({
     "50 state emissions",
+    "owner's portfolio",
+})
+
+# Package names (normalised to lowercase) that are dealer-installed
+# accessories rather than factory packages.  These are moved from the
+# ``packages`` list into ``dealer_accessories`` by the
+# ``PackageFilterPipeline`` and counted under ``dealer_accessories_price``.
+DEALER_ACCESSORY_NAMES: frozenset[str] = frozenset({
+    "pulse",
+    "perma plate appearance protection 5yrs coverage",
+    "permaplate appearance protection 5yrs coverage",
+    "permaplate windshield protection 5yrs coverage",
+    "door edge and cup guards",
+    "door edge & cup guards",
+    "tint",
+    "chiprotect 10yrs coverage",
+    "360shield -paintshield and interiorshield",
+    "z360shield -paintshield and interiorshield",
 })
 
 

@@ -22,11 +22,7 @@ import scrapy
 from scrapy.http import HtmlResponse
 
 from car_inventory_scraper.spiders import log_request_failure
-from car_inventory_scraper.parsing_helpers import (
-    EXCLUDED_PACKAGES,
-    normalize_pkg_name,
-    parse_price,
-)
+from car_inventory_scraper.parsing_helpers import parse_price
 from car_inventory_scraper.items import CarItem
 
 # Number of vehicles DealerOn displays per search-results page.
@@ -169,19 +165,13 @@ class DealerOnSpider(scrapy.Spider):
 
         # --- Packages & Accessories (CSS class: .package-info) ---
         packages: list[dict[str, str | int]] = []
-        dealer_acc_packages: list[dict[str, str | int]] = []
         for pkg in response.css(".package-info"):
             pkg_name = pkg.css(".package-info__name::text").get("").strip()
             price_str = pkg.css(".package-info__price::text").get("").strip()
-            if not pkg_name or pkg_name.lower() in EXCLUDED_PACKAGES:
+            if not pkg_name:
                 continue
-            entry = {"name": pkg_name, "price": parse_price(price_str)}
-            if _is_dealer_accessory(pkg_name):
-                dealer_acc_packages.append(entry)
-            else:
-                packages.append(entry)
+            packages.append({"name": pkg_name, "price": parse_price(price_str)})
         item["packages"] = packages or None
-        item["dealer_accessories"] = dealer_acc_packages or None
 
         # --- Pricing ---
         item["msrp"] = parse_price(vdp.attrib.get("data-msrp"))
@@ -215,24 +205,6 @@ class DealerOnSpider(scrapy.Spider):
 
     def errback(self, failure):
         log_request_failure(failure, self._domain, self.logger)
-
-
-# ---------------------------------------------------------------------------
-# Helpers — dealer-installed accessories detection
-# ---------------------------------------------------------------------------
-
-# Package names (normalised to lowercase) that are dealer-installed
-# accessories rather than factory packages.  These are excluded from the
-# packages list / total and counted under dealer_accessories_price & adjustments.
-_DEALER_ACCESSORY_NAMES: set[str] = {
-    "360shield -paintshield and interiorshield",
-    "z360shield -paintshield and interiorshield",
-}
-
-
-def _is_dealer_accessory(name: str) -> bool:
-    """Return ``True`` if *name* matches a known dealer-installed accessory."""
-    return normalize_pkg_name(name).lower() in _DEALER_ACCESSORY_NAMES
 
 
 # ---------------------------------------------------------------------------

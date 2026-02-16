@@ -31,7 +31,6 @@ from car_inventory_scraper.spiders import log_request_failure
 from scrapy.http import HtmlResponse, JsonResponse
 
 from car_inventory_scraper.parsing_helpers import (
-    EXCLUDED_PACKAGES,
     normalize_color,
     normalize_drivetrain,
     normalize_pkg_name,
@@ -236,8 +235,6 @@ def _parse_oem_packages(raw: str) -> list[dict[str, str | int | None]]:
         if not name:
             continue
         name = normalize_pkg_name(name)
-        if name.lower() in EXCLUDED_PACKAGES:
-            continue
 
         price = parse_price(fields.get("msrp"))
         packages.append({"name": name, "price": price})

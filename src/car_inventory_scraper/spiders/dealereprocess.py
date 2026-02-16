@@ -28,7 +28,6 @@ from scrapy.http import HtmlResponse
 
 from car_inventory_scraper.items import CarItem
 from car_inventory_scraper.parsing_helpers import (
-    EXCLUDED_PACKAGES,
     normalize_color,
     normalize_drivetrain,
     normalize_pkg_name,
@@ -155,21 +154,13 @@ class DealerEprocessSpider(scrapy.Spider):
 
         # --- Packages / installed options ---
         packages = []
-        dealer_acc_packages: list[dict[str, str | int]] = []
         for opt in response.css(".installed_options__item"):
             opt_name = opt.css(".installed_options__title::text").get("").strip()
             opt_price_raw = opt.css(".installed_options__cost::text").get("").strip()
             if not opt_name:
                 continue
-            if opt_name.lower() in EXCLUDED_PACKAGES:
-                continue
-            pkg = {"name": normalize_pkg_name(opt_name), "price": parse_price(opt_price_raw)}
-            if _is_dealer_accessory(opt_name):
-                dealer_acc_packages.append(pkg)
-            else:
-                packages.append(pkg)
+            packages.append({"name": normalize_pkg_name(opt_name), "price": parse_price(opt_price_raw)})
         item["packages"] = packages or None
-        item["dealer_accessories"] = dealer_acc_packages or None
 
         # --- Pricing ---
         # TSRP / MSRP from the pricing container
@@ -194,23 +185,6 @@ class DealerEprocessSpider(scrapy.Spider):
 
     async def errback(self, failure):
         log_request_failure(failure, self._domain, self.logger)
-
-
-# ---------------------------------------------------------------------------
-# Helpers — dealer-installed accessories detection
-# ---------------------------------------------------------------------------
-
-# Package names (normalised to lowercase) that are dealer-installed
-# accessories rather than factory packages.  These are excluded from the
-# packages list / total and counted under dealer_accessories_price & adjustments.
-_DEALER_ACCESSORY_NAMES: set[str] = {
-    "pulse",
-}
-
-
-def _is_dealer_accessory(name: str) -> bool:
-    """Return ``True`` if *name* matches a known dealer-installed accessory."""
-    return normalize_pkg_name(name).lower() in _DEALER_ACCESSORY_NAMES
 
 
 # ---------------------------------------------------------------------------
