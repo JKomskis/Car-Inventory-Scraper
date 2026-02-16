@@ -460,7 +460,7 @@ def _normalize_status(text: str) -> str:
     if "transit" in lower:
         return "In Transit"
     if "build" in lower:
-        return "Build Phase"
+        return "In Production"
     if "stock" in lower:
         return "In Stock"
     return text.strip()
