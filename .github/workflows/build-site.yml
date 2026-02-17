@@ -36,6 +36,8 @@ jobs:
       - name: Build static site
         working-directory: site
         run: npm run build
+        env:
+          BASE_PATH: /Car-Inventory-Scraper/
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

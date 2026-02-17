@@ -22,10 +22,10 @@ eleventyComputed:
 <p class="snapshot-nav">
   {%- set idx = inventory.snapshots.indexOf(snapshot) -%}
   {%- if idx > 0 -%}
-    <a href="/inventory/{{ inventory.snapshots[idx - 1].date }}/">&larr; {{ inventory.snapshots[idx - 1].date }}</a>
+    <a href="{{ basePath }}inventory/{{ inventory.snapshots[idx - 1].date }}/">&larr; {{ inventory.snapshots[idx - 1].date }}</a>
   {%- endif -%}
   {%- if idx < inventory.snapshots.length - 1 -%}
-    <a href="/inventory/">{{ inventory.snapshots[idx + 1].date }} &rarr;</a>
+    <a href="{{ basePath }}inventory/">{{ inventory.snapshots[idx + 1].date }} &rarr;</a>
   {%- endif -%}
 </p>
 

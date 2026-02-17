@@ -4,7 +4,12 @@ import EleventyVitePlugin from "@11ty/eleventy-plugin-vite";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+const basePath = process.env.BASE_PATH || "/";
+
 export default function (eleventyConfig) {
+  // Expose base path to all templates
+  eleventyConfig.addGlobalData("basePath", basePath);
+
   // Watch the inventory data directory for changes during dev
   eleventyConfig.addWatchTarget(
     path.resolve(__dirname, "../inventory/")
@@ -16,6 +21,7 @@ export default function (eleventyConfig) {
   // Vite plugin for JS bundling with tree-shaking
   eleventyConfig.addPlugin(EleventyVitePlugin, {
     viteOptions: {
+      base: basePath,
       resolve: {
         alias: {
           "/scripts": path.resolve(__dirname, "src/scripts"),
