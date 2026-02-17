@@ -1,6 +1,28 @@
 [
   {
     "adjustments": null,
+    "availability_date": null,
+    "base_price": null,
+    "dealer_accessories_price": null,
+    "dealer_name": "Toyota of Renton",
+    "dealer_url": "https://www.toyotaofrenton.com/all-inventory/index.htm?compositeType=new&make=Toyota&model=RAV4&year=2026&sortBy=internetPrice%20asc",
+    "detail_url": "https://www.toyotaofrenton.com/new/Toyota/2026-Toyota-RAV4-61085548ac1850322cdacea0518d036f.htm",
+    "drivetrain": null,
+    "exterior_color": null,
+    "interior_color": null,
+    "model_code": null,
+    "msrp": null,
+    "packages": null,
+    "status": null,
+    "stock_number": null,
+    "total_packages_price": null,
+    "total_price": null,
+    "trim": null,
+    "vin": null,
+    "year": null
+  },
+  {
+    "adjustments": null,
     "availability_date": "03/19/26",
     "base_price": 38950,
     "dealer_accessories": null,
@@ -528,6 +550,66 @@
     "year": "2026"
   },
   {
+    "adjustments": null,
+    "availability_date": "03/10/26",
+    "base_price": 38950,
+    "dealer_accessories": null,
+    "dealer_accessories_price": null,
+    "dealer_name": "Swickard Toyota",
+    "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12",
+    "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-2T36CRAV1TC001465",
+    "drivetrain": "AWD",
+    "exterior_color": "Meteor Shower",
+    "interior_color": "Black Softex",
+    "model_code": "4444",
+    "msrp": 41103,
+    "packages": [
+      {
+        "name": "All-Weather Liner Package",
+        "price": 339
+      },
+      {
+        "name": "Door Edge Film",
+        "price": 100
+      },
+      {
+        "name": "Door Panel Scuff Protectors",
+        "price": 130
+      },
+      {
+        "name": "Door Sill Protectors",
+        "price": 199
+      },
+      {
+        "name": "Low Profile Cross Bars",
+        "price": 320
+      },
+      {
+        "name": "Mudguards",
+        "price": 160
+      },
+      {
+        "name": "Rear Cargo Lamps",
+        "price": 425
+      },
+      {
+        "name": "Toyota Multimedia Screen Protector",
+        "price": 105
+      },
+      {
+        "name": "Weather Package",
+        "price": 375
+      }
+    ],
+    "status": "In Transit",
+    "stock_number": "C001465",
+    "total_packages_price": 2153,
+    "total_price": 41103,
+    "trim": "XLE Premium",
+    "vin": "2T36CRAV1TC001465",
+    "year": "2026"
+  },
+  {
     "adjustments": -200,
     "availability_date": "4/15/2026",
     "base_price": 38950,
@@ -728,6 +810,83 @@
     "total_price": 40338,
     "trim": "XLE Premium",
     "vin": "2T36CRAV2TC08F879",
+    "year": "2026"
+  },
+  {
+    "adjustments": -1298,
+    "availability_date": "03/11/26 - 04/03/26",
+    "base_price": 38950,
+    "dealer_accessories": [
+      {
+        "name": "Door edge & cup guards",
+        "price": 799
+      },
+      {
+        "name": "Pulse",
+        "price": 499
+      }
+    ],
+    "dealer_accessories_price": 1298,
+    "dealer_name": "Toyota of Kirkland",
+    "dealer_url": "https://www.toyotaofkirkland.com/new-inventory/index.htm?year=2026&model=RAV4&sortBy=internetPrice%20asc",
+    "detail_url": "https://www.toyotaofkirkland.com/new/Toyota/2026-Toyota-RAV4-67e2adddac1804977aca573a72f5f746.htm",
+    "drivetrain": "AWD",
+    "exterior_color": "Storm Cloud",
+    "interior_color": "Harvest Beige SofTex",
+    "model_code": "4444",
+    "msrp": 43603,
+    "packages": [
+      {
+        "name": "All-weather liner package",
+        "price": 339
+      },
+      {
+        "name": "Door edge film",
+        "price": 100
+      },
+      {
+        "name": "Door panel scuff protectors",
+        "price": 130
+      },
+      {
+        "name": "Door sill protectors",
+        "price": 199
+      },
+      {
+        "name": "Low profile cross bars",
+        "price": 320
+      },
+      {
+        "name": "Mudguards",
+        "price": 160
+      },
+      {
+        "name": "Panoramic moonroof package",
+        "price": 1850
+      },
+      {
+        "name": "Rear cargo lamps",
+        "price": 425
+      },
+      {
+        "name": "Toyota multimedia screen protector",
+        "price": 105
+      },
+      {
+        "name": "Weather package",
+        "price": 375
+      },
+      {
+        "name": "Xle driver assist package",
+        "price": 650
+      }
+    ],
+    "status": "In Production",
+    "stock_number": null,
+    "total_packages_price": 4653,
+    "total_price": 43603,
+    "trim": "XLE Premium",
+    "vin": "2T36CRAV2TW08D452",
     "year": "2026"
   },
   {
@@ -1690,7 +1849,7 @@
     "msrp": 40508,
     "packages": [
       {
-        "name": "All-Weather Liner Package",
+        "name": "All Weather Floor Liners and Cargo Tray",
         "price": 339
       },
       {
@@ -1710,7 +1869,7 @@
         "price": 160
       },
       {
-        "name": "Weather Package",
+        "name": "Weather Package: - Heated Steering Wheel - Windshield De-Icer - Rain Sensing Windshield Wipers",
         "price": 375
       }
     ],
@@ -1906,7 +2065,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "02/26/26 - 03/15/26",
+    "availability_date": "02/27/26 - 03/15/26",
     "base_price": 38950,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -2335,7 +2494,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "02/27/26-03/16/26",
+    "availability_date": "02/28/26-03/16/26",
     "base_price": 39913,
     "dealer_accessories_price": null,
     "dealer_name": "Marysville Toyota",
@@ -2719,7 +2878,7 @@
     "msrp": 35658,
     "packages": [
       {
-        "name": "All-Weather Liner Package",
+        "name": "All Weather Floor Liners and Cargo Tray",
         "price": 339
       },
       {
@@ -3375,112 +3534,12 @@
         "price": 425
       }
     ],
-    "status": "Sale Pending - In Stock",
+    "status": "In Stock",
     "stock_number": "41623",
     "total_packages_price": 655,
     "total_price": 42005,
     "trim": "Woodland",
     "vin": "JTM6CRAV0TD001744",
-    "year": "2026"
-  },
-  {
-    "adjustments": null,
-    "base_price": 42750,
-    "dealer_accessories": [
-      {
-        "name": "Chiprotect 10yrs coverage",
-        "price": 1895
-      },
-      {
-        "name": "Door edge & cup guards",
-        "price": 799
-      },
-      {
-        "name": "Permaplate appearance protection 5yrs coverage",
-        "price": 1295
-      },
-      {
-        "name": "Permaplate windshield protection 5yrs coverage",
-        "price": 1895
-      },
-      {
-        "name": "Pulse",
-        "price": 499
-      },
-      {
-        "name": "Tint",
-        "price": 899
-      }
-    ],
-    "dealer_accessories_price": 7282,
-    "dealer_name": "Toyota of Kirkland",
-    "dealer_url": "https://www.toyotaofkirkland.com/new-inventory/index.htm?year=2026&model=RAV4&sortBy=internetPrice%20asc",
-    "detail_url": "https://www.toyotaofkirkland.com/new/Toyota/2026-Toyota-RAV4-2eca7e2bac18162db87f19eb7b51c3e9.htm",
-    "drivetrain": "AWD",
-    "exterior_color": "Storm Cloud",
-    "interior_color": "Black",
-    "model_code": "4530",
-    "msrp": 47373,
-    "packages": [
-      {
-        "name": "All-weather liner package",
-        "price": 339
-      },
-      {
-        "name": "Door sill protectors",
-        "price": 199
-      },
-      {
-        "name": "Illuminated front badge",
-        "price": 330
-      },
-      {
-        "name": "Jbl\u00ae premium audio package",
-        "price": 620
-      },
-      {
-        "name": "Low profile cross bars",
-        "price": 320
-      },
-      {
-        "name": "Mudguards",
-        "price": 160
-      },
-      {
-        "name": "Panoramic moonroof package",
-        "price": 700
-      },
-      {
-        "name": "Rear bumper protector",
-        "price": 130
-      },
-      {
-        "name": "Rear cargo lamps",
-        "price": 425
-      },
-      {
-        "name": "Toyota multimedia screen protector",
-        "price": 105
-      },
-      {
-        "name": "Two-tone exterior paint",
-        "price": 500
-      },
-      {
-        "name": "Weather package",
-        "price": 375
-      },
-      {
-        "name": "Xse driver assist package",
-        "price": 420
-      }
-    ],
-    "status": "In Stock",
-    "stock_number": "2644004",
-    "total_packages_price": 4623,
-    "total_price": 54655,
-    "trim": "XSE",
-    "vin": "JTM6CRAV0TD001923",
     "year": "2026"
   },
   {
@@ -3662,19 +3721,19 @@
   },
   {
     "adjustments": null,
-    "availability_date": "02/15/26-02/18/26",
+    "availability_date": null,
     "base_price": 48028,
     "dealer_accessories_price": null,
     "dealer_name": "Marysville Toyota",
     "dealer_url": "https://www.marysvilletoyota.com/new-vehicles/rav4/?_dFR%5Bmake%5D%5B0%5D=Toyota&_dFR%5Bmodel%5D%5B0%5D=RAV4&_dFR%5Bmodel%5D%5B1%5D=RAV4%2520Hybrid&_dFR%5Btype%5D%5B0%5D=New&_dFR%5Byear%5D%5B0%5D=2026",
-    "detail_url": "https://www.marysvilletoyota.com/inventory/new-2026-toyota-rav4-limited-awd-hybrid-awd-jtm6crav0td301767/",
+    "detail_url": "https://www.marysvilletoyota.com/inventory/new-2026-toyota-rav4-limited-awd-4d-sport-utility-jtm6crav0td301767/",
     "drivetrain": "AWD",
-    "exterior_color": "Meteor Shower",
-    "interior_color": "Black SofTex",
+    "exterior_color": null,
+    "interior_color": "Black",
     "model_code": "4534",
     "msrp": 48028,
     "packages": null,
-    "status": "In Transit",
+    "status": "In Stock",
     "stock_number": "T380",
     "total_packages_price": null,
     "total_price": 48028,
@@ -3684,7 +3743,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "02/18/26",
+    "availability_date": null,
     "base_price": 37550,
     "dealer_accessories": [
       {
@@ -3747,7 +3806,7 @@
         "price": 375
       }
     ],
-    "status": "In Transit",
+    "status": "In Stock",
     "stock_number": "D304202",
     "total_packages_price": 3633,
     "total_price": 45174,
@@ -3757,7 +3816,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/08/26",
+    "availability_date": "03/06/26",
     "base_price": 37550,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -3873,7 +3932,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "3/27/2026",
+    "availability_date": "3/23/2026",
     "base_price": 44750,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -3925,7 +3984,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/23/26",
+    "availability_date": "03/24/26",
     "base_price": 37550,
     "dealer_accessories": [
       {
@@ -4043,19 +4102,19 @@
   },
   {
     "adjustments": null,
-    "availability_date": "02/15/26-02/19/26",
+    "availability_date": null,
     "base_price": 40523,
     "dealer_accessories_price": null,
     "dealer_name": "Marysville Toyota",
     "dealer_url": "https://www.marysvilletoyota.com/new-vehicles/rav4/?_dFR%5Bmake%5D%5B0%5D=Toyota&_dFR%5Bmodel%5D%5B0%5D=RAV4&_dFR%5Bmodel%5D%5B1%5D=RAV4%2520Hybrid&_dFR%5Btype%5D%5B0%5D=New&_dFR%5Byear%5D%5B0%5D=2026",
-    "detail_url": "https://www.marysvilletoyota.com/inventory/new-2026-toyota-rav4-se-awd-hybrid-awd-jtm6crav0tj001423/",
+    "detail_url": "https://www.marysvilletoyota.com/inventory/new-2026-toyota-rav4-se-awd-4d-sport-utility-jtm6crav0tj001423/",
     "drivetrain": "AWD",
-    "exterior_color": "Meteor Shower",
-    "interior_color": "Black/Blue Fabric",
+    "exterior_color": null,
+    "interior_color": "Blackblue Fabri",
     "model_code": "4524",
     "msrp": 40523,
     "packages": null,
-    "status": "In Transit",
+    "status": "In Stock",
     "stock_number": "T410",
     "total_packages_price": null,
     "total_price": 40523,
@@ -4105,7 +4164,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "02/20/26 - 03/08/26",
+    "availability_date": "02/20/26 - 03/06/26",
     "base_price": 37550,
     "dealer_accessories": [
       {
@@ -4161,7 +4220,7 @@
       }
     ],
     "status": "In Transit",
-    "stock_number": null,
+    "stock_number": "T45011",
     "total_packages_price": 2574,
     "total_price": 42117,
     "trim": "SE",
@@ -4223,7 +4282,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/08/26",
+    "availability_date": "03/05/26",
     "base_price": 37550,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -4340,7 +4399,7 @@
   },
   {
     "adjustments": -200,
-    "availability_date": "3/24/2026",
+    "availability_date": "3/23/2026",
     "base_price": 37550,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -4565,7 +4624,7 @@
       }
     ],
     "status": "In Transit",
-    "stock_number": null,
+    "stock_number": "D000554",
     "total_packages_price": 4193,
     "total_price": 46943,
     "trim": "XSE",
@@ -4575,62 +4634,38 @@
   {
     "adjustments": null,
     "availability_date": null,
-    "base_price": 42750,
+    "base_price": 44634,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Toyota of Bellevue",
     "dealer_url": "https://www.toyotaofbellevue.com/searchnew.aspx?year=2026&make=toyota&model=rav4&st=Price+asc&pn=12",
     "detail_url": "https://www.toyotaofbellevue.com/new-Bellevue-2026-Toyota-RAV4-XSE-JTM6CRAV1TD001851",
     "drivetrain": "AWD",
-    "exterior_color": "Wind Chill Pearl/Midnight Black Metallic Roof",
-    "interior_color": "Black/Blue Softex Mixed Media",
+    "exterior_color": "Wind Chill Pearl W/Black Roof",
+    "interior_color": "Black",
     "model_code": "4530",
     "msrp": 46749,
     "packages": [
       {
-        "name": "All-Weather Liner Package",
-        "price": 339
+        "name": "DRIVER ASSIST",
+        "price": 420
       },
       {
-        "name": "Alloy Wheel Locks: Black Chrome",
-        "price": 90
-      },
-      {
-        "name": "JBL\u00ae Premium Audio Package",
+        "name": "JBL PREMIUM AUDIO W/9 SPEAKERS",
         "price": 620
       },
       {
-        "name": "Low Profile Cross Bars",
-        "price": 320
-      },
-      {
-        "name": "Mudguards",
-        "price": 160
-      },
-      {
-        "name": "Panoramic Moonroof Package",
+        "name": "PANORAMIC SUN ROOF PACKAGE",
         "price": 700
       },
       {
-        "name": "Premium Paint",
-        "price": 475
-      },
-      {
-        "name": "Two-Tone Exterior Paint",
-        "price": 500
-      },
-      {
-        "name": "Weather Package",
+        "name": "WEATHER PACKAGE",
         "price": 375
-      },
-      {
-        "name": "XSE Driver Assist Package",
-        "price": 420
       }
     ],
     "status": "In Stock",
     "stock_number": "TD001851",
-    "total_packages_price": 3999,
+    "total_packages_price": 2115,
     "total_price": 46749,
     "trim": "XSE",
     "vin": "JTM6CRAV1TD001851",
@@ -4638,83 +4673,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": null,
-    "base_price": 42750,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
-    "dealer_name": "Doxon Toyota",
-    "dealer_url": "https://www.doxontoyota.com/search/new-2026-toyota-rav4-auburn-wa/?s:pr=1&ct=12&cy=98002&md=309&mk=63&tp=new&yr=2026&p=3",
-    "detail_url": "https://www.doxontoyota.com/auto/new-2026-toyota-rav4-auburn-wa/115462142/",
-    "drivetrain": "AWD",
-    "exterior_color": "Storm Cloud/Midnight Black Metallic Roof",
-    "interior_color": "Black/Blue Softex Mixed Media",
-    "model_code": "9900",
-    "msrp": 47143,
-    "packages": [
-      {
-        "name": "All-Weather Liner Package",
-        "price": 339
-      },
-      {
-        "name": "Door Edge Film",
-        "price": 100
-      },
-      {
-        "name": "Door Panel Scuff Protectors",
-        "price": 130
-      },
-      {
-        "name": "Door Sill Protectors",
-        "price": 199
-      },
-      {
-        "name": "JBL\u00ae Premium Audio Package",
-        "price": 620
-      },
-      {
-        "name": "Low Profile Cross Bars",
-        "price": 320
-      },
-      {
-        "name": "Mudguards",
-        "price": 160
-      },
-      {
-        "name": "Panoramic Moonroof Package",
-        "price": 700
-      },
-      {
-        "name": "Rear Cargo Lamps",
-        "price": 425
-      },
-      {
-        "name": "Toyota Multimedia Screen Protector",
-        "price": 105
-      },
-      {
-        "name": "Two-Tone Exterior Paint",
-        "price": 500
-      },
-      {
-        "name": "Weather Package",
-        "price": 375
-      },
-      {
-        "name": "XSE Driver Assist Package",
-        "price": 420
-      }
-    ],
-    "status": "Sale Pending - In Stock",
-    "stock_number": "41718",
-    "total_packages_price": 4393,
-    "total_price": 47143,
-    "trim": "XSE",
-    "vin": "JTM6CRAV1TD002238",
-    "year": "2026"
-  },
-  {
-    "adjustments": null,
-    "availability_date": "02/20/26 - 03/07/26",
+    "availability_date": "02/19/26 - 03/05/26",
     "base_price": 42750,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -4785,7 +4744,7 @@
       }
     ],
     "status": "In Transit",
-    "stock_number": null,
+    "stock_number": "264781",
     "total_packages_price": 5098,
     "total_price": 47848,
     "trim": "XSE",
@@ -4794,92 +4753,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/14/26 - 04/01/26",
-    "base_price": 42750,
-    "dealer_accessories": [
-      {
-        "name": "Door edge and cup guards",
-        "price": 399
-      },
-      {
-        "name": "Perma plate appearance protection 5yrs coverage",
-        "price": 1295
-      },
-      {
-        "name": "Pulse",
-        "price": 299
-      }
-    ],
-    "dealer_accessories_price": 1993,
-    "dealer_name": "Toyota of Renton",
-    "dealer_url": "https://www.toyotaofrenton.com/all-inventory/index.htm?compositeType=new&make=Toyota&model=RAV4&year=2026&sortBy=internetPrice%20asc",
-    "detail_url": "https://www.toyotaofrenton.com/new/Toyota/2026-Toyota-RAV4-61085548ac1850322cdacea0518d036f.htm",
-    "drivetrain": "AWD",
-    "exterior_color": "Wind Chill Pearl",
-    "interior_color": "Black",
-    "model_code": "4530",
-    "msrp": 47413,
-    "packages": [
-      {
-        "name": "All-weather liner package",
-        "price": 339
-      },
-      {
-        "name": "Door sill protectors",
-        "price": 199
-      },
-      {
-        "name": "Jbl\u00ae premium audio package",
-        "price": 620
-      },
-      {
-        "name": "Low profile cross bars",
-        "price": 320
-      },
-      {
-        "name": "Mudguards",
-        "price": 160
-      },
-      {
-        "name": "Panoramic moonroof package",
-        "price": 700
-      },
-      {
-        "name": "Premium paint",
-        "price": 475
-      },
-      {
-        "name": "Rear bumper protector",
-        "price": 130
-      },
-      {
-        "name": "Rear cargo lamps",
-        "price": 425
-      },
-      {
-        "name": "Two-tone exterior paint",
-        "price": 500
-      },
-      {
-        "name": "Weather package",
-        "price": 375
-      },
-      {
-        "name": "Xse driver assist package",
-        "price": 420
-      }
-    ],
-    "status": "In Production",
-    "stock_number": null,
-    "total_packages_price": 4663,
-    "total_price": 49406,
-    "trim": "XSE",
-    "vin": "JTM6CRAV1TD006046",
-    "year": "2026"
-  },
-  {
-    "adjustments": null,
-    "availability_date": null,
+    "availability_date": "02/21/26",
     "base_price": 37550,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -4947,7 +4821,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/01/26",
+    "availability_date": "02/21/26",
     "base_price": 37550,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -5003,7 +4877,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/09/26-03/27/26",
+    "availability_date": "03/07/26-03/24/26",
     "base_price": 40429,
     "dealer_accessories_price": null,
     "dealer_name": "Marysville Toyota",
@@ -5158,7 +5032,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "02/17/26 - 03/02/26",
+    "availability_date": "02/17/26 - 02/21/26",
     "base_price": 37550,
     "dealer_accessories": [
       {
@@ -5482,7 +5356,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": null,
+    "availability_date": "02/19/26",
     "base_price": 41350,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -5510,6 +5384,75 @@
     "total_price": 42305,
     "trim": "Woodland",
     "vin": "JTM6CRAV2TD002622",
+    "year": "2026"
+  },
+  {
+    "adjustments": -1298,
+    "availability_date": "null",
+    "base_price": 42750,
+    "dealer_accessories": [
+      {
+        "name": "Door edge & cup guards",
+        "price": 799
+      },
+      {
+        "name": "Pulse",
+        "price": 499
+      }
+    ],
+    "dealer_accessories_price": 1298,
+    "dealer_name": "Toyota of Kirkland",
+    "dealer_url": "https://www.toyotaofkirkland.com/new-inventory/index.htm?year=2026&model=RAV4&sortBy=internetPrice%20asc",
+    "detail_url": "https://www.toyotaofkirkland.com/new/Toyota/2026-Toyota-RAV4-68d1b4fbac1824b5c543d2477ca22ca2.htm",
+    "drivetrain": "AWD",
+    "exterior_color": "Wind Chill Pearl",
+    "interior_color": "Black",
+    "model_code": "4530",
+    "msrp": 46538,
+    "packages": [
+      {
+        "name": "All-weather liner package",
+        "price": 339
+      },
+      {
+        "name": "Door sill protectors",
+        "price": 199
+      },
+      {
+        "name": "Jbl\u00ae premium audio package",
+        "price": 620
+      },
+      {
+        "name": "Mudguards",
+        "price": 160
+      },
+      {
+        "name": "Panoramic moonroof package",
+        "price": 700
+      },
+      {
+        "name": "Premium paint",
+        "price": 475
+      },
+      {
+        "name": "Two-tone exterior paint",
+        "price": 500
+      },
+      {
+        "name": "Weather package",
+        "price": 375
+      },
+      {
+        "name": "Xse driver assist package",
+        "price": 420
+      }
+    ],
+    "status": "In Production",
+    "stock_number": null,
+    "total_packages_price": 3788,
+    "total_price": 46538,
+    "trim": "XSE",
+    "vin": "JTM6CRAV2TD004550",
     "year": "2026"
   },
   {
@@ -5652,7 +5595,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/09/26",
+    "availability_date": "03/07/26",
     "base_price": 37550,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -5764,7 +5707,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/25/26",
+    "availability_date": "03/24/26",
     "base_price": 37550,
     "dealer_accessories": [
       {
@@ -5877,7 +5820,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/07/26",
+    "availability_date": "03/04/26",
     "base_price": 37550,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -5940,7 +5883,7 @@
       }
     ],
     "status": "In Transit",
-    "stock_number": null,
+    "stock_number": "J001682",
     "total_packages_price": 3723,
     "total_price": 41273,
     "trim": "SE",
@@ -6037,11 +5980,80 @@
       }
     ],
     "status": "In Transit",
-    "stock_number": null,
+    "stock_number": "T45012",
     "total_packages_price": 5188,
     "total_price": 49931,
     "trim": "XSE",
     "vin": "JTM6CRAV2TJ002279",
+    "year": "2026"
+  },
+  {
+    "adjustments": -1298,
+    "availability_date": "03/07/26 - 03/25/26",
+    "base_price": 42750,
+    "dealer_accessories": [
+      {
+        "name": "Door edge & cup guards",
+        "price": 799
+      },
+      {
+        "name": "Pulse",
+        "price": 499
+      }
+    ],
+    "dealer_accessories_price": 1298,
+    "dealer_name": "Toyota of Kirkland",
+    "dealer_url": "https://www.toyotaofkirkland.com/new-inventory/index.htm?year=2026&model=RAV4&sortBy=internetPrice%20asc",
+    "detail_url": "https://www.toyotaofkirkland.com/new/Toyota/2026-Toyota-RAV4-68d2d2f6ac18160793fbd89076e90519.htm",
+    "drivetrain": "AWD",
+    "exterior_color": "Storm Cloud",
+    "interior_color": "Black",
+    "model_code": "4530",
+    "msrp": 46524,
+    "packages": [
+      {
+        "name": "All-weather liner package",
+        "price": 339
+      },
+      {
+        "name": "Body side moldings",
+        "price": 260
+      },
+      {
+        "name": "Door edge guards",
+        "price": 165
+      },
+      {
+        "name": "Illuminated door sills",
+        "price": 395
+      },
+      {
+        "name": "Jbl\u00ae premium audio package",
+        "price": 620
+      },
+      {
+        "name": "Panoramic moonroof package",
+        "price": 700
+      },
+      {
+        "name": "Two-tone exterior paint",
+        "price": 500
+      },
+      {
+        "name": "Weather package",
+        "price": 375
+      },
+      {
+        "name": "Xse driver assist package",
+        "price": 420
+      }
+    ],
+    "status": "In Production",
+    "stock_number": null,
+    "total_packages_price": 3774,
+    "total_price": 46524,
+    "trim": "XSE",
+    "vin": "JTM6CRAV2TJ002749",
     "year": "2026"
   },
   {
@@ -6078,59 +6090,6 @@
     "total_price": 46679,
     "trim": "Limited",
     "vin": "JTM6CRAV2TJ002766",
-    "year": "2026"
-  },
-  {
-    "adjustments": -1298,
-    "availability_date": "03/14/26 - 03/31/26",
-    "base_price": 37550,
-    "dealer_accessories": [
-      {
-        "name": "Door edge & cup guards",
-        "price": 799
-      },
-      {
-        "name": "Pulse",
-        "price": 499
-      }
-    ],
-    "dealer_accessories_price": 1298,
-    "dealer_name": "Toyota of Kirkland",
-    "dealer_url": "https://www.toyotaofkirkland.com/new-inventory/index.htm?year=2026&model=RAV4&sortBy=internetPrice%20asc",
-    "detail_url": "https://www.toyotaofkirkland.com/new/Toyota/2026-Toyota-RAV4-50ed594bac180497dff57124955de1f3.htm",
-    "drivetrain": "AWD",
-    "exterior_color": "Midnight Black Metallic",
-    "interior_color": "Black",
-    "model_code": "4524",
-    "msrp": 39604,
-    "packages": [
-      {
-        "name": "All-weather liner package",
-        "price": 339
-      },
-      {
-        "name": "Alloy wheel locks: black chrome",
-        "price": 90
-      },
-      {
-        "name": "Convenience package",
-        "price": 400
-      },
-      {
-        "name": "Moonroof package",
-        "price": 850
-      },
-      {
-        "name": "Weather package",
-        "price": 375
-      }
-    ],
-    "status": "In Production",
-    "stock_number": null,
-    "total_packages_price": 2054,
-    "total_price": 39604,
-    "trim": "SE",
-    "vin": "JTM6CRAV2TJ003609",
     "year": "2026"
   },
   {
@@ -6298,7 +6257,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/01/26",
+    "availability_date": "02/21/26",
     "base_price": 37550,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -6346,7 +6305,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "3/26/2026",
+    "availability_date": "3/23/2026",
     "base_price": 42750,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -6355,7 +6314,7 @@
     "detail_url": "https://www.toyotaofpuyallup.com/viewdetails/new/jtm6crav3td004220/2026-toyota-rav4-sport-utility?type=cash",
     "drivetrain": "AWD",
     "exterior_color": "Storm Cloud/Midnight Black Metallic roof",
-    "interior_color": "Black/Blue SofTex",
+    "interior_color": "Black/Blue SofTex Mixed Media",
     "model_code": "4530",
     "msrp": 46214,
     "packages": [
@@ -6644,7 +6603,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/12/26",
+    "availability_date": "03/10/26",
     "base_price": 37550,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -6709,7 +6668,7 @@
     "detail_url": "https://www.toyotaofpuyallup.com/viewdetails/new/jtm6crav3tj003859/2026-toyota-rav4-sport-utility?type=cash",
     "drivetrain": "AWD",
     "exterior_color": "Storm Cloud/Midnight Black Metallic roof",
-    "interior_color": "Black/Blue SofTex",
+    "interior_color": "Black/Blue SofTex Mixed Media",
     "model_code": "4530",
     "msrp": 45704,
     "packages": [
@@ -6893,7 +6852,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "02/23/26 - 03/11/26",
+    "availability_date": "02/23/26 - 03/09/26",
     "base_price": 44750,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -6961,7 +6920,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/07/26-03/26/26",
+    "availability_date": "03/07/26-03/24/26",
     "base_price": 46939,
     "dealer_accessories_price": null,
     "dealer_name": "Marysville Toyota",
@@ -7103,8 +7062,45 @@
     "year": 2026
   },
   {
+    "adjustments": -1298,
+    "availability_date": "03/14/26 - 03/31/26",
+    "base_price": 41350,
+    "dealer_accessories": [
+      {
+        "name": "Door edge & cup guards",
+        "price": 799
+      },
+      {
+        "name": "Pulse",
+        "price": 499
+      }
+    ],
+    "dealer_accessories_price": 1298,
+    "dealer_name": "Toyota of Kirkland",
+    "dealer_url": "https://www.toyotaofkirkland.com/new-inventory/index.htm?year=2026&model=RAV4&sortBy=internetPrice%20asc",
+    "detail_url": "https://www.toyotaofkirkland.com/new/Toyota/2026-Toyota-RAV4-5e76e9bdac181d2aba6c7baff1bb26dc.htm",
+    "drivetrain": "AWD",
+    "exterior_color": "Midnight Black Metallic",
+    "interior_color": "Black SofTex",
+    "model_code": "4437",
+    "msrp": 42200,
+    "packages": [
+      {
+        "name": "Moonroof package",
+        "price": 850
+      }
+    ],
+    "status": "In Production",
+    "stock_number": "2644013",
+    "total_packages_price": 850,
+    "total_price": 42200,
+    "trim": "Woodland",
+    "vin": "JTM6CRAV4TD005442",
+    "year": "2026"
+  },
+  {
     "adjustments": null,
-    "availability_date": "03/01/26",
+    "availability_date": "02/21/26",
     "base_price": 37550,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -7227,7 +7223,7 @@
       }
     ],
     "status": "In Transit",
-    "stock_number": null,
+    "stock_number": "D304302",
     "total_packages_price": 4182,
     "total_price": 48932,
     "trim": "Limited",
@@ -7308,7 +7304,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/12/26",
+    "availability_date": "03/10/26",
     "base_price": 37550,
     "dealer_accessories": [
       {
@@ -7367,7 +7363,7 @@
         "price": 375
       }
     ],
-    "status": "In Production",
+    "status": "In Transit",
     "stock_number": "T251208",
     "total_packages_price": 2938,
     "total_price": 40887,
@@ -7421,7 +7417,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/07/26-03/25/26",
+    "availability_date": "03/07/26-03/24/26",
     "base_price": 39994,
     "dealer_accessories_price": null,
     "dealer_name": "Marysville Toyota",
@@ -7443,76 +7439,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "02/16/26 - 02/18/26",
-    "base_price": 42750,
-    "dealer_accessories": [
-      {
-        "name": "Door edge and cup guards",
-        "price": 399
-      },
-      {
-        "name": "Perma plate appearance protection 5yrs coverage",
-        "price": 1295
-      },
-      {
-        "name": "Pulse",
-        "price": 299
-      }
-    ],
-    "dealer_accessories_price": 1993,
-    "dealer_name": "Toyota of Renton",
-    "dealer_url": "https://www.toyotaofrenton.com/all-inventory/index.htm?compositeType=new&make=Toyota&model=RAV4&year=2026&sortBy=internetPrice%20asc",
-    "detail_url": "https://www.toyotaofrenton.com/new/Toyota/2026-Toyota-RAV4-e8224d43ac185b54f99274c28d0baf6a.htm",
-    "drivetrain": "AWD",
-    "exterior_color": "Storm Cloud",
-    "interior_color": "Black",
-    "model_code": "4530",
-    "msrp": 46184,
-    "packages": [
-      {
-        "name": "All-weather liner package",
-        "price": 339
-      },
-      {
-        "name": "Jbl\u00ae premium audio package",
-        "price": 620
-      },
-      {
-        "name": "Low profile cross bars",
-        "price": 320
-      },
-      {
-        "name": "Mudguards",
-        "price": 160
-      },
-      {
-        "name": "Panoramic moonroof package",
-        "price": 700
-      },
-      {
-        "name": "Two-tone exterior paint",
-        "price": 500
-      },
-      {
-        "name": "Weather package",
-        "price": 375
-      },
-      {
-        "name": "Xse driver assist package",
-        "price": 420
-      }
-    ],
-    "status": "In Transit",
-    "stock_number": "T45010",
-    "total_packages_price": 3434,
-    "total_price": 48177,
-    "trim": "XSE",
-    "vin": "JTM6CRAV4TJ001716",
-    "year": "2026"
-  },
-  {
-    "adjustments": null,
-    "availability_date": "02/23/26 - 03/11/26",
+    "availability_date": "02/23/26 - 03/09/26",
     "base_price": 42750,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -7649,7 +7576,7 @@
     "detail_url": "https://www.toyotaofpuyallup.com/viewdetails/new/jtm6crav4tj003238/2026-toyota-rav4-sport-utility?type=cash",
     "drivetrain": "AWD",
     "exterior_color": "Storm Cloud/Midnight Black Metallic roof",
-    "interior_color": "Black/Blue SofTex",
+    "interior_color": "Black/Blue SofTex Mixed Media",
     "model_code": "4530",
     "msrp": 46184,
     "packages": [
@@ -7903,7 +7830,7 @@
       }
     ],
     "status": "In Transit",
-    "stock_number": null,
+    "stock_number": "D000590",
     "total_packages_price": 1184,
     "total_price": 42534,
     "trim": "Woodland",
@@ -8028,7 +7955,7 @@
       }
     ],
     "status": "In Transit",
-    "stock_number": null,
+    "stock_number": "D002372",
     "total_packages_price": 3403,
     "total_price": 40953,
     "trim": "SE",
@@ -8037,7 +7964,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "02/15/26-02/19/26",
+    "availability_date": "02/16/26-02/19/26",
     "base_price": 46194,
     "dealer_accessories_price": null,
     "dealer_name": "Marysville Toyota",
@@ -8130,7 +8057,7 @@
       }
     ],
     "status": "In Transit",
-    "stock_number": null,
+    "stock_number": "D002663",
     "total_packages_price": 4868,
     "total_price": 47618,
     "trim": "XSE",
@@ -8139,7 +8066,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/10/26",
+    "availability_date": "03/07/26",
     "base_price": 42750,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -8287,7 +8214,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "02/17/26 - 03/02/26",
+    "availability_date": "02/16/26 - 02/20/26",
     "base_price": 42750,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -8524,7 +8451,7 @@
   },
   {
     "adjustments": -1298,
-    "availability_date": "02/24/26 - 03/12/26",
+    "availability_date": "02/24/26 - 03/10/26",
     "base_price": 37550,
     "dealer_accessories": [
       {
@@ -8605,7 +8532,7 @@
   },
   {
     "adjustments": -1298,
-    "availability_date": "02/24/26 - 03/12/26",
+    "availability_date": "02/24/26 - 03/10/26",
     "base_price": 42750,
     "dealer_accessories": [
       {
@@ -8690,7 +8617,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/12/26",
+    "availability_date": "03/10/26",
     "base_price": 42750,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -8901,7 +8828,7 @@
         "price": 425
       }
     ],
-    "status": "In Transit",
+    "status": "Sale Pending - In Transit",
     "stock_number": "50427",
     "total_packages_price": 1852,
     "total_price": 46602,
@@ -8911,7 +8838,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/12/26",
+    "availability_date": "03/10/26",
     "base_price": 37550,
     "dealer_accessories": [
       {
@@ -9470,63 +9397,7 @@
   },
   {
     "adjustments": null,
-    "base_price": 42750,
-    "dealer_accessories": [
-      {
-        "name": "Door edge and cup guards",
-        "price": 399
-      },
-      {
-        "name": "Perma plate appearance protection 5yrs coverage",
-        "price": 1295
-      },
-      {
-        "name": "Pulse",
-        "price": 299
-      }
-    ],
-    "dealer_accessories_price": 1993,
-    "dealer_name": "Toyota of Renton",
-    "dealer_url": "https://www.toyotaofrenton.com/all-inventory/index.htm?compositeType=new&make=Toyota&model=RAV4&year=2026&sortBy=internetPrice%20asc",
-    "detail_url": "https://www.toyotaofrenton.com/new/Toyota/2026-Toyota-RAV4-ad83a837ac181b75aed5365052d2df7c.htm",
-    "drivetrain": "AWD",
-    "exterior_color": "Midnight Black Metallic",
-    "interior_color": "Black",
-    "model_code": "4530",
-    "msrp": 44564,
-    "packages": [
-      {
-        "name": "All-weather liner package",
-        "price": 339
-      },
-      {
-        "name": "Jbl\u00ae premium audio package",
-        "price": 620
-      },
-      {
-        "name": "Low profile cross bars",
-        "price": 320
-      },
-      {
-        "name": "Mudguards",
-        "price": 160
-      },
-      {
-        "name": "Weather package",
-        "price": 375
-      }
-    ],
-    "status": "In Stock",
-    "stock_number": "T45006",
-    "total_packages_price": 1814,
-    "total_price": 46557,
-    "trim": "XSE",
-    "vin": "JTM6CRAV6TD302972",
-    "year": "2026"
-  },
-  {
-    "adjustments": null,
-    "availability_date": "03/12/26",
+    "availability_date": "03/10/26",
     "base_price": 37550,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -9590,7 +9461,7 @@
   },
   {
     "adjustments": -200,
-    "availability_date": "3/26/2026",
+    "availability_date": "3/23/2026",
     "base_price": 37550,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -9759,7 +9630,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/12/26",
+    "availability_date": "03/10/26",
     "base_price": 42750,
     "dealer_accessories": [
       {
@@ -9830,7 +9701,7 @@
         "price": 420
       }
     ],
-    "status": "In Production",
+    "status": "In Transit",
     "stock_number": "T251220",
     "total_packages_price": 4554,
     "total_price": 47703,
@@ -9840,7 +9711,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/26/26",
+    "availability_date": "03/24/26",
     "base_price": 42750,
     "dealer_accessories": [
       {
@@ -10021,7 +9892,7 @@
       }
     ],
     "status": "In Production",
-    "stock_number": null,
+    "stock_number": "2644012",
     "total_packages_price": 3519,
     "total_price": 46269,
     "trim": "XSE",
@@ -10264,7 +10135,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "3/8/2026",
+    "availability_date": "3/6/2026",
     "base_price": 41350,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -10292,7 +10163,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/10/26",
+    "availability_date": "03/07/26",
     "base_price": 42750,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -10348,7 +10219,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/08/26 - 03/25/26",
+    "availability_date": "03/06/26 - 03/23/26",
     "base_price": 42750,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -10432,7 +10303,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": null,
+    "availability_date": "03/10/26",
     "base_price": 44750,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -10573,7 +10444,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/13/26",
+    "availability_date": "03/10/26",
     "base_price": 37550,
     "dealer_accessories": [
       {
@@ -10985,7 +10856,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": null,
+    "availability_date": "02/19/26",
     "base_price": 41350,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -11172,7 +11043,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "02/23/26 - 03/11/26",
+    "availability_date": "02/23/26 - 03/09/26",
     "base_price": 42750,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -11238,7 +11109,7 @@
         "price": 420
       }
     ],
-    "status": "In Production",
+    "status": "In Transit",
     "stock_number": null,
     "total_packages_price": 4623,
     "total_price": 47373,
@@ -11404,7 +11275,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": null,
+    "availability_date": "02/24/26-03/12/26",
     "base_price": 44989,
     "dealer_accessories_price": null,
     "dealer_name": "Marysville Toyota",
@@ -11426,7 +11297,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "02/14/26 - 02/15/26",
+    "availability_date": "02/15/26 - 02/17/26",
     "base_price": 42750,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -11483,70 +11354,6 @@
     "trim": "XSE",
     "vin": "JTM6CRAV8TD302259",
     "year": 2026
-  },
-  {
-    "adjustments": null,
-    "availability_date": null,
-    "base_price": 42750,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
-    "dealer_name": "Doxon Toyota",
-    "dealer_url": "https://www.doxontoyota.com/search/new-2026-toyota-rav4-auburn-wa/?s:pr=1&ct=12&cy=98002&md=309&mk=63&tp=new&yr=2026&p=3",
-    "detail_url": "https://www.doxontoyota.com/auto/new-2026-toyota-rav4-auburn-wa/115073690/",
-    "drivetrain": "AWD",
-    "exterior_color": "Midnight Black Metallic",
-    "interior_color": "Black/Blue Softex Mixed Media",
-    "model_code": "9900",
-    "msrp": 45374,
-    "packages": [
-      {
-        "name": "All-Weather Liner Package",
-        "price": 339
-      },
-      {
-        "name": "Alloy Wheel Locks: Black Chrome",
-        "price": 90
-      },
-      {
-        "name": "Door Edge Guards",
-        "price": 165
-      },
-      {
-        "name": "JBL\u00ae Premium Audio Package",
-        "price": 620
-      },
-      {
-        "name": "Key Glove",
-        "price": 25
-      },
-      {
-        "name": "Low Profile Cross Bars",
-        "price": 320
-      },
-      {
-        "name": "Mudguards",
-        "price": 160
-      },
-      {
-        "name": "Rear Cargo Lamps",
-        "price": 425
-      },
-      {
-        "name": "Toyota Multimedia Screen Protector",
-        "price": 105
-      },
-      {
-        "name": "Weather Package",
-        "price": 375
-      }
-    ],
-    "status": "In Stock",
-    "stock_number": "41663",
-    "total_packages_price": 2624,
-    "total_price": 45374,
-    "trim": "XSE",
-    "vin": "JTM6CRAV8TD302567",
-    "year": "2026"
   },
   {
     "adjustments": null,
@@ -11659,7 +11466,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/08/26 - 03/25/26",
+    "availability_date": "03/06/26 - 03/23/26",
     "base_price": 37550,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -11835,7 +11642,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "3/7/2026",
+    "availability_date": "3/6/2026",
     "base_price": 42750,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -11844,7 +11651,7 @@
     "detail_url": "https://www.toyotaofpuyallup.com/viewdetails/new/jtm6crav8tj001878/2026-toyota-rav4-sport-utility?type=cash",
     "drivetrain": "AWD",
     "exterior_color": "Wind Chill Pearl/Midnight Black Metallic roof",
-    "interior_color": "Black/Blue SofTex",
+    "interior_color": "Black/Blue SofTex Mixed Media",
     "model_code": "4530",
     "msrp": 46179,
     "packages": [
@@ -11887,7 +11694,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/08/26 - 03/25/26",
+    "availability_date": "03/06/26 - 03/23/26",
     "base_price": 37550,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -12020,7 +11827,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/07/26-03/26/26",
+    "availability_date": "03/07/26-03/24/26",
     "base_price": 46669,
     "dealer_accessories_price": null,
     "dealer_name": "Marysville Toyota",
@@ -12190,7 +11997,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/09/26-03/28/26",
+    "availability_date": "03/07/26-03/24/26",
     "base_price": 46884,
     "dealer_accessories_price": null,
     "dealer_name": "Marysville Toyota",
@@ -12332,79 +12139,6 @@
   },
   {
     "adjustments": null,
-    "availability_date": "02/16/26 - 02/18/26",
-    "base_price": 44750,
-    "dealer_accessories": [
-      {
-        "name": "Door edge and cup guards",
-        "price": 399
-      },
-      {
-        "name": "Perma plate appearance protection 5yrs coverage",
-        "price": 1295
-      },
-      {
-        "name": "Pulse",
-        "price": 299
-      }
-    ],
-    "dealer_accessories_price": 1993,
-    "dealer_name": "Toyota of Renton",
-    "dealer_url": "https://www.toyotaofrenton.com/all-inventory/index.htm?compositeType=new&make=Toyota&model=RAV4&year=2026&sortBy=internetPrice%20asc",
-    "detail_url": "https://www.toyotaofrenton.com/new/Toyota/2026-Toyota-RAV4-85459349ac1800c3f23ff000725ac06e.htm",
-    "drivetrain": "AWD",
-    "exterior_color": "Storm Cloud",
-    "interior_color": "Black SofTex",
-    "model_code": "4534",
-    "msrp": 48118,
-    "packages": [
-      {
-        "name": "10-in. Color head-up display (hud)",
-        "price": 600
-      },
-      {
-        "name": "20-in. Wheel package",
-        "price": 1240
-      },
-      {
-        "name": "All-weather liner package",
-        "price": 339
-      },
-      {
-        "name": "Alloy wheel locks: chrome",
-        "price": 90
-      },
-      {
-        "name": "Blackout emblem overlays",
-        "price": 89
-      },
-      {
-        "name": "Low profile cross bars",
-        "price": 320
-      },
-      {
-        "name": "Mudguards",
-        "price": 160
-      },
-      {
-        "name": "Rear cargo lamps",
-        "price": 425
-      },
-      {
-        "name": "Toyota multimedia screen protector",
-        "price": 105
-      }
-    ],
-    "status": "In Transit",
-    "stock_number": "T45002",
-    "total_packages_price": 3368,
-    "total_price": 50111,
-    "trim": "Limited",
-    "vin": "JTM6CRAV9TD301184",
-    "year": "2026"
-  },
-  {
-    "adjustments": null,
     "availability_date": "03/03/26",
     "base_price": 42750,
     "dealer_accessories": [
@@ -12470,7 +12204,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "02/17/26",
+    "availability_date": null,
     "base_price": 42750,
     "dealer_accessories": [
       {
@@ -12521,7 +12255,7 @@
         "price": 375
       }
     ],
-    "status": "In Transit",
+    "status": "In Stock",
     "stock_number": "D301833",
     "total_packages_price": 2509,
     "total_price": 49250,
@@ -12631,62 +12365,6 @@
     "total_price": 45374,
     "trim": "XSE",
     "vin": "JTM6CRAV9TD302772",
-    "year": "2026"
-  },
-  {
-    "adjustments": null,
-    "availability_date": null,
-    "base_price": 44750,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
-    "dealer_name": "Burien Toyota",
-    "dealer_url": "https://www.burientoyota.com/new-vehicles/?model=RAV4&yr=2026",
-    "detail_url": "https://www.burientoyota.com/vehicle/New/2026/Toyota/RAV4/JTM6CRAV9TD302805/",
-    "drivetrain": "AWD",
-    "exterior_color": "Midnight Black Metallic",
-    "interior_color": "Black SofTex",
-    "model_code": "4534",
-    "msrp": 47398,
-    "packages": [
-      {
-        "name": "10-In. Color Head-Up Display (HUD)",
-        "price": 600
-      },
-      {
-        "name": "20-In. Wheel Package",
-        "price": 1240
-      },
-      {
-        "name": "All-Weather Liner Package",
-        "price": 339
-      },
-      {
-        "name": "Alloy Wheel Locks: Chrome",
-        "price": 90
-      },
-      {
-        "name": "Blackout Emblem Overlays",
-        "price": 89
-      },
-      {
-        "name": "Key Glove",
-        "price": 25
-      },
-      {
-        "name": "Mudguards",
-        "price": 160
-      },
-      {
-        "name": "Toyota Multimedia Screen Protector",
-        "price": 105
-      }
-    ],
-    "status": "Sale Pending - In Stock",
-    "stock_number": "50422",
-    "total_packages_price": 2648,
-    "total_price": 47398,
-    "trim": "Limited",
-    "vin": "JTM6CRAV9TD302805",
     "year": "2026"
   },
   {
@@ -12803,7 +12481,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/06/26 - 03/24/26",
+    "availability_date": "03/06/26 - 03/23/26",
     "base_price": 44750,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -12945,7 +12623,7 @@
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Doxon Toyota",
-    "dealer_url": "https://www.doxontoyota.com/search/new-2026-toyota-rav4-auburn-wa/?s:pr=1&ct=12&cy=98002&md=309&mk=63&tp=new&yr=2026&p=4",
+    "dealer_url": "https://www.doxontoyota.com/search/new-2026-toyota-rav4-auburn-wa/?s:pr=1&ct=12&cy=98002&md=309&mk=63&tp=new&yr=2026&p=3",
     "detail_url": "https://www.doxontoyota.com/auto/new-2026-toyota-rav4-auburn-wa/116480339/",
     "drivetrain": "AWD",
     "exterior_color": "Blueprint",
@@ -13310,7 +12988,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/12/26",
+    "availability_date": "03/10/26",
     "base_price": 42750,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -13366,7 +13044,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "04/05/26",
+    "availability_date": "03/24/26",
     "base_price": 42750,
     "dealer_accessories": [
       {
@@ -13486,7 +13164,7 @@
         "price": 375
       }
     ],
-    "status": "In Transit",
+    "status": "Sale Pending - In Transit",
     "stock_number": "T251163",
     "total_packages_price": 2459,
     "total_price": 45608,
@@ -13496,7 +13174,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/02/26",
+    "availability_date": "02/18/26",
     "base_price": 44750,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -13547,75 +13225,11 @@
       }
     ],
     "status": "In Transit",
-    "stock_number": null,
+    "stock_number": "D301324",
     "total_packages_price": 3443,
     "total_price": 48193,
     "trim": "Limited",
     "vin": "JTM6CRAVXTD301324",
-    "year": "2026"
-  },
-  {
-    "adjustments": -1298,
-    "base_price": 42750,
-    "dealer_accessories": [
-      {
-        "name": "Door edge & cup guards",
-        "price": 799
-      },
-      {
-        "name": "Pulse",
-        "price": 499
-      }
-    ],
-    "dealer_accessories_price": 1298,
-    "dealer_name": "Toyota of Kirkland",
-    "dealer_url": "https://www.toyotaofkirkland.com/new-inventory/index.htm?year=2026&model=RAV4&sortBy=internetPrice%20asc",
-    "detail_url": "https://www.toyotaofkirkland.com/new/Toyota/2026-Toyota-RAV4-47490bc9ac184b11b2d29e4f79e1b11c.htm",
-    "drivetrain": "AWD",
-    "exterior_color": "Midnight Black Metallic",
-    "interior_color": "Black",
-    "model_code": "4530",
-    "msrp": 45194,
-    "packages": [
-      {
-        "name": "All-weather liner package",
-        "price": 339
-      },
-      {
-        "name": "Door edge film",
-        "price": 100
-      },
-      {
-        "name": "Jbl\u00ae premium audio package",
-        "price": 620
-      },
-      {
-        "name": "Low profile cross bars",
-        "price": 320
-      },
-      {
-        "name": "Mudguards",
-        "price": 160
-      },
-      {
-        "name": "Rear cargo lamps",
-        "price": 425
-      },
-      {
-        "name": "Toyota multimedia screen protector",
-        "price": 105
-      },
-      {
-        "name": "Weather package",
-        "price": 375
-      }
-    ],
-    "status": "In Stock",
-    "stock_number": "2644003",
-    "total_packages_price": 2444,
-    "total_price": 45194,
-    "trim": "XSE",
-    "vin": "JTM6CRAVXTD301369",
     "year": "2026"
   },
   {
@@ -13739,7 +13353,7 @@
       }
     ],
     "status": "In Transit",
-    "stock_number": null,
+    "stock_number": "D303543",
     "total_packages_price": 2773,
     "total_price": 45523,
     "trim": "XSE",
@@ -13817,7 +13431,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/26/26",
+    "availability_date": "03/24/26",
     "base_price": 37550,
     "dealer_accessories": [
       {
@@ -13864,7 +13478,7 @@
         "price": 375
       }
     ],
-    "status": "In Production",
+    "status": "Sale Pending - In Production",
     "stock_number": "T251275",
     "total_packages_price": 2944,
     "total_price": 40893,
@@ -13946,7 +13560,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/08/26 - 03/25/26",
+    "availability_date": "03/06/26 - 03/23/26",
     "base_price": 42750,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -14150,7 +13764,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/13/26",
+    "availability_date": "03/10/26",
     "base_price": 42750,
     "dealer_accessories": [
       {
@@ -14231,7 +13845,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "02/24/26-03/13/26",
+    "availability_date": "02/24/26-03/11/26",
     "base_price": 46339,
     "dealer_accessories_price": null,
     "dealer_name": "Marysville Toyota",
@@ -14253,7 +13867,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "03/13/26",
+    "availability_date": "03/10/26",
     "base_price": 37550,
     "dealer_accessories": [
       {
@@ -14635,7 +14249,6 @@
   },
   {
     "adjustments": null,
-    "availability_date": "02/15/26 - 02/16/26",
     "base_price": 37550,
     "dealer_accessories": [
       {
@@ -14690,7 +14303,7 @@
         "price": 375
       }
     ],
-    "status": "In Transit",
+    "status": "In Stock",
     "stock_number": "T45008",
     "total_packages_price": 1903,
     "total_price": 40151,
