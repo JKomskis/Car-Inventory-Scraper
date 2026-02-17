@@ -1,0 +1,148 @@
+---
+layout: layouts/base.njk
+pagination:
+  data: inventory.snapshots
+  size: 1
+  alias: snapshot
+eleventyComputed:
+  title: "Inventory – {{ snapshot.date }}"
+  permalink: >-
+    {%- if snapshot.date === inventory.snapshots[inventory.snapshots.length - 1].date -%}
+      /inventory/
+    {%- else -%}
+      /inventory/{{ snapshot.date }}/
+    {%- endif -%}
+---
+
+<h1>Inventory &mdash; {{ snapshot.date }}</h1>
+<p class="meta">
+  {{ snapshot.items | length }} vehicles
+</p>
+
+<p class="snapshot-nav">
+  {%- set idx = inventory.snapshots.indexOf(snapshot) -%}
+  {%- if idx > 0 -%}
+    <a href="/inventory/{{ inventory.snapshots[idx - 1].date }}/">&larr; {{ inventory.snapshots[idx - 1].date }}</a>
+  {%- endif -%}
+  {%- if idx < inventory.snapshots.length - 1 -%}
+    <a href="/inventory/">{{ inventory.snapshots[idx + 1].date }} &rarr;</a>
+  {%- endif -%}
+</p>
+
+<div class="dashboard-grid">
+  <div class="card">
+    <h3>Inventory by Dealer</h3>
+    <canvas id="chart-by-dealer"></canvas>
+  </div>
+
+  <div class="card">
+    <h3>Inventory by Trim</h3>
+    <canvas id="chart-by-trim"></canvas>
+  </div>
+
+  <div class="card">
+    <h3>Price Distribution</h3>
+    <canvas id="chart-price-dist"></canvas>
+  </div>
+</div>
+
+{# ── Trim × Dealer summary table ── #}
+{% set tbd = snapshot.trimByDealer %}
+
+<h2>Vehicles by Trim &amp; Dealer</h2>
+<div style="overflow-x: auto;">
+<table id="trim-table">
+  <thead>
+    <tr>
+      <th>Dealer</th>
+      {% for trim in tbd.trims %}<th>{{ trim }}</th>{% endfor %}
+      <th>Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for dealer in tbd.dealers %}
+    <tr>
+      <td>{{ dealer }}</td>
+      {% for trim in tbd.trims %}
+        {% set key = dealer + "||" + trim %}
+        <td>{{ tbd.counts[key] if tbd.counts[key] else "" }}</td>
+      {% endfor %}
+      <td class="emphasis">{{ tbd.dealerTotals[dealer] }}</td>
+    </tr>
+    {% endfor %}
+    <tr>
+      <td class="emphasis">Total</td>
+      {% for trim in tbd.trims %}
+        <td class="emphasis">{{ tbd.trimTotals[trim] }}</td>
+      {% endfor %}
+      <td class="emphasis">{{ tbd.grandTotal }}</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+{# ── Full inventory table ── #}
+<h2 style="margin-top:2.5rem;">Full Inventory</h2>
+<div style="overflow-x: auto;">
+<table id="inv-table">
+  <thead>
+    <tr>
+      <th>Dealer</th>
+      <th>Stock #</th>
+      <th>Year</th>
+      <th>Trim</th>
+      <th>Drivetrain</th>
+      <th>Ext. Color</th>
+      <th>Int. Color</th>
+      <th>Base Price</th>
+      <th>Pkgs Total</th>
+      <th>MSRP</th>
+      <th>Dlr Accessories</th>
+      <th>Adjustments</th>
+      <th>Advertised Price</th>
+      <th>Status</th>
+      <th>Avail. Date</th>
+      <th>Packages</th>
+      <th>VIN</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in snapshot.items | sort(false, false, "total_price") %}
+    <tr>
+      <td>{{ item.dealer_name }}</td>
+      <td>{{ item.stock_number }}</td>
+      <td>{{ item.year }}</td>
+      <td>{{ item.trim }}</td>
+      <td>{{ item.drivetrain }}</td>
+      <td>{{ item.exterior_color }}</td>
+      <td>{{ item.interior_color }}</td>
+      <td data-sort-value="{{ item.base_price or 0 }}">{{ item.base_price | dollar }}</td>
+      <td data-sort-value="{{ item.total_packages_price or 0 }}">{{ item.total_packages_price | dollar }}</td>
+      <td data-sort-value="{{ item.msrp or 0 }}">{{ item.msrp | dollar }}</td>
+      <td class="{{ 'adj-pos' if item.dealer_accessories_price }}" data-sort-value="{{ item.dealer_accessories_price or 0 }}">{{ item.dealer_accessories_price | dollar }}</td>
+      <td class="{{ item.adjustments | adjClass }}" data-sort-value="{{ item.adjustments or 0 }}">{{ item.adjustments | adjustment }}</td>
+      <td class="emphasis" data-sort-value="{{ item.total_price or 0 }}">{{ item.total_price | dollar }}</td>
+      <td>{{ item.status }}</td>
+      <td>{{ item.availability_date }}</td>
+      <td class="packages">
+        {%- for pkg in item.packages -%}
+          {{ pkg.name }}{% if pkg.price %} ({{ pkg.price }}){% endif %}{% if not loop.last %}<br>{% endif %}
+        {%- endfor -%}
+      </td>
+      <td>
+        {%- if item.detail_url -%}
+          <a href="{{ item.detail_url }}" target="_blank" rel="noopener">{{ item.vin }}</a>
+        {%- else -%}
+          {{ item.vin }}
+        {%- endif -%}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<script>
+  window.__CHART_DATA__ = {{ snapshot.charts | dump | safe }};
+</script>
+<script type="module" src="/scripts/snapshot-init.js"></script>

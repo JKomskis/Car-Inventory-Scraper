@@ -8,6 +8,12 @@ on:
 permissions:
   contents: write
 
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow the scraper to finish and commit results even if a new run is triggered.
+concurrency:
+  group: "scrape"
+  cancel-in-progress: false
+
 jobs:
   scrape:
     runs-on: ubuntu-latest
@@ -28,9 +34,6 @@ jobs:
       - name: Crawl dealer inventory
         run: uv run car-inventory-scraper crawl --config dealers.toml
 
-      - name: Generate report
-        run: uv run car-inventory-scraper report inventory/inventory.json -o inventory.html
-
       - name: Compress inventory to dated archive
         run: |
           YEAR=$(date -u +'%Y')
@@ -45,7 +48,6 @@ jobs:
           name: inventory
           path: |
             inventory/inventory.json
-            inventory.html
 
       - name: Commit updated inventory
         run: |

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title or "Vehicle Inventory" }}</title>
+  <link rel="stylesheet" href="/styles/main.css">
+</head>
+<body>
+  <nav class="site-nav">
+    <a href="/" class="nav-brand">Car Inventory</a>
+    <ul class="nav-links">
+      <li><a href="/">Dashboard</a></li>
+      <li><a href="/inventory/">Inventory</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    {{ content | safe }}
+  </main>
+
+  <footer class="site-footer">
+    <p>Generated from {{ inventory.snapshots | length }} snapshot{{ "s" if inventory.snapshots | length != 1 }}</p>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+---
+layout: layouts/base.njk
+title: Dashboard
+permalink: /
+---
+
+<h1>Inventory Dashboard</h1>
+<p class="meta">
+  {{ inventory.uniqueVinCount }} unique vehicles across {{ inventory.snapshots | length }} snapshot{{ "s" if inventory.snapshots | length != 1 }}
+</p>
+
+<div class="dashboard-grid">
+  <div class="card">
+    <h3>Total Inventory Over Time</h3>
+    <canvas id="chart-history"></canvas>
+  </div>
+
+  <div class="card">
+    <h3>Dealer Inventory Over Time</h3>
+    <canvas id="chart-dealer-history"></canvas>
+  </div>
+
+  <div class="card">
+    <h3>Trim Count Over Time</h3>
+    <canvas id="chart-trim-history"></canvas>
+  </div>
+
+  <div class="card">
+    <h3>Vehicle Status Over Time</h3>
+    <canvas id="chart-status-history"></canvas>
+  </div>
+</div>
+
+<script>
+  // Only the pre-computed chart labels/values — no raw inventory data
+  window.__CHART_DATA__ = {{ inventory.charts | dump | safe }};
+</script>
+<script type="module" src="/scripts/dashboard-charts.js"></script>
