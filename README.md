@@ -1,6 +1,6 @@
 # Car Inventory Scraper
 
-Scrape car dealership websites to build an inventory database.
+Scrape car dealership websites to build an inventory database, track inventory over time with daily snapshots, and visualize trends on a static dashboard.
 
 ## Quick Start with `uvx`
 
@@ -16,25 +16,37 @@ Create a `dealers.toml` file listing all the dealerships you want to scrape:
 
 ```toml
 [settings]
-output = "inventory.html"
+output = "inventory/inventory.json"
 
 [[dealers]]
 name = "Toyota of Bellevue"
 spider = "dealeron"
-url = "https://www.toyotaofbellevue.com/searchnew.aspx?Make=Toyota"
+url = "https://www.toyotaofbellevue.com/searchnew.aspx?year=2026&make=toyota&model=rav4"
 
 [[dealers]]
 name = "Toyota of Kirkland"
-spider = "dealeron"
-url = "https://www.toyotaofkirkland.com/searchnew.aspx?Make=Toyota"
+spider = "dealercom"
+url = "https://www.toyotaofkirkland.com/new-inventory/index.htm?year=2026&model=RAV4"
+
+[[dealers]]
+name = "Toyota of Seattle"
+spider = "teamvelocity"
+url = "https://www.toyotaofseattle.com/inventory/New/Toyota/RAV4?years=2026"
 ```
 
 Then run all dealers at once:
 
 ```bash
 uvx car-inventory-scraper crawl --config dealers.toml
-# or specify a different config path:
-uvx car-inventory-scraper crawl --config my-dealers.toml
+```
+
+## Makefile
+
+```bash
+make crawl        # run all spiders from dealers.toml
+make build        # build the static dashboard site
+make dev          # start the Eleventy dev server with hot-reload
+make all          # full pipeline — crawl then build
 ```
 
 ## Development Setup
@@ -44,9 +56,12 @@ uvx car-inventory-scraper crawl --config my-dealers.toml
 cd Car-Inventory-Scraper
 uv sync
 
-# Run a crawl:
+# Run a single-dealer crawl:
 uv run car-inventory-scraper crawl dealeron \
     --url "https://www.toyotaofbellevue.com/searchnew.aspx?Make=Toyota&ModelAndTrim=RAV4"
+
+# Install the site's Node dependencies:
+cd site && npm install
 ```
 
 ## CLI Reference
@@ -55,9 +70,8 @@ uv run car-inventory-scraper crawl dealeron \
 car-inventory-scraper [OPTIONS] COMMAND [ARGS]...
 
 Commands:
-  crawl    Scrape dealership inventory (single URL or config file).
+  crawl    Run spiders to scrape dealership inventory.
   list     List available spiders.
-  report   Generate an HTML inventory report from a scraped JSON file.
 ```
 
 ### `crawl`
@@ -82,12 +96,12 @@ Arguments:
 Options:
   -u, --url TEXT           Starting URL (single-dealer mode)
   -c, --config PATH        TOML config file (multi-dealer mode)
-  -o, --output TEXT        Output file path (default: inventory.html)
+  -o, --output TEXT        Output JSON file path (default: inventory.json)
 ```
 
 ## Output
 
-By default, results are written to `inventory.json` — a JSON array of vehicle objects:
+Results are written to `inventory/inventory.json` (configurable via `dealers.toml` or `--output`) — a JSON array of vehicle objects:
 
 ```json
 {
@@ -119,61 +133,74 @@ By default, results are written to `inventory.json` — a JSON array of vehicle 
 }
 ```
 
-### `report`
+### Snapshots
 
-Generate a styled, sortable HTML report from a previously scraped JSON file:
-
-```
-car-inventory-scraper report INPUT_FILE [OPTIONS]
-```
+Daily snapshots are stored as compressed files under `inventory/<year>/<month>/`:
 
 ```
-Arguments:
-  INPUT_FILE               Path to the JSON inventory file.
-
-Options:
-  -o, --output TEXT        Output HTML file path (default: inventory.html)
-  --hide-dealer            Hide the Dealer column in the report.
+inventory/
+├── inventory.json                         # latest crawl (uncompressed)
+└── 2026/
+    └── 02/
+        ├── inventory_2026_02_16.json.gz
+        └── inventory_2026_02_17.json.gz
 ```
 
-Example:
+The static site reads all `*.json.gz` snapshots to render historical charts and per-date inventory pages.
+
+## Static Dashboard Site
+
+### Building
 
 ```bash
-uvx car-inventory-scraper report inventory/inventory.json -o inventory.html
+cd site
+npm install
+npm run build     # outputs to site/dist/
+npm run dev       # dev server with hot-reload
 ```
 
-## Adding New Spiders
+Or use the Makefile from the project root:
 
-Each dealership platform gets its own spider in `src/car_inventory_scraper/spiders/`.
-
-1. Create a new file, e.g. `src/car_inventory_scraper/spiders/autonation.py`
-2. Subclass `scrapy.Spider` and set a unique `name`
-3. Yield `CarItem` instances from your `parse` method
-4. The new spider will automatically appear in `car-inventory-scraper list`
+```bash
+make build        # build the static site
+make dev          # start the dev server
+```
 
 ## Project Structure
 
 ```
-src/car_inventory_scraper/
-├── __init__.py
-├── __main__.py          # python -m support
-├── cli.py               # Click CLI entry-point
-├── handler.py           # Scrapy signal handlers
-├── items.py             # CarItem definition
-├── parsing_helpers.py   # Shared parsing utilities
-├── pipelines.py         # Text cleaning, timestamps
-├── settings.py          # Scrapy config
-├── spiders/
-│   ├── __init__.py
-│   ├── dealercom.py     # Spider for Dealer.com sites
-│   ├── dealereprocess.py
-│   ├── dealerinspire.py # Spider for DealerInspire sites
-│   ├── dealeron.py      # Spider for DealerOn sites
-│   ├── dealervenom.py   # Spider for DealerVenom sites
-│   └── teamvelocity.py  # Spider for TeamVelocity sites
-└── tools/
+├── dealers.toml                 # Multi-dealer scraping configuration
+├── Makefile                     # crawl / build / dev / all targets
+├── pyproject.toml               # Python project metadata & dependencies
+├── scrapy.cfg                   # Scrapy project settings reference
+├── inventory/                   # Scraped data & compressed snapshots
+│   ├── inventory.json           # Latest crawl output
+│   └── <year>/<month>/          # Daily .json.gz snapshots
+├── site/                        # Eleventy static dashboard
+│   ├── eleventy.config.js
+│   ├── package.json
+│   └── src/
+│       ├── _data/inventory.js   # Loads snapshots for templates
+│       ├── _includes/layouts/   # Nunjucks base layout
+│       ├── pages/               # Dashboard & snapshot pages
+│       ├── scripts/             # Chart.js setup & rendering
+│       └── styles/              # CSS
+└── src/car_inventory_scraper/
     ├── __init__.py
-    └── build_report.py  # HTML report generator
+    ├── __main__.py              # python -m support
+    ├── cli.py                   # Click CLI entry-point
+    ├── handler.py               # CloudScraper download handler
+    ├── items.py                 # CarItem definition
+    ├── parsing_helpers.py       # Shared parsing & normalization utilities
+    ├── pipelines.py             # Item processing pipelines
+    ├── settings.py              # Scrapy configuration
+    └── spiders/
+        ├── dealercom.py         # Dealer.com
+        ├── dealereprocess.py    # DealerEProcess
+        ├── dealerinspire.py     # DealerInspire (+ Algolia)
+        ├── dealeron.py          # DealerOn
+        ├── dealervenom.py       # DealerVenom
+        └── teamvelocity.py      # TeamVelocity
 ```
 
 ## License

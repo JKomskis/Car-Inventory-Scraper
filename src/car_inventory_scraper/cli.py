@@ -155,30 +155,5 @@ def list_spiders():
         click.echo(f"  {name:20s} {spider_cls.__doc__ or ''}")
 
 
-@main.command()
-@click.argument("input_file", type=click.Path(exists=True))
-@click.option(
-    "--output", "-o",
-    default="inventory.html",
-    help="Output HTML file path (default: inventory.html).",
-)
-@click.option(
-    "--hide-dealer",
-    is_flag=True,
-    default=False,
-    help="Hide the Dealer column in the report.",
-)
-def report(input_file: str, output: str, hide_dealer: bool):
-    """Generate an HTML inventory report from a scraped JSON file.
-
-    Example::
-
-        car-inventory-scraper report inventory.json -o inventory.html
-    """
-    from car_inventory_scraper.tools.build_report import build_report
-
-    build_report(input_file, output, hide_dealer=hide_dealer)
-
-
 if __name__ == "__main__":
     main()
