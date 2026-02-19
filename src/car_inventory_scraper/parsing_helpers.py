@@ -80,6 +80,8 @@ DEALER_ACCESSORY_NAMES: frozenset[str] = frozenset({
     "chiprotect 10yrs coverage",
     "360shield -paintshield and interiorshield",
     "z360shield -paintshield and interiorshield",
+    "max shield",
+    "maximum shield- complete vehicle protection",
 })
 
 

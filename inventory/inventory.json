@@ -528,11 +528,16 @@
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "03/22/26",
-    "base_price": 37450,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 38950,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=6",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-2T36CRAV1TC08F517",
@@ -563,10 +568,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -577,7 +578,7 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 2793,
+    "total_packages_price": 1293,
     "total_price": 41743,
     "trim": "XLE Premium",
     "vin": "2T36CRAV1TC08F517",
@@ -1115,11 +1116,16 @@
     "year": "2026"
   },
   {
-    "adjustments": 2495,
+    "adjustments": null,
     "availability_date": "04/11/26",
-    "base_price": 32255,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 34750,
+    "dealer_accessories": [
+      {
+        "name": "Maximum Shield- Complete Vehicle Protection",
+        "price": 2495
+      }
+    ],
+    "dealer_accessories_price": 2495,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=5",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-LE-2T36CRAV3TC10I232",
@@ -1138,17 +1144,13 @@
         "price": 320
       },
       {
-        "name": "Maximum Shield- Complete Vehicle Protection",
-        "price": 2495
-      },
-      {
         "name": "Mudguards",
         "price": 160
       }
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 3314,
+    "total_packages_price": 819,
     "total_price": 38064,
     "trim": "LE",
     "vin": "2T36CRAV3TC10I232",
@@ -1579,11 +1581,16 @@
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "04/02/26",
-    "base_price": 37450,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 38950,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=7",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-2T36CRAV4TW09F165",
@@ -1614,10 +1621,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -1640,7 +1643,7 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 5668,
+    "total_packages_price": 4168,
     "total_price": 44618,
     "trim": "XLE Premium",
     "vin": "2T36CRAV4TW09F165",
@@ -1930,11 +1933,16 @@
     "year": 2026
   },
   {
-    "adjustments": 2495,
+    "adjustments": null,
     "availability_date": "04/14/26",
-    "base_price": 32255,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 34750,
+    "dealer_accessories": [
+      {
+        "name": "Maximum Shield- Complete Vehicle Protection",
+        "price": 2495
+      }
+    ],
+    "dealer_accessories_price": 2495,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=5",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-LE-2T36CRAV5TC11E534",
@@ -1957,17 +1965,13 @@
         "price": 320
       },
       {
-        "name": "Maximum Shield- Complete Vehicle Protection",
-        "price": 2495
-      },
-      {
         "name": "Mudguards",
         "price": 160
       }
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 3514,
+    "total_packages_price": 1019,
     "total_price": 38264,
     "trim": "LE",
     "vin": "2T36CRAV5TC11E534",
@@ -2386,11 +2390,16 @@
     "year": "2026"
   },
   {
-    "adjustments": 2495,
+    "adjustments": null,
     "availability_date": null,
-    "base_price": 40255,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 42750,
+    "dealer_accessories": [
+      {
+        "name": "Maximum Shield- Complete Vehicle Protection",
+        "price": 2495
+      }
+    ],
+    "dealer_accessories_price": 2495,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=4",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XSE-2T36CRAV6TW004666",
@@ -2411,10 +2420,6 @@
       {
         "name": "Low Profile Cross Bars",
         "price": 320
-      },
-      {
-        "name": "Maximum Shield- Complete Vehicle Protection",
-        "price": 2495
       },
       {
         "name": "Mudguards",
@@ -2439,18 +2444,23 @@
     ],
     "status": "In Transit",
     "stock_number": "W004666",
-    "total_packages_price": 5929,
+    "total_packages_price": 3434,
     "total_price": 48679,
     "trim": "XSE",
     "vin": "2T36CRAV6TW004666",
     "year": "2026"
   },
   {
-    "adjustments": 2495,
+    "adjustments": null,
     "availability_date": null,
-    "base_price": 36455,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 38950,
+    "dealer_accessories": [
+      {
+        "name": "Maximum Shield- Complete Vehicle Protection",
+        "price": 2495
+      }
+    ],
+    "dealer_accessories_price": 2495,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=7",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-2T36CRAV6TW05E939",
@@ -2473,10 +2483,6 @@
         "price": 320
       },
       {
-        "name": "Maximum Shield- Complete Vehicle Protection",
-        "price": 2495
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -2495,7 +2501,7 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 6279,
+    "total_packages_price": 3784,
     "total_price": 45229,
     "trim": "XLE Premium",
     "vin": "2T36CRAV6TW05E939",
@@ -2651,11 +2657,16 @@
     "year": "2026"
   },
   {
-    "adjustments": 2495,
+    "adjustments": null,
     "availability_date": "04/08/26",
-    "base_price": 36455,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 38950,
+    "dealer_accessories": [
+      {
+        "name": "Maximum Shield- Complete Vehicle Protection",
+        "price": 2495
+      }
+    ],
+    "dealer_accessories_price": 2495,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=7",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-2T36CRAV7TW08G735",
@@ -2678,10 +2689,6 @@
         "price": 320
       },
       {
-        "name": "Maximum Shield- Complete Vehicle Protection",
-        "price": 2495
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -2700,7 +2707,7 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 6139,
+    "total_packages_price": 3644,
     "total_price": 45089,
     "trim": "XLE Premium",
     "vin": "2T36CRAV7TW08G735",
@@ -3409,11 +3416,16 @@
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "03/20/26",
-    "base_price": 36050,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 37550,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=6",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-2T36DRBV0TC08D835",
@@ -3444,10 +3456,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -3458,18 +3466,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 2793,
+    "total_packages_price": 1293,
     "total_price": 40343,
     "trim": "XLE Premium",
     "vin": "2T36DRBV0TC08D835",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "04/03/26",
-    "base_price": 31850,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 33350,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=5",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-LE-2T36DRBV0TW09G261",
@@ -3500,10 +3513,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -3514,18 +3523,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 2793,
+    "total_packages_price": 1293,
     "total_price": 36143,
     "trim": "LE",
     "vin": "2T36DRBV0TW09G261",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "04/14/26",
-    "base_price": 34650,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 36150,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=5",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-SE-2T36DRBV0TW11E175",
@@ -3548,10 +3562,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -3562,18 +3572,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 2614,
+    "total_packages_price": 1114,
     "total_price": 38764,
     "trim": "SE",
     "vin": "2T36DRBV0TW11E175",
     "year": "2026"
   },
   {
-    "adjustments": 6500,
+    "adjustments": 5000,
     "availability_date": "02/28/26",
-    "base_price": 36050,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 37550,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=3",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-2T36DRBV2TC000532",
@@ -3604,10 +3619,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -3618,18 +3629,23 @@
     ],
     "status": "In Transit",
     "stock_number": "C000532",
-    "total_packages_price": 2793,
+    "total_packages_price": 1293,
     "total_price": 45343,
     "trim": "XLE Premium",
     "vin": "2T36DRBV2TC000532",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "04/03/26",
-    "base_price": 31850,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 33350,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=5",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-LE-2T36DRBV2TW09G116",
@@ -3660,10 +3676,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -3678,18 +3690,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 3268,
+    "total_packages_price": 1768,
     "total_price": 36618,
     "trim": "LE",
     "vin": "2T36DRBV2TW09G116",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "04/15/26",
-    "base_price": 31850,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 33350,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=5",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-LE-2T36DRBV2TW11F649",
@@ -3720,10 +3737,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -3734,18 +3747,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 2793,
+    "total_packages_price": 1293,
     "total_price": 36143,
     "trim": "LE",
     "vin": "2T36DRBV2TW11F649",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "02/28/26",
-    "base_price": 36050,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 37550,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=3",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-2T36DRBV3TC000541",
@@ -3776,10 +3794,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -3790,18 +3804,23 @@
     ],
     "status": "In Transit",
     "stock_number": "C000541",
-    "total_packages_price": 2793,
+    "total_packages_price": 1293,
     "total_price": 40343,
     "trim": "XLE Premium",
     "vin": "2T36DRBV3TC000541",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "04/04/26",
-    "base_price": 36050,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 37550,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=7",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-2T36DRBV3TW09H744",
@@ -3832,10 +3851,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -3862,18 +3877,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 6143,
+    "total_packages_price": 4643,
     "total_price": 43693,
     "trim": "XLE Premium",
     "vin": "2T36DRBV3TW09H744",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "04/07/26",
-    "base_price": 36050,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 37550,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=6",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-2T36DRBV3TW10D932",
@@ -3904,10 +3924,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -3918,18 +3934,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 2793,
+    "total_packages_price": 1293,
     "total_price": 40343,
     "trim": "XLE Premium",
     "vin": "2T36DRBV3TW10D932",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "04/17/26",
-    "base_price": 36050,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 37550,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=6",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-2T36DRBV3TW11H457",
@@ -3960,10 +3981,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -3974,18 +3991,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 2793,
+    "total_packages_price": 1293,
     "total_price": 40343,
     "trim": "XLE Premium",
     "vin": "2T36DRBV3TW11H457",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "04/04/26",
-    "base_price": 36050,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 37550,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=6",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-2T36DRBV4TW09H736",
@@ -4016,10 +4038,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -4034,18 +4052,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 3268,
+    "total_packages_price": 1768,
     "total_price": 40818,
     "trim": "XLE Premium",
     "vin": "2T36DRBV4TW09H736",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "04/04/26",
-    "base_price": 36050,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 37550,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=7",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-2T36DRBV4TW09H767",
@@ -4076,10 +4099,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -4102,18 +4121,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 5668,
+    "total_packages_price": 4168,
     "total_price": 43218,
     "trim": "XLE Premium",
     "vin": "2T36DRBV4TW09H767",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "04/04/26",
-    "base_price": 36050,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 37550,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=7",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-2T36DRBV5TW09H762",
@@ -4144,10 +4168,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -4170,18 +4190,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 5668,
+    "total_packages_price": 4168,
     "total_price": 43218,
     "trim": "XLE Premium",
     "vin": "2T36DRBV5TW09H762",
     "year": "2026"
   },
   {
-    "adjustments": 4500,
+    "adjustments": 3000,
     "availability_date": "02/28/26",
-    "base_price": 36050,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 37550,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=3",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-2T36DRBV6TC000601",
@@ -4212,10 +4237,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -4226,18 +4247,23 @@
     ],
     "status": "In Transit",
     "stock_number": "C000601",
-    "total_packages_price": 2793,
+    "total_packages_price": 1293,
     "total_price": 43343,
     "trim": "XLE Premium",
     "vin": "2T36DRBV6TC000601",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "03/19/26",
-    "base_price": 36050,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 37550,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=5",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-2T36DRBV6TC08D841",
@@ -4268,10 +4294,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -4282,18 +4304,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 2793,
+    "total_packages_price": 1293,
     "total_price": 40343,
     "trim": "XLE Premium",
     "vin": "2T36DRBV6TC08D841",
     "year": "2026"
   },
   {
-    "adjustments": 2495,
+    "adjustments": null,
     "availability_date": "03/28/26",
-    "base_price": 35055,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 37550,
+    "dealer_accessories": [
+      {
+        "name": "Maximum Shield- Complete Vehicle Protection",
+        "price": 2495
+      }
+    ],
+    "dealer_accessories_price": 2495,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=6",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-2T36DRBV6TC08F430",
@@ -4320,28 +4347,29 @@
         "price": 320
       },
       {
-        "name": "Maximum Shield- Complete Vehicle Protection",
-        "price": 2495
-      },
-      {
         "name": "Mudguards",
         "price": 160
       }
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 3404,
+    "total_packages_price": 909,
     "total_price": 40954,
     "trim": "XLE Premium",
     "vin": "2T36DRBV6TC08F430",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "04/03/26",
-    "base_price": 31850,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 33350,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=4",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-LE-2T36DRBV6TW09G314",
@@ -4372,10 +4400,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -4386,18 +4410,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 2793,
+    "total_packages_price": 1293,
     "total_price": 36143,
     "trim": "LE",
     "vin": "2T36DRBV6TW09G314",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "04/04/26",
-    "base_price": 36050,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 37550,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=7",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-2T36DRBV6TW09H754",
@@ -4424,10 +4453,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -4450,18 +4475,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 5329,
+    "total_packages_price": 3829,
     "total_price": 42879,
     "trim": "XLE Premium",
     "vin": "2T36DRBV6TW09H754",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "04/04/26",
-    "base_price": 36050,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 37550,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=7",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-2T36DRBV6TW09H835",
@@ -4492,10 +4522,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -4518,18 +4544,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 5668,
+    "total_packages_price": 4168,
     "total_price": 43218,
     "trim": "XLE Premium",
     "vin": "2T36DRBV6TW09H835",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "04/17/26",
-    "base_price": 31850,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 33350,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=5",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-LE-2T36DRBV6TW11H551",
@@ -4560,10 +4591,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -4578,18 +4605,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 3268,
+    "total_packages_price": 1768,
     "total_price": 36618,
     "trim": "LE",
     "vin": "2T36DRBV6TW11H551",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "03/20/26",
-    "base_price": 36050,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 37550,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=6",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-2T36DRBV7TC08D847",
@@ -4620,10 +4652,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -4634,18 +4662,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 2793,
+    "total_packages_price": 1293,
     "total_price": 40343,
     "trim": "XLE Premium",
     "vin": "2T36DRBV7TC08D847",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "03/19/26",
-    "base_price": 36050,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 37550,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=6",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-2T36DRBV7TC08D864",
@@ -4676,10 +4709,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -4690,18 +4719,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 2793,
+    "total_packages_price": 1293,
     "total_price": 40343,
     "trim": "XLE Premium",
     "vin": "2T36DRBV7TC08D864",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "04/17/26",
-    "base_price": 36050,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 37550,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=6",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-2T36DRBV7TW11H459",
@@ -4732,10 +4766,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -4746,18 +4776,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 2793,
+    "total_packages_price": 1293,
     "total_price": 40343,
     "trim": "XLE Premium",
     "vin": "2T36DRBV7TW11H459",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "04/17/26",
-    "base_price": 36050,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 37550,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=6",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-2T36DRBV7TW11H476",
@@ -4788,10 +4823,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -4802,18 +4833,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 2793,
+    "total_packages_price": 1293,
     "total_price": 40343,
     "trim": "XLE Premium",
     "vin": "2T36DRBV7TW11H476",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "03/10/26",
-    "base_price": 36050,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 37550,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=3",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-2T36DRBV8TC000082",
@@ -4822,26 +4858,26 @@
     "interior_color": "Black Softex",
     "model_code": "4527",
     "msrp": 37550,
-    "packages": [
-      {
-        "name": "MAX SHIELD",
-        "price": 1500
-      }
-    ],
+    "packages": null,
     "status": "In Transit",
     "stock_number": "C000082",
-    "total_packages_price": 1500,
+    "total_packages_price": null,
     "total_price": 39050,
     "trim": "XLE Premium",
     "vin": "2T36DRBV8TC000082",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "02/26/26",
-    "base_price": 31850,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 33350,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=2",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-LE-2T36DRBV8TC000194",
@@ -4864,10 +4900,6 @@
         "price": 165
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Rear Bumper Protector",
         "price": 130
       },
@@ -4878,18 +4910,23 @@
     ],
     "status": "In Transit",
     "stock_number": "C000194",
-    "total_packages_price": 2328,
+    "total_packages_price": 828,
     "total_price": 35678,
     "trim": "LE",
     "vin": "2T36DRBV8TC000194",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "03/09/26",
-    "base_price": 36050,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 37550,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=3",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-2T36DRBV8TC000681",
@@ -4920,10 +4957,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -4934,18 +4967,23 @@
     ],
     "status": "In Transit",
     "stock_number": "C000681",
-    "total_packages_price": 2793,
+    "total_packages_price": 1293,
     "total_price": 40343,
     "trim": "XLE Premium",
     "vin": "2T36DRBV8TC000681",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "03/12/26",
-    "base_price": 34650,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 36150,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=5",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-SE-2T36DRBV8TW05F649",
@@ -4968,10 +5006,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -4982,18 +5016,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 2614,
+    "total_packages_price": 1114,
     "total_price": 38764,
     "trim": "SE",
     "vin": "2T36DRBV8TW05F649",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "04/03/26",
-    "base_price": 31850,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 33350,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=4",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-LE-2T36DRBV8TW09G251",
@@ -5024,10 +5063,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -5038,18 +5073,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 2793,
+    "total_packages_price": 1293,
     "total_price": 36143,
     "trim": "LE",
     "vin": "2T36DRBV8TW09G251",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "04/03/26",
-    "base_price": 31850,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 33350,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=4",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-LE-2T36DRBV8TW09G296",
@@ -5080,10 +5120,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -5094,18 +5130,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 2793,
+    "total_packages_price": 1293,
     "total_price": 36143,
     "trim": "LE",
     "vin": "2T36DRBV8TW09G296",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "04/03/26",
-    "base_price": 31850,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 33350,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=5",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-LE-2T36DRBV9TW09G307",
@@ -5136,10 +5177,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -5150,7 +5187,7 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 2793,
+    "total_packages_price": 1293,
     "total_price": 36143,
     "trim": "LE",
     "vin": "2T36DRBV9TW09G307",
@@ -5210,11 +5247,16 @@
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "03/24/26",
-    "base_price": 34650,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 36150,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=5",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-SE-2T36DRBVXTW07D845",
@@ -5233,10 +5275,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Rear Bumper Protector",
         "price": 130
       },
@@ -5251,7 +5289,7 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 2819,
+    "total_packages_price": 1319,
     "total_price": 38969,
     "trim": "SE",
     "vin": "2T36DRBVXTW07D845",
@@ -6307,11 +6345,16 @@
     "year": 2026
   },
   {
-    "adjustments": 6495,
+    "adjustments": 4995,
     "availability_date": "03/24/26",
-    "base_price": 41250,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 42750,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=8",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XSE-JTM6CRAV1TD005298",
@@ -6336,10 +6379,6 @@
       {
         "name": "Low Profile Cross Bars",
         "price": 320
-      },
-      {
-        "name": "MAX SHIELD",
-        "price": 1500
       },
       {
         "name": "Mudguards",
@@ -6372,7 +6411,7 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 5704,
+    "total_packages_price": 4204,
     "total_price": 53449,
     "trim": "XSE",
     "vin": "JTM6CRAV1TD005298",
@@ -7751,11 +7790,16 @@
     "year": 2026
   },
   {
-    "adjustments": 2495,
+    "adjustments": null,
     "availability_date": "03/25/26",
-    "base_price": 32255,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 34750,
+    "dealer_accessories": [
+      {
+        "name": "Maximum Shield- Complete Vehicle Protection",
+        "price": 2495
+      }
+    ],
+    "dealer_accessories_price": 2495,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=5",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-LE-JTM6CRAV3TD004525",
@@ -7778,10 +7822,6 @@
         "price": 320
       },
       {
-        "name": "Maximum Shield- Complete Vehicle Protection",
-        "price": 2495
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -7792,7 +7832,7 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 3939,
+    "total_packages_price": 1444,
     "total_price": 38689,
     "trim": "LE",
     "vin": "JTM6CRAV3TD004525",
@@ -8514,11 +8554,16 @@
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "04/01/26",
-    "base_price": 41250,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 42750,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=8",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XSE-JTM6CRAV4TD005697",
@@ -8541,10 +8586,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -8563,7 +8604,7 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 3589,
+    "total_packages_price": 2089,
     "total_price": 46339,
     "trim": "XSE",
     "vin": "JTM6CRAV4TD005697",
@@ -8765,11 +8806,16 @@
     "year": "2026"
   },
   {
-    "adjustments": 2495,
+    "adjustments": null,
     "availability_date": "02/27/26",
-    "base_price": 42255,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 44750,
+    "dealer_accessories": [
+      {
+        "name": "Maximum Shield- Complete Vehicle Protection",
+        "price": 2495
+      }
+    ],
+    "dealer_accessories_price": 2495,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=4",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-Limited-JTM6CRAV4TJ001778",
@@ -8808,17 +8854,13 @@
         "price": 320
       },
       {
-        "name": "Maximum Shield- Complete Vehicle Protection",
-        "price": 2495
-      },
-      {
         "name": "Mudguards",
         "price": 160
       }
     ],
     "status": "In Transit",
     "stock_number": "J001778",
-    "total_packages_price": 5358,
+    "total_packages_price": 2863,
     "total_price": 50108,
     "trim": "Limited",
     "vin": "JTM6CRAV4TJ001778",
@@ -9417,11 +9459,16 @@
     "year": 2026
   },
   {
-    "adjustments": 2495,
+    "adjustments": null,
     "availability_date": null,
-    "base_price": 42255,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 44750,
+    "dealer_accessories": [
+      {
+        "name": "Maximum Shield- Complete Vehicle Protection",
+        "price": 2495
+      }
+    ],
+    "dealer_accessories_price": 2495,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=2",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-Limited-JTM6CRAV5TD304325",
@@ -9456,10 +9503,6 @@
         "price": 320
       },
       {
-        "name": "Maximum Shield- Complete Vehicle Protection",
-        "price": 2495
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -9470,7 +9513,7 @@
     ],
     "status": "In Stock",
     "stock_number": "D304325",
-    "total_packages_price": 5849,
+    "total_packages_price": 3354,
     "total_price": 50599,
     "trim": "Limited",
     "vin": "JTM6CRAV5TD304325",
@@ -9901,11 +9944,16 @@
     "year": "2026"
   },
   {
-    "adjustments": 2495,
+    "adjustments": null,
     "availability_date": "03/21/26",
-    "base_price": 42255,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 44750,
+    "dealer_accessories": [
+      {
+        "name": "Maximum Shield- Complete Vehicle Protection",
+        "price": 2495
+      }
+    ],
+    "dealer_accessories_price": 2495,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=8",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-Limited-JTM6CRAV5TJ002406",
@@ -9940,10 +9988,6 @@
         "price": 320
       },
       {
-        "name": "Maximum Shield- Complete Vehicle Protection",
-        "price": 2495
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -9954,7 +9998,7 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 5808,
+    "total_packages_price": 3313,
     "total_price": 50558,
     "trim": "Limited",
     "vin": "JTM6CRAV5TJ002406",
@@ -10248,11 +10292,16 @@
     "year": 2026
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "03/06/26",
-    "base_price": 41250,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 42750,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=3",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XSE-JTM6CRAV6TD002672",
@@ -10275,10 +10324,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -10297,7 +10342,7 @@
     ],
     "status": "In Transit",
     "stock_number": "D002672",
-    "total_packages_price": 3589,
+    "total_packages_price": 2089,
     "total_price": 46339,
     "trim": "XSE",
     "vin": "JTM6CRAV6TD002672",
@@ -11389,11 +11434,16 @@
     "year": 2026
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "03/24/26",
-    "base_price": 39850,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 41350,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=7",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-Woodland-JTM6CRAV7TD004687",
@@ -11412,10 +11462,6 @@
         "price": 165
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Moonroof Package",
         "price": 850
       },
@@ -11430,7 +11476,7 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 2870,
+    "total_packages_price": 1370,
     "total_price": 44220,
     "trim": "Woodland",
     "vin": "JTM6CRAV7TD004687",
@@ -11578,11 +11624,16 @@
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "02/19/26",
-    "base_price": 43250,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 44750,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=4",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-Limited-JTM6CRAV7TJ001385",
@@ -11621,10 +11672,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -11639,7 +11686,7 @@
     ],
     "status": "In Transit",
     "stock_number": "J001385",
-    "total_packages_price": 5108,
+    "total_packages_price": 3608,
     "total_price": 49858,
     "trim": "Limited",
     "vin": "JTM6CRAV7TJ001385",
@@ -12273,11 +12320,16 @@
     "year": 2026
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "03/24/26",
-    "base_price": 39850,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 41350,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=7",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-Woodland-JTM6CRAV8TD005055",
@@ -12296,10 +12348,6 @@
         "price": 165
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Moonroof Package",
         "price": 850
       },
@@ -12314,18 +12362,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 2870,
+    "total_packages_price": 1370,
     "total_price": 44220,
     "trim": "Woodland",
     "vin": "JTM6CRAV8TD005055",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "04/01/26",
-    "base_price": 41250,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 42750,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=7",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XSE-JTM6CRAV8TD005380",
@@ -12348,10 +12401,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -12366,18 +12415,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 3114,
+    "total_packages_price": 1614,
     "total_price": 45864,
     "trim": "XSE",
     "vin": "JTM6CRAV8TD005380",
     "year": "2026"
   },
   {
-    "adjustments": 6500,
+    "adjustments": 5000,
     "availability_date": "04/01/26",
-    "base_price": 39850,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 41350,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=8",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-Woodland-JTM6CRAV8TD005623",
@@ -12396,10 +12450,6 @@
         "price": 165
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Moonroof Package",
         "price": 850
       },
@@ -12414,7 +12464,7 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 2870,
+    "total_packages_price": 1370,
     "total_price": 49220,
     "trim": "Woodland",
     "vin": "JTM6CRAV8TD005623",
@@ -14089,11 +14139,16 @@
     "year": "2026"
   },
   {
-    "adjustments": 6500,
+    "adjustments": 5000,
     "availability_date": "03/17/26",
-    "base_price": 41250,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 42750,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=8",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XSE-JTM6CRAV9TJ002537",
@@ -14116,10 +14171,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -14134,7 +14185,7 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 3114,
+    "total_packages_price": 1614,
     "total_price": 50864,
     "trim": "XSE",
     "vin": "JTM6CRAV9TJ002537",
@@ -14431,11 +14482,16 @@
     "year": "2026"
   },
   {
-    "adjustments": 6500,
+    "adjustments": 5000,
     "availability_date": "03/30/26",
-    "base_price": 39850,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 41350,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=8",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-Woodland-JTM6CRAVXTD005770",
@@ -14454,10 +14510,6 @@
         "price": 165
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Moonroof Package",
         "price": 850
       },
@@ -14472,7 +14524,7 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 2870,
+    "total_packages_price": 1370,
     "total_price": 49220,
     "trim": "Woodland",
     "vin": "JTM6CRAVXTD005770",
@@ -15186,11 +15238,16 @@
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "03/24/26",
-    "base_price": 41250,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 42750,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=7",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XSE-JTM6CRAVXTJ002773",
@@ -15213,10 +15270,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -15231,7 +15284,7 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 3114,
+    "total_packages_price": 1614,
     "total_price": 45864,
     "trim": "XSE",
     "vin": "JTM6CRAVXTJ002773",
@@ -15515,11 +15568,16 @@
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "03/05/26",
-    "base_price": 31850,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 33350,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=3",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-LE-JTM6DRBV0TJ000607",
@@ -15550,10 +15608,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -15564,18 +15618,23 @@
     ],
     "status": "In Transit",
     "stock_number": null,
-    "total_packages_price": 2793,
+    "total_packages_price": 1293,
     "total_price": 36143,
     "trim": "LE",
     "vin": "JTM6DRBV0TJ000607",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "03/17/26",
-    "base_price": 31850,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 33350,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=4",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-LE-JTM6DRBV2TJ001158",
@@ -15602,10 +15661,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -15616,18 +15671,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 2703,
+    "total_packages_price": 1203,
     "total_price": 36053,
     "trim": "LE",
     "vin": "JTM6DRBV2TJ001158",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "03/24/26",
-    "base_price": 36050,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 37550,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=6",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-JTM6DRBV2TJ001693",
@@ -15658,10 +15718,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -15676,18 +15732,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 3268,
+    "total_packages_price": 1768,
     "total_price": 40818,
     "trim": "XLE Premium",
     "vin": "JTM6DRBV2TJ001693",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "03/24/26",
-    "base_price": 31850,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 33350,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=4",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-LE-JTM6DRBV4TJ001601",
@@ -15718,10 +15779,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -15732,18 +15789,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 2793,
+    "total_packages_price": 1293,
     "total_price": 36143,
     "trim": "LE",
     "vin": "JTM6DRBV4TJ001601",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "02/19/26",
-    "base_price": 31850,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 33350,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=3",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-LE-JTM6DRBV5TD000441",
@@ -15774,10 +15836,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -15788,18 +15846,23 @@
     ],
     "status": "In Transit",
     "stock_number": "D000441",
-    "total_packages_price": 2793,
+    "total_packages_price": 1293,
     "total_price": 36143,
     "trim": "LE",
     "vin": "JTM6DRBV5TD000441",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "03/03/26",
-    "base_price": 31850,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 33350,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=3",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-LE-JTM6DRBV5TD302814",
@@ -15820,10 +15883,6 @@
       {
         "name": "Low Profile Cross Bars",
         "price": 320
-      },
-      {
-        "name": "MAX SHIELD",
-        "price": 1500
       },
       {
         "name": "Mudguards",
@@ -15848,7 +15907,7 @@
     ],
     "status": "In Transit",
     "stock_number": "D302814",
-    "total_packages_price": 3818,
+    "total_packages_price": 2318,
     "total_price": 37168,
     "trim": "LE",
     "vin": "JTM6DRBV5TD302814",
@@ -15919,11 +15978,16 @@
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "03/08/26",
-    "base_price": 36050,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 37550,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=3",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-JTM6DRBV5TJ000523",
@@ -15946,10 +16010,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -15968,18 +16028,23 @@
     ],
     "status": "In Transit",
     "stock_number": "J000523",
-    "total_packages_price": 3379,
+    "total_packages_price": 1879,
     "total_price": 40929,
     "trim": "XLE Premium",
     "vin": "JTM6DRBV5TJ000523",
     "year": "2026"
   },
   {
-    "adjustments": 6500,
+    "adjustments": 5000,
     "availability_date": "03/06/26",
-    "base_price": 36050,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 37550,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=3",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-JTM6DRBV5TJ000764",
@@ -16006,10 +16071,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -16028,18 +16089,23 @@
     ],
     "status": "In Transit",
     "stock_number": "J000764",
-    "total_packages_price": 5373,
+    "total_packages_price": 3873,
     "total_price": 47923,
     "trim": "XLE Premium",
     "vin": "JTM6DRBV5TJ000764",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "03/24/26",
-    "base_price": 31850,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 33350,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=4",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-LE-JTM6DRBV7TJ001575",
@@ -16070,10 +16136,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -16084,18 +16146,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 2793,
+    "total_packages_price": 1293,
     "total_price": 36143,
     "trim": "LE",
     "vin": "JTM6DRBV7TJ001575",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "03/24/26",
-    "base_price": 31850,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 33350,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=4",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-LE-JTM6DRBV7TJ001964",
@@ -16126,10 +16193,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -16140,18 +16203,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 2793,
+    "total_packages_price": 1293,
     "total_price": 36143,
     "trim": "LE",
     "vin": "JTM6DRBV7TJ001964",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "03/06/26",
-    "base_price": 31850,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 33350,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=4",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-LE-JTM6DRBV8TJ000595",
@@ -16182,10 +16250,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -16196,18 +16260,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 2793,
+    "total_packages_price": 1293,
     "total_price": 36143,
     "trim": "LE",
     "vin": "JTM6DRBV8TJ000595",
     "year": "2026"
   },
   {
-    "adjustments": 6495,
+    "adjustments": 4995,
     "availability_date": "03/06/26",
-    "base_price": 36050,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 37550,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=8",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-XLE+Premium-JTM6DRBV8TJ000919",
@@ -16234,10 +16303,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -16260,18 +16325,23 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 5578,
+    "total_packages_price": 4078,
     "total_price": 48123,
     "trim": "XLE Premium",
     "vin": "JTM6DRBV8TJ000919",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "03/03/26",
-    "base_price": 31850,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 33350,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=3",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-LE-JTM6DRBV9TD303044",
@@ -16294,10 +16364,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -16312,18 +16378,23 @@
     ],
     "status": "In Transit",
     "stock_number": "D303044",
-    "total_packages_price": 2904,
+    "total_packages_price": 1404,
     "total_price": 36254,
     "trim": "LE",
     "vin": "JTM6DRBV9TD303044",
     "year": "2026"
   },
   {
-    "adjustments": 1500,
+    "adjustments": null,
     "availability_date": "03/24/26",
-    "base_price": 31850,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
+    "base_price": 33350,
+    "dealer_accessories": [
+      {
+        "name": "MAX SHIELD",
+        "price": 1500
+      }
+    ],
+    "dealer_accessories_price": 1500,
     "dealer_name": "Swickard Toyota",
     "dealer_url": "https://www.swickardtoyota.com/searchnew.aspx?yearrange=2026-2026&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=4",
     "detail_url": "https://www.swickardtoyota.com/new-Edmonds-2026-Toyota-RAV4-LE-JTM6DRBV9TJ002002",
@@ -16354,10 +16425,6 @@
         "price": 320
       },
       {
-        "name": "MAX SHIELD",
-        "price": 1500
-      },
-      {
         "name": "Mudguards",
         "price": 160
       },
@@ -16368,7 +16435,7 @@
     ],
     "status": "In Production",
     "stock_number": null,
-    "total_packages_price": 2793,
+    "total_packages_price": 1293,
     "total_price": 36143,
     "trim": "LE",
     "vin": "JTM6DRBV9TJ002002",
