@@ -14,7 +14,7 @@ import {
   Tooltip,
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import { palette, getCanvas } from "./chart-setup.js";
+import { palette, getCanvas, htmlLegendPlugin } from "./chart-setup.js";
 
 Chart.register(
   BarController,
@@ -27,6 +27,7 @@ Chart.register(
   Tooltip,
   ChartDataLabels
 );
+Chart.register(htmlLegendPlugin);
 
 const { byDealer, byTrim, priceDist } = window.__CHART_DATA__ || {};
 
@@ -73,6 +74,8 @@ if (byTrim?.labels?.length) {
     options: {
       responsive: true,
       plugins: {
+        legend: { display: false },
+        htmlLegend: { containerID: "legend-by-trim" },
         datalabels: {
           color: "#fff",
           font: { weight: "bold", size: 11 },

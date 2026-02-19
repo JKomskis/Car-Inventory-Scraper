@@ -24,8 +24,10 @@ eleventyComputed:
   {%- if idx > 0 -%}
     <a href="{{ basePath }}inventory/{{ inventory.snapshots[idx - 1].date }}/">&larr; {{ inventory.snapshots[idx - 1].date }}</a>
   {%- endif -%}
-  {%- if idx < inventory.snapshots.length - 1 -%}
+  {%- if idx == inventory.snapshots.length - 2 -%}
     <a href="{{ basePath }}inventory/">{{ inventory.snapshots[idx + 1].date }} &rarr;</a>
+  {%- elif idx < inventory.snapshots.length - 1 -%}
+    <a href="{{ basePath }}inventory/{{ inventory.snapshots[idx + 1].date }}/">{{ inventory.snapshots[idx + 1].date }} &rarr;</a>
   {%- endif -%}
 </p>
 
@@ -38,6 +40,7 @@ eleventyComputed:
   <div class="card">
     <h3>Inventory by Trim</h3>
     <canvas id="chart-by-trim"></canvas>
+    <div id="legend-by-trim"></div>
   </div>
 
   <div class="card">

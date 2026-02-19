@@ -13,7 +13,7 @@ import {
   Legend,
   Tooltip,
 } from "chart.js";
-import { palette, getCanvas } from "./chart-setup.js";
+import { palette, getCanvas, htmlLegendPlugin } from "./chart-setup.js";
 
 Chart.register(
   LineController,
@@ -25,6 +25,7 @@ Chart.register(
   Legend,
   Tooltip
 );
+Chart.register(htmlLegendPlugin);
 
 const { history, dealerHistory, trimHistory, statusHistory } =
   window.__CHART_DATA__ || {};
@@ -46,13 +47,18 @@ if (history?.labels?.length) {
     },
     options: {
       responsive: true,
+      maintainAspectRatio: true,
+      aspectRatio: 2,
       scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
+      plugins: {
+        legend: { display: false },
+      }
     },
   });
 }
 
 // Helper for multi-series line charts
-function multiLinechart(canvasId, dataset) {
+function multiLinechart(canvasId, dataset, legendContainerID) {
   if (!dataset?.labels?.length) return;
   new Chart(getCanvas(canvasId), {
     type: "line",
@@ -69,17 +75,22 @@ function multiLinechart(canvasId, dataset) {
     },
     options: {
       responsive: true,
+      maintainAspectRatio: true,
+      aspectRatio: 2,
       scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
-      plugins: { legend: { position: "bottom" } },
+      plugins: {
+        legend: { display: false },
+        htmlLegend: { containerID: legendContainerID },
+      },
     },
   });
 }
 
 // ── Dealer Inventory Over Time ──
-multiLinechart("chart-dealer-history", dealerHistory);
+multiLinechart("chart-dealer-history", dealerHistory, "legend-dealer-history");
 
 // ── Trim Count Over Time ──
-multiLinechart("chart-trim-history", trimHistory);
+multiLinechart("chart-trim-history", trimHistory, "legend-trim-history");
 
 // ── Vehicle Status Over Time ──
-multiLinechart("chart-status-history", statusHistory);
+multiLinechart("chart-status-history", statusHistory, "legend-status-history");
