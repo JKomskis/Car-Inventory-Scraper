@@ -105,31 +105,30 @@ Results are written to `inventory/inventory.json` (configurable via `dealers.tom
 
 ```json
 {
-  "detail_url": "https://www.toyotaoflakecity.com/new-Seattle-2026-Toyota-RAV4-XLE+Premium-2T16CRAV7TC06D725",
-  "dealer_name": "Toyota of Lake City",
-  "dealer_url": "https://www.toyotaoflakecity.com/searchnew.aspx?...",
-  "vin": "2T16CRAV7TC06D725",
-  "stock_number": null,
-  "model_code": "4444",
-  "year": "2026",
-  "trim": "XLE Premium",
+  "adjustments": null,
+  "availability_date": "03/19/26",
+  "base_price": 38950,
+  "dealer_accessories": null,
+  "dealer_accessories_price": null,
+  "dealer_name": "Example Toyota",
+  "dealer_url": "https://www.example.com/searchnew.aspx?...",
+  "detail_url": "https://www.example.com/new-2026-Toyota-RAV4-XLE+Premium-1ABCD2345EF678901",
+  "drivetrain": "AWD",
   "exterior_color": "Meteor Shower",
   "interior_color": "Black Softex",
-  "drivetrain": "AWD",
-  "packages": [
-    { "name": "Weather Package", "price": 375 },
-    { "name": "All-Weather Liner Package", "price": 339 }
-  ],
-  "dealer_accessories": null,
+  "model_code": "4444",
   "msrp": 39664,
-  "total_price": 39664,
+  "packages": [
+    { "name": "All-Weather Liner Package", "price": 339 },
+    { "name": "Weather Package", "price": 375 }
+  ],
   "status": "In Production",
-  "availability_date": "03/19/26",
+  "stock_number": null,
   "total_packages_price": 714,
-  "dealer_accessories_price": null,
-  "base_price": 38950,
-  "adjustments": null,
-  "scraped_at": "2026-02-16T06:47:11.528762+00:00"
+  "total_price": 39664,
+  "trim": "XLE Premium",
+  "vin": "1ABCD2345EF678901",
+  "year": "2026"
 }
 ```
 

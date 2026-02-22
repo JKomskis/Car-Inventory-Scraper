@@ -40,6 +40,3 @@ class CarItem(scrapy.Item):
     dealer_name = scrapy.Field()
     dealer_url = scrapy.Field()
     detail_url = scrapy.Field()
-
-    # Metadata
-    scraped_at = scrapy.Field()

@@ -1,0 +1,39 @@
+---
+layout: layouts/base.njk
+title: Compare Snapshots
+permalink: /compare/
+---
+
+<h1>Compare Snapshots</h1>
+<p class="meta">Select two dates to see what changed between inventory snapshots.</p>
+
+<div class="compare-controls">
+  <label>
+    From
+    <input type="date" id="date-a">
+  </label>
+  <label>
+    To
+    <input type="date" id="date-b">
+  </label>
+</div>
+
+<div id="compare-status" class="compare-status"></div>
+<div id="compare-summary" class="summary-bar"></div>
+
+<div id="added-section" class="diff-section">
+  <h2 class="section-header"></h2>
+  <div class="section-body"></div>
+</div>
+
+<div id="removed-section" class="diff-section">
+  <h2 class="section-header"></h2>
+  <div class="section-body"></div>
+</div>
+
+<div id="modified-section" class="diff-section">
+  <h2 class="section-header"></h2>
+  <div class="section-body"></div>
+</div>
+
+<script type="module" src="/scripts/compare-init.js"></script>
