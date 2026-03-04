@@ -60,14 +60,11 @@ class DealerOnSpider(scrapy.Spider):
     async def parse_search(self, response: HtmlResponse):
         """Parse the search results page using embedded JSON script tags.
 
-        DealerOn search pages embed two useful ``<script>`` blocks that
-        are present in the static HTML (no JavaScript rendering needed):
+        DealerOn search pages embed vehicle URLs in a
+        ``<script type="application/ld+json">`` block containing a
+        schema.org ``ItemList``.
 
-        * ``#dealeron_tagging_data`` — contains ``itemCount`` (total
-          number of vehicles matching the search) used for pagination.
-        * ``#dlron-srp-model`` — contains ``ItemListJson``, a
-          schema.org ``ItemList`` with the URL, name, and VIN of every
-          vehicle on the current page.
+        Pagination uses ``itemCount`` from ``#dealeron_tagging_data``.
         """
         base_url = response.url
         dealer_name = (
@@ -75,7 +72,7 @@ class DealerOnSpider(scrapy.Spider):
             or response.css("title::text").get("").split("|")[-1].strip()
         )
 
-        # --- Extract vehicle list from dlron-srp-model ---
+        # --- Extract vehicle list from ld+json ---
         detail_urls = _extract_vehicle_urls(response, base_url)
         self.logger.info(
             "[%s] Found %d vehicles on %s",
@@ -240,29 +237,26 @@ def _strip_html(value: str) -> str | None:
 # ---------------------------------------------------------------------------
 
 def _extract_vehicle_urls(response: HtmlResponse, base_url: str) -> list[str]:
-    """Extract vehicle detail URLs from the ``#dlron-srp-model`` script tag.
-
-    The tag contains a JSON object whose ``ItemListJson`` value is itself
-    a JSON-encoded schema.org ``ItemList``.  Each ``ListItem`` has a
-    ``url`` field pointing to the vehicle detail page.
+    """Extract vehicle detail URLs from a ``<script type="application/ld+json">``
+    block containing a schema.org ``ItemList``.
     """
-    raw = response.css("script#dlron-srp-model::text").get()
-    if not raw:
-        return []
-    try:
-        model = json.loads(raw)
-        item_list = json.loads(model["ItemListJson"])
-        return [
-            item["url"]
-            for item in item_list.get("itemListElement", [])
-            if item.get("url")
-        ]
-    except (json.JSONDecodeError, KeyError, TypeError) as exc:
-        import logging
-        logging.getLogger(__name__).warning(
-            "[%s] Failed to parse dlron-srp-model: %s", urlparse(base_url).netloc, exc,
-        )
-        return []
+    for ld_script in response.css('script[type="application/ld+json"]::text').getall():
+        try:
+            ld_data = json.loads(ld_script)
+            if ld_data.get("@type") == "ItemList":
+                return [
+                    item["url"]
+                    for item in ld_data.get("itemListElement", [])
+                    if item.get("url")
+                ]
+        except (json.JSONDecodeError, KeyError, TypeError):
+            continue
+
+    import logging
+    logging.getLogger(__name__).warning(
+        "[%s] No vehicle URLs found in ld+json", urlparse(base_url).netloc,
+    )
+    return []
 
 
 def _extract_item_count(response: HtmlResponse) -> int | None:
