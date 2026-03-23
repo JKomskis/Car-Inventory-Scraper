@@ -24,11 +24,11 @@ RETRY_HTTP_CODES = [500, 502, 503, 504, 408]
 
 # --- Download handlers ---
 DOWNLOAD_HANDLERS = {
-    # CloudScraper-aware HTTPS handler — set meta["use_cloudscraper"]=True
-    # on individual requests to route them through cloudscraper and bypass
-    # Cloudflare bot-detection.  All other requests use the default HTTP client.
-    "http": "car_inventory_scraper.handler.CloudScraperHandler",
-    "https": "car_inventory_scraper.handler.CloudScraperHandler",
+    # nodriver-aware handler — set meta["nodriver"]=True on individual
+    # requests to fetch them via a real Chrome browser and bypass Cloudflare
+    # bot-detection.  All other requests use the default HTTP client.
+    "http": "car_inventory_scraper.handler.NoDriverHandler",
+    "https": "car_inventory_scraper.handler.NoDriverHandler",
 }
 
 # --- Pipelines ---
@@ -45,3 +45,7 @@ JSON_REPORT_PATH = "inventory.json"
 # --- Misc ---
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 LOG_LEVEL = "INFO"
+
+# Suppress noisy nodriver CDP parsing warnings for unrecognized Chrome events.
+import logging
+logging.getLogger("nodriver.core.connection").setLevel(logging.WARNING)

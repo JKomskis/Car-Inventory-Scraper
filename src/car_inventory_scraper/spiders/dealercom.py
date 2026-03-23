@@ -4,14 +4,11 @@ Dealer.com is one of the most widely used dealership website platforms,
 powering thousands of franchise dealerships across the US and Canada.
 Inventory search pages live at paths like ``/new-inventory/index.htm``.
 
-The search page HTML contains an inline JavaScript ``fetch()`` call to
-``/api/widget/ws-inv-data/getInventory`` with a URL-encoded JSON POST body.
-This spider extracts that payload, replays the POST request to get a JSON
-listing of all matching vehicles, and then follows each vehicle's detail
-link to scrape full pricing, packages, and status information.
-
-Pagination is handled by fetching successive search pages with a ``start``
-query parameter; each page embeds a fresh POST body with the correct offset.
+The search page renders ``.vehicle-card`` elements containing links to
+vehicle detail pages.  This spider collects those links from each search
+results page, follows pagination via the ``.pagination-next`` link, and
+then scrapes full pricing, packages, and status information from each
+vehicle detail page.
 
 Example usage::
 
@@ -21,12 +18,12 @@ Example usage::
 
 import json
 import re
-from urllib.parse import urljoin, urlparse, parse_qs, urlencode, urlunparse, unquote
+from urllib.parse import parse_qs, urlencode, urljoin, urlparse, urlunparse
 
 import scrapy
 
 from car_inventory_scraper.spiders import log_request_failure
-from scrapy.http import HtmlResponse, JsonResponse
+from scrapy.http import HtmlResponse
 
 from car_inventory_scraper.parsing_helpers import (
     normalize_drivetrain,
@@ -34,14 +31,6 @@ from car_inventory_scraper.parsing_helpers import (
     parse_price,
 )
 from car_inventory_scraper.items import CarItem
-
-
-# Regex to locate the encoded POST body inside the page's inline JS.
-_FETCH_BODY_RE = re.compile(
-    r'fetch\("/api/widget/ws-inv-data/getInventory",'
-    r'\{method:"POST",headers:\{"Content-Type":"application/json"\},'
-    r'body:decodeURI\("([^"]+)"\)'
-)
 
 
 class DealerComSpider(scrapy.Spider):
@@ -62,113 +51,72 @@ class DealerComSpider(scrapy.Spider):
         self._domain = urlparse(url).netloc
 
     # ------------------------------------------------------------------
-    # 1. Fetch the search page HTML (plain HTTP)
+    # Search results page — collect detail links
     # ------------------------------------------------------------------
 
     async def start(self):
         yield scrapy.Request(
             self.start_url,
-            callback=self.parse_search_page,
+            meta={
+                "nodriver": True,
+                "nodriver_wait_js": "document.querySelector('.vehicle-card-detailed')",
+            },
+            callback=self.parse_search,
             errback=self.errback,
         )
 
-    async def parse_search_page(self, response: HtmlResponse):
-        """Extract the getInventory POST payload from inline JS and call the API."""
-        match = _FETCH_BODY_RE.search(response.text)
-        if not match:
-            self.logger.error(
-                "[%s] Could not find getInventory fetch payload on %s", self._domain, response.url,
-            )
-            return
-
-        post_body_str = unquote(match.group(1))
-        post_body = json.loads(post_body_str)
-
-        # Resolve dealer name
+    async def parse_search(self, response: HtmlResponse):
+        """Extract vehicle detail links from the search results page."""
+        base_url = response.url
         dealer_name = (
             self._dealer_name_override
             or response.css("title::text").get("").split("|")[-1].strip()
         )
 
-        # Determine the API endpoint (same origin)
-        parsed = urlparse(response.url)
-        api_url = f"{parsed.scheme}://{parsed.netloc}/api/widget/ws-inv-data/getInventory"
+        vehicle_cards = response.css(".vehicle-card-detailed")
+        self.logger.info("[%s] Found %d vehicles on %s", self._domain, len(vehicle_cards), response.url)
 
-        yield scrapy.Request(
-            api_url,
-            method="POST",
-            headers={"Content-Type": "application/json"},
-            body=json.dumps(post_body),
-            callback=self.parse_inventory_api,
-            errback=self.errback,
-            meta={
-                "dealer_name": dealer_name,
-                "dealer_url": response.url,
-                "page_start": 0,
-            }
-        )
-
-    # ------------------------------------------------------------------
-    # 2. Parse the JSON inventory API response
-    # ------------------------------------------------------------------
-
-    async def parse_inventory_api(self, response: JsonResponse):
-        """Parse the getInventory JSON and yield detail-page requests."""
-        data = response.json()
-        vehicles = data.get("inventory", [])
-        page_info = data.get("pageInfo", {})
-        dealer_name = response.meta["dealer_name"]
-        dealer_url = response.meta["dealer_url"]
-
-        parsed = urlparse(response.url)
-        base_origin = f"{parsed.scheme}://{parsed.netloc}"
-
-        self.logger.info(
-            "[%s] Found %d vehicles (start: %d, total: %s)",
-            self._domain,
-            len(vehicles),
-            int(response.meta["page_start"]),
-            page_info.get("totalCount"),
-        )
-
-        for vehicle in vehicles:
-            link = vehicle.get("link")
-            if not link:
+        seen = set()
+        for card in vehicle_cards:
+            # The first <a> with an href containing /new/ or /used/ is the detail link.
+            href = card.css("a[href*='/new/']::attr(href), a[href*='/used/']::attr(href)").get("")
+            if not href or href in seen:
                 continue
-            detail_url = urljoin(base_origin, link)
+            seen.add(href)
+            detail_url = urljoin(base_url, href)
 
             yield scrapy.Request(
                 detail_url,
                 callback=self.parse_detail,
                 errback=self.errback,
                 meta={
+                    "nodriver": True,
+                    "nodriver_wait_js": "document.body && document.body.innerHTML.includes('DDC.WS.state')",
                     "dealer_name": dealer_name,
-                    "dealer_url": dealer_url,
+                    "dealer_url": base_url,
                 },
             )
 
         # --- Pagination ---
-        total_count = page_info.get("totalCount", 0)
-        page_size = page_info.get("pageSize", 18)
-        current_start = response.meta["page_start"]
-        next_start = current_start + page_size
-
-        if next_start < total_count:
-            post_body = json.loads(response.request.body)
-            post_body["inventoryParameters"]["start"] = str(next_start)
-
+        next_href = response.css(".pagination-next a::attr(href)").get()
+        if next_href:
+            # The next-page link only contains ?start=N — merge it into
+            # the current page URL so filters (year, model, etc.) are kept.
+            current_parsed = urlparse(response.url)
+            current_qs = parse_qs(current_parsed.query)
+            next_qs = parse_qs(urlparse(next_href).query)
+            current_qs.update(next_qs)
+            next_url = urlunparse(current_parsed._replace(
+                query=urlencode(current_qs, doseq=True),
+            ))
             yield scrapy.Request(
-                response.url,
-                method="POST",
-                headers={"Content-Type": "application/json"},
-                body=json.dumps(post_body),
-                callback=self.parse_inventory_api,
-                errback=self.errback,
+                next_url,
                 meta={
-                    "dealer_name": dealer_name,
-                    "dealer_url": dealer_url,
-                    "page_start": next_start,
+                    "nodriver": True,
+                    "nodriver_wait_js": "document.querySelector('.vehicle-card-detailed')",
                 },
+                callback=self.parse_search,
+                errback=self.errback,
             )
 
     # ------------------------------------------------------------------

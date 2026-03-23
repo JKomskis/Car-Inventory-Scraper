@@ -6,8 +6,8 @@ Dealer eProcess is a dealership website platform that serves many Toyota
 pages embed JSON-LD ``Vehicle`` schema data as well as a ``data-vehicle``
 attribute with URL-encoded JSON metadata.
 
-Cloudflare protection is bypassed via the ``use_cloudscraper`` request
-meta key (using the ``cloudscraper`` library) — no browser automation required.
+Cloudflare protection is bypassed via the ``nodriver`` request
+meta key (using the ``nodriver`` library with a real Chrome browser).
 
 Example usage::
 
@@ -59,7 +59,7 @@ class DealerEprocessSpider(scrapy.Spider):
     async def start(self):
         yield scrapy.Request(
             self.start_url,
-            meta={"use_cloudscraper": True},
+            meta={"nodriver": True, "nodriver_wait_js": "document.querySelector('.vehicle_item')"},
             callback=self.parse_search,
             errback=self.errback,
         )
@@ -88,7 +88,8 @@ class DealerEprocessSpider(scrapy.Spider):
             yield scrapy.Request(
                 detail_url,
                 meta={
-                    "use_cloudscraper": True,
+                    "nodriver": True,
+                    "nodriver_wait_js": "document.querySelector('script[type=\"application/ld+json\"]')",
                     "dealer_name": dealer_name,
                     "dealer_url": base_url,
                 },
@@ -101,7 +102,7 @@ class DealerEprocessSpider(scrapy.Spider):
         if next_url:
             yield scrapy.Request(
                 next_url,
-                meta={"use_cloudscraper": True},
+                meta={"nodriver": True, "nodriver_wait_js": "document.querySelector('.vehicle_item')"},
                 callback=self.parse_search,
                 errback=self.errback,
             )

@@ -28,13 +28,23 @@ jobs:
         uses: astral-sh/setup-uv@v5
 
       - name: Set up Python
-        run: uv python install
+        run: uv python install 3.13
 
       - name: Install dependencies
         run: uv sync
 
+      - name: Install Google Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable xvfb dbus dbus-x11
+          google-chrome-stable --version
+
       - name: Crawl dealer inventory
-        run: uv run car-inventory-scraper crawl --config dealers.toml
+        run: |
+          export DISPLAY=:99
+          Xvfb :99 -screen 0 1920x1080x24 &
+          sleep 1
+          dbus-launch uv run car-inventory-scraper crawl --config dealers.toml
 
       - name: Compress inventory to dated archive
         run: |

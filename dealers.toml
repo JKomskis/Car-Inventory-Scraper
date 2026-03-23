@@ -66,6 +66,6 @@ url = "https://www.marysvilletoyota.com/new-vehicles/rav4/?_dFR%5Bmake%5D%5B0%5D
 # Optional: bypass Cloudflare by querying the Algolia API directly.
 # Get these values from the page's JS variables (algoliaConfig /
 # inventoryLightningSettings) via your browser's DevTools.
-algolia_app_id = "SEWJN80HTN"
-algolia_api_key = "179608f32563367799314290254e3e44" # search-only API key from algoliaConfig.apiKeySearch
-algolia_index = "marysvilletoyota-sbm0524_production_inventory_status_price_low_high" # sort index from inventoryLightningSettings.inventoryIndex
+# algolia_app_id = "SEWJN80HTN"
+# algolia_api_key = "179608f32563367799314290254e3e44" # search-only API key from algoliaConfig.apiKeySearch
+# algolia_index = "marysvilletoyota-sbm0524_production_inventory_status_price_low_high" # sort index from inventoryLightningSettings.inventoryIndex

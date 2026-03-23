@@ -2,7 +2,7 @@
 
 # Run the scrapy spiders using the dealers config
 crawl:
-	cd $(CURDIR) && uv run car-inventory-scraper crawl --config dealers.toml
+	cd $(CURDIR) && xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" uv run car-inventory-scraper crawl --config dealers.toml
 
 # Build the static site from inventory data
 build:

@@ -56,6 +56,12 @@ make all          # full pipeline — crawl then build
 cd Car-Inventory-Scraper
 uv sync
 
+# Chromium or Google Chrome must be installed (used by nodriver for Cloudflare bypass).
+# On Ubuntu/Debian:
+#   sudo apt-get update && sudo apt-get install -y chromium-browser
+# On macOS:
+#   brew install --cask chromium
+
 # Run a single-dealer crawl:
 uv run car-inventory-scraper crawl dealeron \
     --url "https://www.toyotaofbellevue.com/searchnew.aspx?Make=Toyota&ModelAndTrim=RAV4"
@@ -188,7 +194,7 @@ make dev          # start the dev server
     ├── __init__.py
     ├── __main__.py              # python -m support
     ├── cli.py                   # Click CLI entry-point
-    ├── handler.py               # CloudScraper download handler
+    ├── handler.py               # nodriver download handler (Cloudflare bypass)
     ├── items.py                 # CarItem definition
     ├── parsing_helpers.py       # Shared parsing & normalization utilities
     ├── pipelines.py             # Item processing pipelines

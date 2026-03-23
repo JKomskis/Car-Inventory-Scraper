@@ -8,7 +8,7 @@ the page's inline JavaScript, along with the active refinements
 
 This spider:
 
-1. **Fetches the SRP page** with ``use_cloudscraper`` meta
+1. **Fetches the SRP page** with ``nodriver`` meta
    to bypass Cloudflare bot-detection and extract the Algolia config from
    embedded ``<script>`` variables (``algoliaConfig``,
    ``inventoryLightningSettings``, ``PARAMS``).
@@ -75,7 +75,8 @@ class DealerInspireSpider(scrapy.Spider):
         self._dealer_name_override = dealer_name
         self._domain = urlparse(url).netloc
 
-        # Optional direct Algolia API credentials (bypass Cloudflare).
+        # Optional direct Algolia API credentials (bypass Cloudflare
+        # without launching a browser).
         self._algolia_app_id = algolia_app_id
         self._algolia_api_key = algolia_api_key
         self._algolia_index = algolia_index
@@ -113,7 +114,7 @@ class DealerInspireSpider(scrapy.Spider):
             # Mode A — fetch the SRP page to extract Algolia credentials.
             yield scrapy.Request(
                 self.start_url,
-                meta={"use_cloudscraper": True},
+                meta={"nodriver": True, "nodriver_wait_js": "document.body && document.body.innerHTML.includes('algoliaConfig')"},
                 callback=self.parse_srp_for_algolia,
                 errback=self.errback,
             )
