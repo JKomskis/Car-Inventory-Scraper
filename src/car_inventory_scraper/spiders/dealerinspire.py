@@ -1,22 +1,23 @@
 """Spider for DealerInspire-powered dealership websites.
 
-DealerInspire is a dealership website platform that uses Algolia
-InstantSearch for its inventory search pages.  The Algolia credentials
-(application ID, search-only API key, and index name) are embedded in
-the page's inline JavaScript, along with the active refinements
-(make, model, year, type, etc.).
+DealerInspire is a dealership website platform (now part of Cars Commerce)
+that uses a Search Service API for its inventory search pages.  The API
+credentials (base URL, CCID, and API key) are embedded in the page's
+inline JavaScript via the ``SEARCH_SERVICE`` variable, along with a
+``SEARCH_SERVICE_FIELD_MAP`` that maps legacy Algolia field names to the
+new Search Service field names.  Refinements (make, model, year, type)
+come from ``inventoryLightningSettings``.
 
 This spider:
 
 1. **Fetches the SRP page** with ``nodriver`` meta
-   to bypass Cloudflare bot-detection and extract the Algolia config from
-   embedded ``<script>`` variables (``algoliaConfig``,
-   ``inventoryLightningSettings``, ``PARAMS``).
-2. **Queries the Algolia search API** directly over HTTPS to retrieve
+   to bypass Cloudflare bot-detection and extract the Search Service
+   config and refinements from embedded ``<script>`` variables.
+2. **Queries the Search Service API** directly over HTTPS to retrieve
    the full vehicle inventory in JSON.
-3. **Maps each Algolia hit** to a :class:`CarItem`.
+3. **Maps each listing** to a :class:`CarItem`.
 
-Unlike other platforms, packages are not available in the Algolia
+Unlike other platforms, packages are not available in the API
 response (they only appear on the factory window sticker), so the
 ``packages`` field is always ``None``.
 
@@ -44,9 +45,32 @@ from car_inventory_scraper.parsing_helpers import (
     parse_price,
 )
 
-# Default Algolia page size — overridden from the ``PARAMS`` JS variable
-# when available.
-_DEFAULT_HITS_PER_PAGE = 20
+# Default page size for the Search Service API.
+_DEFAULT_PER_PAGE = 20
+
+# Fields we request from the Search Service API.
+_REQUESTED_FIELDS = [
+    "vin", "stock", "type", "year", "make", "model", "trim",
+    "model_number", "date_in_stock", "mileage", "vdp_url", "source_id",
+    "styles", "mechanical", "pricing", "dealer", "media",
+    "extra_fields", "status", "manufacturer_model_code",
+]
+
+# The ``status`` filter ensures we only get published/visible listings.
+_STATUS_FILTER = ["publish", "modified", "pend-sale"]
+
+# Default field map from legacy Algolia names -> Search Service indexed names.
+_DEFAULT_FIELD_MAP: dict[str, str] = {
+    "type": "type_slug",
+    "make": "make",
+    "model": "model_slug",
+    "model_slug": "model_slug",
+    "year": "year",
+    "trim": "trim_slug",
+    "body": "body_type",
+    "ext_color_generic": "exterior_color_generic",
+    "drivetrain": "drivetrain",
+}
 
 
 class DealerInspireSpider(scrapy.Spider):
@@ -59,9 +83,9 @@ class DealerInspireSpider(scrapy.Spider):
         self,
         url: str | None = None,
         dealer_name: str | None = None,
-        algolia_app_id: str | None = None,
-        algolia_api_key: str | None = None,
-        algolia_index: str | None = None,
+        search_api_url: str | None = None,
+        search_ccid: str | None = None,
+        search_api_key: str | None = None,
         *args,
         **kwargs,
     ):
@@ -75,65 +99,69 @@ class DealerInspireSpider(scrapy.Spider):
         self._dealer_name_override = dealer_name
         self._domain = urlparse(url).netloc
 
-        # Optional direct Algolia API credentials (bypass Cloudflare
-        # without launching a browser).
-        self._algolia_app_id = algolia_app_id
-        self._algolia_api_key = algolia_api_key
-        self._algolia_index = algolia_index
+        # Optional direct Search Service API credentials (bypass
+        # Cloudflare without launching a browser).
+        self._search_api_url = search_api_url
+        self._search_ccid = search_ccid
+        self._search_api_key = search_api_key
         self._direct_api_mode = all(
-            [algolia_app_id, algolia_api_key, algolia_index]
+            [search_api_url, search_ccid, search_api_key]
         )
 
     # ------------------------------------------------------------------
-    # Step 1 — Fetch the SRP page to extract Algolia credentials
+    # Step 1 — Fetch the SRP page to extract Search Service config
     # ------------------------------------------------------------------
 
     async def start(self):
         if self._direct_api_mode:
-            # Mode B — skip the SRP page; query Algolia directly with
-            # the credentials supplied via the dealer config.
+            # Mode B — skip the SRP page; query the Search Service
+            # directly with the credentials supplied via dealer config.
             self.logger.info(
-                "[%s] Using direct Algolia API mode (skipping SRP page)",
+                "[%s] Using direct Search Service API mode (skipping SRP page)",
                 self._domain,
             )
-            algolia = {
-                "app_id": self._algolia_app_id,
-                "api_key": self._algolia_api_key,
-                "index": self._algolia_index,
+            search_cfg = {
+                "api_url": self._search_api_url,
+                "ccid": self._search_ccid,
+                "api_key": self._search_api_key,
             }
             # Derive facet filters from _dFR query parameters in the URL.
             url_refinements = _extract_url_refinements(self.start_url)
-            facet_filters = _build_facet_filters(url_refinements)
+            facet_filters = _map_refinements(url_refinements, _DEFAULT_FIELD_MAP)
 
             dealer_name = self._dealer_name_override or self._domain
 
-            yield self._algolia_request(
-                algolia, facet_filters, _DEFAULT_HITS_PER_PAGE, dealer_name, page=0,
+            yield self._search_request(
+                search_cfg, facet_filters, _DEFAULT_PER_PAGE, dealer_name, page=1,
             )
         else:
-            # Mode A — fetch the SRP page to extract Algolia credentials.
+            # Mode A — fetch the SRP page to extract Search Service config.
             yield scrapy.Request(
                 self.start_url,
-                meta={"nodriver": True, "nodriver_wait_js": "document.body && document.body.innerHTML.includes('algoliaConfig')"},
-                callback=self.parse_srp_for_algolia,
+                meta={"nodriver": True, "nodriver_wait_js": "document.body && document.body.innerHTML.includes('SEARCH_SERVICE')"},
+                callback=self.parse_srp_for_search_service,
                 errback=self.errback,
             )
 
-    async def parse_srp_for_algolia(self, response: HtmlResponse):
-        """Extract Algolia config from embedded JS and begin API queries."""
-        algolia = _extract_algolia_config(response)
-        if not algolia:
+    async def parse_srp_for_search_service(self, response: HtmlResponse):
+        """Extract Search Service config from embedded JS and begin API queries."""
+        search_cfg = _extract_search_service_config(response)
+        if not search_cfg:
             self.logger.error(
-                "[%s] Could not extract Algolia config on %s", self._domain, response.url,
+                "[%s] Could not extract Search Service config on %s",
+                self._domain, response.url,
             )
             return
 
         self.logger.info(
-            "[%s] Algolia config: appId=%s, index=%s",
+            "[%s] Search Service config: apiUrl=%s, ccid=%s",
             self._domain,
-            algolia["app_id"],
-            algolia["index"],
+            search_cfg["api_url"],
+            search_cfg["ccid"],
         )
+
+        # Extract the indexed field map for mapping refinement names.
+        field_map = _extract_field_map(response)
 
         # Derive dealer name from the page title if not overridden.
         dealer_name = (
@@ -141,98 +169,103 @@ class DealerInspireSpider(scrapy.Spider):
             or response.css("title::text").get("").split("|")[-1].strip()
         )
 
-        # Build facet filters from the refinements embedded in
-        # ``inventoryLightningSettings``.
-        facet_filters = _build_facet_filters(algolia.get("refinements", {}))
+        # Build facet filters from inventoryLightningSettings refinements
+        # merged with URL _dFR parameters.
+        refinements = _extract_refinements(response)
+        facet_filters = _map_refinements(refinements, field_map)
 
-        hits_per_page = algolia.get("hits_per_page", _DEFAULT_HITS_PER_PAGE)
+        per_page = _extract_per_page(response)
 
-        # Request page 0 from Algolia (zero-indexed).
-        yield self._algolia_request(
-            algolia, facet_filters, hits_per_page, dealer_name, page=0,
+        # Request page 1 from the Search Service (one-indexed).
+        yield self._search_request(
+            search_cfg, facet_filters, per_page, dealer_name, page=1,
         )
 
     # ------------------------------------------------------------------
-    # Step 2 — Parse Algolia JSON results → CarItems
+    # Step 2 — Parse Search Service JSON results -> CarItems
     # ------------------------------------------------------------------
 
-    async def parse_algolia_results(self, response: JsonResponse):
-        """Parse a page of Algolia search results.
+    async def parse_search_results(self, response: JsonResponse):
+        """Parse a page of Search Service results.
 
-        Yields a :class:`CarItem` for each vehicle hit and follows with
-        the next page if more results are available.
+        Yields a :class:`CarItem` for each vehicle listing and follows
+        with the next page if more results are available.
         """
         data = json.loads(response.text)
-        hits = data.get("hits", [])
-        page = data.get("page", 0)
-        nb_pages = data.get("nbPages", 1)
-        nb_hits = data.get("nbHits", 0)
+        inner = data.get("data", data)
+        listings = inner.get("listings", [])
+        total = inner.get("total_vehicle_count", len(listings))
+        page = response.meta["page"]
+        per_page = response.meta["per_page"]
         dealer_name = response.meta["dealer_name"]
-        algolia = response.meta["algolia"]
+        search_cfg = response.meta["search_cfg"]
+        facet_filters = response.meta["facet_filters"]
+
+        nb_pages = (total + per_page - 1) // per_page if per_page else 1
 
         self.logger.info(
             "[%s] Found %d vehicles (page %d/%d, total: %d)",
             self._domain,
-            len(hits),
-            page + 1,
+            len(listings),
+            page,
             nb_pages,
-            nb_hits,
+            total,
         )
 
-        for hit in hits:
-            item = _algolia_hit_to_item(hit, dealer_name, self.start_url)
+        for listing in listings:
+            item = _listing_to_item(listing, dealer_name, self.start_url)
             if item is not None:
                 yield item
 
         # --- Pagination ---
-        if page + 1 < nb_pages:
-            yield self._algolia_request(
-                algolia,
-                response.meta["facet_filters"],
-                response.meta["hits_per_page"],
-                dealer_name,
+        if page < nb_pages:
+            yield self._search_request(
+                search_cfg, facet_filters, per_page, dealer_name,
                 page=page + 1,
             )
 
     # ------------------------------------------------------------------
-    # Algolia request builder
+    # Search Service request builder
     # ------------------------------------------------------------------
 
-    def _algolia_request(
+    def _search_request(
         self,
-        algolia: dict,
-        facet_filters: list[list[str]],
-        hits_per_page: int,
+        search_cfg: dict,
+        facet_filters: dict[str, list],
+        per_page: int,
         dealer_name: str,
         page: int,
     ) -> scrapy.Request:
-        """Build a Scrapy request to the Algolia search API."""
+        """Build a Scrapy request to the Search Service API."""
         url = (
-            f"https://{algolia['app_id']}-dsn.algolia.net"
-            f"/1/indexes/{algolia['index']}/query"
+            f"{search_cfg['api_url'].rstrip('/')}"
+            f"/api/v1/listings/{search_cfg['ccid']}/search"
         )
-        # Algolia expects the search parameters as a URL-encoded string
-        # inside a JSON body.
-        filters_json = json.dumps(facet_filters, separators=(",", ":"))
-        params = f"facetFilters={filters_json}&hitsPerPage={hits_per_page}&page={page}"
-        body = json.dumps({"params": params})
+
+        body = json.dumps({
+            "page": page,
+            "perPage": per_page,
+            "filters": {"status": _STATUS_FILTER},
+            "facetFilters": facet_filters,
+            "requestedFields": _REQUESTED_FIELDS,
+        })
 
         return scrapy.Request(
             url,
             method="POST",
             headers={
-                "X-Algolia-Application-Id": algolia["app_id"],
-                "X-Algolia-API-Key": algolia["api_key"],
                 "Content-Type": "application/json",
+                "x-api-key": search_cfg["api_key"],
             },
             body=body,
-            callback=self.parse_algolia_results,
+            callback=self.parse_search_results,
             errback=self.errback,
             meta={
-                "algolia": algolia,
+                "search_cfg": search_cfg,
                 "facet_filters": facet_filters,
-                "hits_per_page": hits_per_page,
+                "per_page": per_page,
                 "dealer_name": dealer_name,
+                "page": page,
             },
         )
 
@@ -245,24 +278,24 @@ class DealerInspireSpider(scrapy.Spider):
 
 
 # ---------------------------------------------------------------------------
-# Helpers — Algolia config extraction
+# Helpers — Search Service config extraction
 # ---------------------------------------------------------------------------
 
-def _extract_algolia_config(response: HtmlResponse) -> dict | None:
-    """Extract Algolia connection details from the SRP page's JavaScript.
+def _extract_search_service_config(response: HtmlResponse) -> dict | None:
+    """Extract Search Service connection details from the SRP page's JavaScript.
 
-    Looks for the ``algoliaConfig`` and ``inventoryLightningSettings``
-    JS variables embedded in ``<script>`` blocks.
+    Looks for the ``SEARCH_SERVICE`` JS variable embedded in ``<script>``
+    blocks.
 
-    Returns a dict with ``app_id``, ``api_key``, ``index``,
-    ``refinements``, and ``hits_per_page`` keys, or ``None`` if
-    extraction fails.
+    Returns a dict with ``api_url``, ``ccid``, and ``api_key`` keys,
+    or ``None`` if extraction fails.
     """
     text = response.text
 
-    # --- algoliaConfig ---
-    # var algoliaConfig = {"appId":"…","apiKeySearch":"…","indexName":"…"};
-    m = re.search(r"var\s+algoliaConfig\s*=\s*(\{[^}]+\})", text)
+    m = re.search(
+        r"var\s+SEARCH_SERVICE\s*=\s*(\{[^;]+\})\s*;",
+        text,
+    )
     if not m:
         return None
     try:
@@ -270,63 +303,89 @@ def _extract_algolia_config(response: HtmlResponse) -> dict | None:
     except json.JSONDecodeError:
         return None
 
-    app_id = cfg.get("appId")
-    api_key = cfg.get("apiKeySearch")
-    base_index = cfg.get("indexName")
-    if not (app_id and api_key and base_index):
+    api_url = cfg.get("apiUrl")
+    ccid = str(cfg.get("ccid", ""))
+    api_key = cfg.get("apiKey")
+    if not (api_url and ccid and api_key):
         return None
 
-    # --- inventoryLightningSettings ---
-    # Contains the sort index (with a ``_status_price_low_high`` suffix)
-    # and the pre-selected refinements.
-    refinements: dict[str, list[str]] = {}
-    sort_index = base_index  # default to the base index
+    return {
+        "api_url": api_url,
+        "ccid": ccid,
+        "api_key": api_key,
+    }
 
-    m_ils = re.search(
+
+def _extract_field_map(response: HtmlResponse) -> dict[str, str]:
+    """Extract the ``SEARCH_SERVICE_FIELD_MAP.indexed`` mapping.
+
+    Falls back to :data:`_DEFAULT_FIELD_MAP` if not found.
+    """
+    text = response.text
+
+    m = re.search(
+        r"var\s+SEARCH_SERVICE_FIELD_MAP\s*=\s*(\{.+?\})\s*;\s*\n",
+        text,
+        re.DOTALL,
+    )
+    if not m:
+        return dict(_DEFAULT_FIELD_MAP)
+    try:
+        fm = json.loads(m.group(1))
+        indexed = fm.get("indexed", {})
+        if indexed:
+            return indexed
+    except json.JSONDecodeError:
+        pass
+    return dict(_DEFAULT_FIELD_MAP)
+
+
+def _extract_per_page(response: HtmlResponse) -> int:
+    """Extract ``hitsPerPage`` from embedded JS."""
+    text = response.text
+    m = re.search(r"var\s+PARAMS\s*=\s*(\{.+?\})\s*;", text)
+    if m:
+        try:
+            params = json.loads(m.group(1))
+            return int(params.get("hitsPerPage", _DEFAULT_PER_PAGE))
+        except (json.JSONDecodeError, ValueError, TypeError):
+            pass
+    return _DEFAULT_PER_PAGE
+
+
+def _extract_refinements(response: HtmlResponse) -> dict[str, list[str]]:
+    """Extract refinements from ``inventoryLightningSettings`` and URL params.
+
+    Merges refinements from the JS variable with ``_dFR`` query parameters
+    from the URL.
+    """
+    text = response.text
+    refinements: dict[str, list[str]] = {}
+
+    m = re.search(
         r"var\s+inventoryLightningSettings\s*=\s*(\{.+?\})\s*;\s*\n",
         text,
         re.DOTALL,
     )
-    if m_ils:
+    if m:
         try:
-            ils = json.loads(m_ils.group(1))
+            ils = json.loads(m.group(1))
             refinements = ils.get("refinements", {})
-            sort_index = ils.get("inventoryIndex", base_index)
         except json.JSONDecodeError:
             pass
 
-    # --- PARAMS (hitsPerPage) ---
-    hits_per_page = _DEFAULT_HITS_PER_PAGE
-    m_params = re.search(r"var\s+PARAMS\s*=\s*(\{.+?\})\s*;", text)
-    if m_params:
-        try:
-            params = json.loads(m_params.group(1))
-            hits_per_page = int(params.get("hitsPerPage", _DEFAULT_HITS_PER_PAGE))
-        except (json.JSONDecodeError, ValueError, TypeError):
-            pass
-
-    # --- URL _dFR query parameters ---
-    # The URL may carry additional refinements (e.g. year) as
-    # ``_dFR[field][index]=value`` query parameters that are *not*
-    # present in ``inventoryLightningSettings.refinements``.
+    # Merge URL _dFR parameters.
     url_refinements = _extract_url_refinements(response.url)
     for field, vals in url_refinements.items():
         if field not in refinements:
             refinements[field] = vals
         else:
-            # Merge without duplicates, preserving order.
             existing = set(refinements[field])
             for v in vals:
                 if v not in existing:
                     refinements[field].append(v)
 
-    return {
-        "app_id": app_id,
-        "api_key": api_key,
-        "index": sort_index,
-        "refinements": refinements,
-        "hits_per_page": hits_per_page,
-    }
+    return refinements
 
 
 def _extract_url_refinements(url: str) -> dict[str, list[str]]:
@@ -339,7 +398,6 @@ def _extract_url_refinements(url: str) -> dict[str, list[str]]:
     """
     refinements: dict[str, list[str]] = {}
     qs = parse_qs(urlparse(url).query)
-    # Keys look like ``_dFR[year][0]``, ``_dFR[model][1]``, etc.
     pattern = re.compile(r"^_dFR\[([^\]]+)\]\[\d+\]$")
     for key, values in qs.items():
         m = pattern.match(key)
@@ -353,43 +411,54 @@ def _extract_url_refinements(url: str) -> dict[str, list[str]]:
 
 
 # ---------------------------------------------------------------------------
-# Helpers — Facet filter building
+# Helpers — Refinements -> facetFilters
 # ---------------------------------------------------------------------------
 
 
-def _build_facet_filters(
+def _map_refinements(
     refinements: dict[str, list[str]],
-) -> list[list[str]]:
-    """Build Algolia ``facetFilters`` from ``inventoryLightningSettings``.
+    field_map: dict[str, str],
+) -> dict[str, list]:
+    """Map refinements from legacy field names to Search Service field names.
 
-    The ``refinements`` dict maps field names to lists of values, e.g.::
+    The ``field_map`` is the ``SEARCH_SERVICE_FIELD_MAP.indexed`` dict
+    that maps Algolia-era field names to the new Search Service names
+    (e.g. ``type`` -> ``type_slug``, ``model`` -> ``model_slug``).
 
-        {"type": ["New"], "make": ["Toyota"],
-         "model": ["RAV4", "RAV4 Hybrid"]}
+    Values for the ``year`` field are converted to integers.
 
-    This is translated to the Algolia ``facetFilters`` format::
-
-        [["type:New"], ["make:Toyota"], ["model:RAV4","model:RAV4 Hybrid"]]
-
-    Each field group is an OR array; the groups are AND'd together.
+    Returns a dict suitable for the ``facetFilters`` key in the API request.
     """
-    return [
-        [f"{field}:{v}" for v in vals]
-        for field, vals in refinements.items()
-    ]
+    result: dict[str, list] = {}
+    for field, vals in refinements.items():
+        mapped = field_map.get(field, field.lower())
+        converted = []
+        for v in vals:
+            if mapped == "year" or field == "year":
+                try:
+                    converted.append(int(v))
+                except (ValueError, TypeError):
+                    converted.append(v)
+            else:
+                converted.append(v)
+        if mapped in result:
+            result[mapped].extend(converted)
+        else:
+            result[mapped] = converted
+    return result
 
 
 # ---------------------------------------------------------------------------
-# Helpers — Algolia hit → CarItem
+# Helpers — Search Service listing -> CarItem
 # ---------------------------------------------------------------------------
 
-def _algolia_hit_to_item(
-    hit: dict,
+def _listing_to_item(
+    listing: dict,
     dealer_name: str,
     dealer_url: str,
 ) -> CarItem | None:
-    """Convert an Algolia hit into a :class:`CarItem`."""
-    vin = hit.get("vin")
+    """Convert a Search Service listing into a :class:`CarItem`."""
+    vin = listing.get("vin")
     if not vin:
         return None
 
@@ -397,34 +466,42 @@ def _algolia_hit_to_item(
 
     # --- Identifiers ---
     item["vin"] = vin
-    item["stock_number"] = hit.get("stock") or None
-    item["model_code"] = hit.get("model_code") or hit.get("model_number") or None
+    item["stock_number"] = listing.get("stock") or None
+    item["model_code"] = (
+        listing.get("manufacturer_model_code")
+        or listing.get("model_number")
+        or None
+    )
 
     # --- Vehicle info ---
-    item["year"] = str(hit["year"]) if hit.get("year") else None
-    item["trim"] = hit.get("trim") or None
-    item["drivetrain"] = normalize_drivetrain(hit.get("drivetrain", ""))
+    item["year"] = str(listing["year"]) if listing.get("year") else None
+    item["trim"] = listing.get("trim") or None
+
+    mechanical = listing.get("mechanical") or {}
+    item["drivetrain"] = normalize_drivetrain(mechanical.get("drivetrain", ""))
 
     # --- Colors ---
-    item["exterior_color"] = normalize_color(hit.get("ext_color"))
-    item["interior_color"] = normalize_color(hit.get("int_color"))
+    styles = listing.get("styles") or {}
+    item["exterior_color"] = normalize_color(styles.get("exterior_color"))
+    item["interior_color"] = normalize_color(styles.get("interior_color"))
 
     # --- Pricing ---
-    msrp = parse_price(hit.get("msrp"))
+    pricing = listing.get("pricing") or {}
+    msrp = parse_price(pricing.get("msrp"))
     our_price = (
-        hit.get("our_price")
-        if isinstance(hit.get("our_price"), int)
-        else parse_price(hit.get("our_price"))
+        parse_price(pricing.get("our_price"))
+        or parse_price(pricing.get("price"))
     )
     item["msrp"] = msrp
     item["total_price"] = our_price or msrp
 
     # --- Packages ---
-    item["packages"] = None  # not available in Algolia
+    item["packages"] = None  # not available in Search Service
 
     # --- Status ---
-    lightning = hit.get("lightning") or {}
-    item["status"] = _extract_status(hit, lightning)
+    extra = listing.get("extra_fields") or {}
+    lightning = extra.get("lightning") or {}
+    item["status"] = _extract_status(listing, lightning)
 
     # --- Availability date ---
     item["availability_date"] = lightning.get("statusETA") or None
@@ -432,23 +509,18 @@ def _algolia_hit_to_item(
     # --- Dealer / links ---
     item["dealer_name"] = dealer_name
     item["dealer_url"] = dealer_url
-    item["detail_url"] = hit.get("link") or None
+    item["detail_url"] = listing.get("vdp_url") or None
 
     return item
 
 
-def _extract_status(hit: dict, lightning: dict) -> str | None:
-    """Determine vehicle availability status from the Algolia hit.
-
-    Prefers ``lightning.statusLabel`` (human-readable, e.g.
-    "In Transit", "Build Phase") over ``vehicle_status`` (e.g.
-    "In-Transit").
-    """
+def _extract_status(listing: dict, lightning: dict) -> str | None:
+    """Determine vehicle availability status from the listing."""
     label = lightning.get("statusLabel", "")
     if label:
         return _normalize_status(label)
 
-    raw = hit.get("vehicle_status", "")
+    raw = lightning.get("status", "")
     if raw:
         return _normalize_status(raw)
 

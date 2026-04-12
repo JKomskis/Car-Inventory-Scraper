@@ -193,7 +193,8 @@ class DealerEprocessSpider(scrapy.Spider):
 # ---------------------------------------------------------------------------
 
 def _extract_json_ld_vehicle(response: HtmlResponse) -> dict:
-    """Return the first JSON-LD block with ``@type`` of ``Vehicle``, or ``{}``."""
+    """Return the first JSON-LD block with ``@type`` of ``Vehicle`` or ``Car``, or ``{}``."""
+    _VEHICLE_TYPES = {"Vehicle", "Car"}
     for script in response.css('script[type="application/ld+json"]::text').getall():
         try:
             data = json.loads(script)
@@ -205,9 +206,9 @@ def _extract_json_ld_vehicle(response: HtmlResponse) -> dict:
                 continue
             obj_type = obj.get("@type", "")
             if isinstance(obj_type, list):
-                if "Vehicle" in obj_type:
+                if _VEHICLE_TYPES & set(obj_type):
                     return obj
-            elif obj_type == "Vehicle":
+            elif obj_type in _VEHICLE_TYPES:
                 return obj
     return {}
 

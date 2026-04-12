@@ -122,7 +122,7 @@ def crawl(
             # Collect optional spider-specific keyword arguments.
             extra_kwargs = {
                 k: dealer[k]
-                for k in ("algolia_app_id", "algolia_api_key", "algolia_index")
+                for k in ("search_api_url", "search_ccid", "search_api_key")
                 if k in dealer
             }
             process.crawl(

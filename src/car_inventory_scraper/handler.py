@@ -67,14 +67,29 @@ class NoDriverHandler(HTTP11DownloadHandler):
     fetched via a persistent :class:`nodriver.Browser` instance that
     bypasses Cloudflare bot-detection.  All other requests are delegated
     to the parent :class:`HTTP11DownloadHandler`.
+
+    The Chrome process and nodriver browser connection are shared across
+    all handler instances (one per spider) so only a single browser is
+    used for the entire crawl.
     """
+
+    # ---- class-level shared state ----
+    _shared_browser: nodriver.Browser | None = None
+    _shared_chrome: asyncio.subprocess.Process | None = None
+    _shared_lock: asyncio.Lock | None = None
+    _ref_count: int = 0
+
+    @classmethod
+    def _lock(cls) -> asyncio.Lock:
+        """Lazy-init the lock (must happen inside a running event loop)."""
+        if cls._shared_lock is None:
+            cls._shared_lock = asyncio.Lock()
+        return cls._shared_lock
 
     def __init__(self, crawler):
         super().__init__(crawler)
         self._crawler = crawler
-        self._browser: nodriver.Browser | None = None
-        self._chrome_process: asyncio.subprocess.Process | None = None
-        self._browser_lock = asyncio.Lock()
+        NoDriverHandler._ref_count += 1
 
     # Candidate browser binaries in preference order.
     _BROWSER_CANDIDATES = [
@@ -119,75 +134,81 @@ class NoDriverHandler(HTTP11DownloadHandler):
         hard-coded ~2.75 s timeout), we launch Chrome ourselves and wait
         for the debug port with a generous timeout before handing the
         running instance to nodriver via ``host`` / ``port``.
+
+        The browser is shared across all handler instances via class
+        attributes so every spider reuses the same Chrome process.
         """
-        async with self._browser_lock:
-            if self._browser is None:
-                browser_path = None
-                for name in self._BROWSER_CANDIDATES:
-                    path = shutil.which(name)
-                    if path:
-                        browser_path = path
-                        break
-                if not browser_path:
-                    raise FileNotFoundError(
-                        "No Chrome/Chromium binary found on PATH"
-                    )
-                logger.info("Using browser: %s", browser_path)
+        cls = NoDriverHandler
+        async with cls._lock():
+            if cls._shared_browser is not None:
+                return cls._shared_browser
 
-                host = "127.0.0.1"
-                port = self._free_port()
-                user_data_dir = temp_profile_dir()
-
-                # Build the same argument set nodriver would use, plus
-                # our CI-friendly extras.
-                args = [
-                    f"--remote-debugging-host={host}",
-                    f"--remote-debugging-port={port}",
-                    f"--user-data-dir={user_data_dir}",
-                    "--remote-allow-origins=*",
-                    "--no-first-run",
-                    "--no-service-autorun",
-                    "--no-default-browser-check",
-                    "--homepage=about:blank",
-                    "--no-pings",
-                    "--password-store=basic",
-                    "--disable-infobars",
-                    "--disable-breakpad",
-                    "--disable-dev-shm-usage",
-                    "--disable-session-crashed-bubble",
-                    "--disable-search-engine-choice-screen",
-                    "--disable-features=IsolateOrigins,site-per-process",
-                    "--no-sandbox",
-                    "--disable-gpu",
-                    "--no-zygote",
-                    "--disable-software-rasterizer",
-                ]
-
-                self._chrome_process = await asyncio.create_subprocess_exec(
-                    browser_path,
-                    *args,
-                    stdin=asyncio.subprocess.PIPE,
-                    stdout=asyncio.subprocess.PIPE,
-                    stderr=asyncio.subprocess.PIPE,
+            browser_path = None
+            for name in self._BROWSER_CANDIDATES:
+                path = shutil.which(name)
+                if path:
+                    browser_path = path
+                    break
+            if not browser_path:
+                raise FileNotFoundError(
+                    "No Chrome/Chromium binary found on PATH"
                 )
-                logger.info(
-                    "Launched Chrome (pid %d) on %s:%d",
-                    self._chrome_process.pid,
-                    host,
-                    port,
-                )
+            logger.info("Using browser: %s", browser_path)
 
-                await self._wait_for_port(host, port)
+            host = "127.0.0.1"
+            port = self._free_port()
+            user_data_dir = temp_profile_dir()
 
-                # Connect nodriver to the already-running browser.
-                self._browser = await nodriver.Browser.create(
-                    headless=False,
-                    sandbox=False,
-                    host=host,
-                    port=port,
-                    browser_executable_path=browser_path,
-                )
-            return self._browser
+            # Build the same argument set nodriver would use, plus
+            # our CI-friendly extras.
+            args = [
+                f"--remote-debugging-host={host}",
+                f"--remote-debugging-port={port}",
+                f"--user-data-dir={user_data_dir}",
+                "--remote-allow-origins=*",
+                "--no-first-run",
+                "--no-service-autorun",
+                "--no-default-browser-check",
+                "--homepage=about:blank",
+                "--no-pings",
+                "--password-store=basic",
+                "--disable-infobars",
+                "--disable-breakpad",
+                "--disable-dev-shm-usage",
+                "--disable-session-crashed-bubble",
+                "--disable-search-engine-choice-screen",
+                "--disable-features=IsolateOrigins,site-per-process",
+                "--no-sandbox",
+                "--disable-gpu",
+                "--no-zygote",
+                "--disable-software-rasterizer",
+            ]
+
+            cls._shared_chrome = await asyncio.create_subprocess_exec(
+                browser_path,
+                *args,
+                stdin=asyncio.subprocess.PIPE,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+            )
+            logger.info(
+                "Launched Chrome (pid %d) on %s:%d",
+                cls._shared_chrome.pid,
+                host,
+                port,
+            )
+
+            await self._wait_for_port(host, port)
+
+            # Connect nodriver to the already-running browser.
+            cls._shared_browser = await nodriver.Browser.create(
+                headless=False,
+                sandbox=False,
+                host=host,
+                port=port,
+                browser_executable_path=browser_path,
+            )
+            return cls._shared_browser
 
     async def download_request(self, request: Request):
         """Route *request* through nodriver or the default HTTP client."""
@@ -297,18 +318,20 @@ class NoDriverHandler(HTTP11DownloadHandler):
                 await asyncio.sleep(0.5)
 
     async def close(self):
-        """Shut down the browser when Scrapy stops."""
-        if self._browser:
-            self._browser.stop()
-            # Give nodriver's internal tasks a moment to wind down so
-            # asyncio doesn't warn about pending tasks being destroyed.
-            await asyncio.sleep(0.5)
-            self._browser = None
-        if self._chrome_process:
-            try:
-                self._chrome_process.terminate()
-                await asyncio.wait_for(self._chrome_process.wait(), timeout=5)
-            except (ProcessLookupError, asyncio.TimeoutError):
-                self._chrome_process.kill()
-            self._chrome_process = None
+        """Shut down the browser when the last handler closes."""
+        cls = NoDriverHandler
+        cls._ref_count -= 1
+        if cls._ref_count <= 0:
+            if cls._shared_browser:
+                cls._shared_browser.stop()
+                await asyncio.sleep(0.5)
+                cls._shared_browser = None
+            if cls._shared_chrome:
+                try:
+                    cls._shared_chrome.terminate()
+                    await asyncio.wait_for(cls._shared_chrome.wait(), timeout=5)
+                except (ProcessLookupError, asyncio.TimeoutError):
+                    cls._shared_chrome.kill()
+                cls._shared_chrome = None
+            cls._shared_lock = None
         await super().close()
