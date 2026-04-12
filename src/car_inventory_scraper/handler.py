@@ -40,10 +40,12 @@ from __future__ import annotations
 import asyncio
 import logging
 import shutil
+import socket
 
 import nodriver
 import nodriver.cdp.fetch as cdp_fetch
 import nodriver.cdp.network as cdp_network
+from nodriver.core.config import temp_profile_dir
 from scrapy import Request
 from scrapy.core.downloader.handlers.http11 import HTTP11DownloadHandler
 from scrapy.http import HtmlResponse
@@ -71,6 +73,7 @@ class NoDriverHandler(HTTP11DownloadHandler):
         super().__init__(crawler)
         self._crawler = crawler
         self._browser: nodriver.Browser | None = None
+        self._chrome_process: asyncio.subprocess.Process | None = None
         self._browser_lock = asyncio.Lock()
 
     # Candidate browser binaries in preference order.
@@ -81,8 +84,42 @@ class NoDriverHandler(HTTP11DownloadHandler):
         "chromium-browser",
     ]
 
+    # How long to wait for Chrome's debug port to accept connections.
+    _BROWSER_READY_TIMEOUT = 30
+
+    @staticmethod
+    def _free_port() -> int:
+        """Find an available TCP port."""
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.bind(("127.0.0.1", 0))
+            return s.getsockname()[1]
+
+    async def _wait_for_port(self, host: str, port: int) -> None:
+        """Poll until *host:port* accepts a TCP connection."""
+        deadline = asyncio.get_event_loop().time() + self._BROWSER_READY_TIMEOUT
+        while asyncio.get_event_loop().time() < deadline:
+            try:
+                _, writer = await asyncio.wait_for(
+                    asyncio.open_connection(host, port), timeout=2,
+                )
+                writer.close()
+                await writer.wait_closed()
+                return
+            except (OSError, asyncio.TimeoutError):
+                await asyncio.sleep(0.5)
+        raise RuntimeError(
+            f"Chrome debug port {host}:{port} not ready after "
+            f"{self._BROWSER_READY_TIMEOUT}s"
+        )
+
     async def _get_browser(self) -> nodriver.Browser:
-        """Lazily launch the browser on first nodriver request."""
+        """Lazily launch Chrome and connect nodriver to it.
+
+        Instead of letting nodriver both launch *and* connect (with its
+        hard-coded ~2.75 s timeout), we launch Chrome ourselves and wait
+        for the debug port with a generous timeout before handing the
+        running instance to nodriver via ``host`` / ``port``.
+        """
         async with self._browser_lock:
             if self._browser is None:
                 browser_path = None
@@ -91,15 +128,64 @@ class NoDriverHandler(HTTP11DownloadHandler):
                     if path:
                         browser_path = path
                         break
+                if not browser_path:
+                    raise FileNotFoundError(
+                        "No Chrome/Chromium binary found on PATH"
+                    )
                 logger.info("Using browser: %s", browser_path)
+
+                host = "127.0.0.1"
+                port = self._free_port()
+                user_data_dir = temp_profile_dir()
+
+                # Build the same argument set nodriver would use, plus
+                # our CI-friendly extras.
+                args = [
+                    f"--remote-debugging-host={host}",
+                    f"--remote-debugging-port={port}",
+                    f"--user-data-dir={user_data_dir}",
+                    "--remote-allow-origins=*",
+                    "--no-first-run",
+                    "--no-service-autorun",
+                    "--no-default-browser-check",
+                    "--homepage=about:blank",
+                    "--no-pings",
+                    "--password-store=basic",
+                    "--disable-infobars",
+                    "--disable-breakpad",
+                    "--disable-dev-shm-usage",
+                    "--disable-session-crashed-bubble",
+                    "--disable-search-engine-choice-screen",
+                    "--disable-features=IsolateOrigins,site-per-process",
+                    "--no-sandbox",
+                    "--disable-gpu",
+                    "--no-zygote",
+                    "--disable-software-rasterizer",
+                ]
+
+                self._chrome_process = await asyncio.create_subprocess_exec(
+                    browser_path,
+                    *args,
+                    stdin=asyncio.subprocess.PIPE,
+                    stdout=asyncio.subprocess.PIPE,
+                    stderr=asyncio.subprocess.PIPE,
+                )
+                logger.info(
+                    "Launched Chrome (pid %d) on %s:%d",
+                    self._chrome_process.pid,
+                    host,
+                    port,
+                )
+
+                await self._wait_for_port(host, port)
+
+                # Connect nodriver to the already-running browser.
                 self._browser = await nodriver.Browser.create(
                     headless=False,
                     sandbox=False,
+                    host=host,
+                    port=port,
                     browser_executable_path=browser_path,
-                    browser_args=[
-                        "--disable-dev-shm-usage",
-                        "--disable-gpu",
-                    ],
                 )
             return self._browser
 
@@ -218,4 +304,11 @@ class NoDriverHandler(HTTP11DownloadHandler):
             # asyncio doesn't warn about pending tasks being destroyed.
             await asyncio.sleep(0.5)
             self._browser = None
+        if self._chrome_process:
+            try:
+                self._chrome_process.terminate()
+                await asyncio.wait_for(self._chrome_process.wait(), timeout=5)
+            except (ProcessLookupError, asyncio.TimeoutError):
+                self._chrome_process.kill()
+            self._chrome_process = None
         await super().close()

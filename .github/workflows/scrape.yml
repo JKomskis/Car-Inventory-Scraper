@@ -36,15 +36,11 @@ jobs:
       - name: Install Google Chrome
         run: |
           sudo apt-get update
-          sudo apt-get install -y google-chrome-stable xvfb dbus dbus-x11
+          sudo apt-get install -y google-chrome-stable xvfb dbus-x11
           google-chrome-stable --version
 
       - name: Crawl dealer inventory
-        run: |
-          export DISPLAY=:99
-          Xvfb :99 -screen 0 1920x1080x24 &
-          sleep 1
-          dbus-launch uv run car-inventory-scraper crawl --config dealers.toml
+        run: xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" uv run car-inventory-scraper crawl --config dealers.toml
 
       - name: Compress inventory to dated archive
         run: |
