@@ -8,7 +8,9 @@ and render vehicle cards as server-rendered HTML with CSS class
 This spider:
 
 1. Fetches the search-results page and extracts ``accountId`` and per-vehicle
-   VINs from the ``.standard-inventory`` card ``data-itemid`` attributes.
+   VINs from vehicle card ``data-itemid`` attributes.  Supports both the legacy
+   ``.standard-inventory`` layout and the newer ``.clean-design-srp-card``
+   layout.
 2. Calls the JSON API ``/api/Inventory/vehicle?vin=…&accountid=…`` for each
    vehicle to obtain full details, including package names with prices.
 3. Follows pagination links (``.inventory-pagination a[rel='next']``).
@@ -93,7 +95,11 @@ class TeamVelocitySpider(scrapy.Spider):
             return
 
         # --- Collect VINs from vehicle cards ---
+        # Try the legacy "standard-inventory" class first, then the newer
+        # "clean-design-srp-card" layout that Team Velocity rolled out.
         vehicle_cards = response.css(".standard-inventory")
+        if not vehicle_cards:
+            vehicle_cards = response.css(".clean-design-srp-card")
         self.logger.info("[%s] Found %d vehicles on %s", self._domain, len(vehicle_cards), response.url)
 
         for card in vehicle_cards:
@@ -108,6 +114,7 @@ class TeamVelocitySpider(scrapy.Spider):
             # Build the detail-page URL for the ``detail_url`` field.
             href = card.css(
                 "a.si-vehicle-box::attr(href), "
+                "a.srp-vehicle-box::attr(href), "
                 "a[href*='/viewdetails/']::attr(href)"
             ).get("")
             detail_url = urljoin(base_url, href.split("#")[0]) if href else ""

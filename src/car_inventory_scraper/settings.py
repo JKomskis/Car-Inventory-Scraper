@@ -18,8 +18,8 @@ DOWNLOAD_DELAY = 2  # seconds between requests to the same domain
 RANDOMIZE_DOWNLOAD_DELAY = True
 
 # --- Timeouts & retries ---
-DOWNLOAD_TIMEOUT = 180  # Scrapy-level hard cap per request (seconds)
-RETRY_TIMES = 2  # retry transient failures (timeouts, 5xx, etc.)
+DOWNLOAD_TIMEOUT = 30  # Scrapy-level hard cap per request (seconds)
+RETRY_TIMES = 4  # retry transient failures (timeouts, 5xx, etc.)
 RETRY_HTTP_CODES = [500, 502, 503, 504, 408]
 
 # --- Download handlers ---

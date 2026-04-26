@@ -49,6 +49,7 @@ from nodriver.core.config import temp_profile_dir
 from scrapy import Request
 from scrapy.core.downloader.handlers.http11 import HTTP11DownloadHandler
 from scrapy.http import HtmlResponse
+from twisted.internet.error import TimeoutError as TwistedTimeoutError
 
 logger = logging.getLogger(__name__)
 
@@ -242,6 +243,10 @@ class NoDriverHandler(HTTP11DownloadHandler):
                 "Page did not finish loading within %ds for %s",
                 timeout,
                 request.url,
+            )
+            await tab.close()
+            raise TwistedTimeoutError(
+                f"Page load timed out after {timeout}s: {request.url}"
             )
 
         content = await tab.get_content()
