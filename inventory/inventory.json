@@ -53,6 +53,28 @@
     "year": "2026"
   },
   {
+    "adjustments": null,
+    "availability_date": null,
+    "base_price": 39854,
+    "dealer_accessories_price": null,
+    "dealer_name": "Toyota of Bellevue",
+    "dealer_url": "https://www.toyotaofbellevue.com/searchnew.aspx?year=2026&make=toyota&model=rav4&st=Price+asc&pn=12",
+    "detail_url": "https://www.toyotaofbellevue.com/new-Bellevue-2026-Toyota-RAV4-XLE+Premium-2T36CRAV0TC019181",
+    "drivetrain": "AWD",
+    "exterior_color": "Ice Cap",
+    "interior_color": "Light Gray",
+    "model_code": "4444",
+    "msrp": 39854,
+    "packages": null,
+    "status": "In Stock",
+    "stock_number": "TC019181",
+    "total_packages_price": null,
+    "total_price": 39854,
+    "trim": "XLE Premium",
+    "vin": "2T36CRAV0TC019181",
+    "year": "2026"
+  },
+  {
     "adjustments": 200,
     "availability_date": "07/18/26",
     "base_price": 39095,
@@ -250,48 +272,8 @@
     "year": "2026"
   },
   {
-    "adjustments": 200,
-    "availability_date": "07/22/26",
-    "base_price": 37695,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
-    "dealer_name": "Burien Toyota",
-    "dealer_url": "https://www.burientoyota.com/new-vehicles/?model=RAV4&yr=2026",
-    "detail_url": "https://www.burientoyota.com/vehicle/New/2026/Toyota/RAV4/2T36CRAV0TW23E448/",
-    "drivetrain": "AWD",
-    "exterior_color": "Meteor Shower",
-    "interior_color": "Black/Blue Fabric",
-    "model_code": "4524",
-    "msrp": 39659,
-    "packages": [
-      {
-        "name": "All-Weather Liner Package",
-        "price": 339
-      },
-      {
-        "name": "Convenience Package",
-        "price": 400
-      },
-      {
-        "name": "Moonroof Package",
-        "price": 850
-      },
-      {
-        "name": "Weather Package",
-        "price": 375
-      }
-    ],
-    "status": "Sale Pending - In Production",
-    "stock_number": "",
-    "total_packages_price": 1964,
-    "total_price": 39859,
-    "trim": "SE",
-    "vin": "2T36CRAV0TW23E448",
-    "year": "2026"
-  },
-  {
     "adjustments": null,
-    "availability_date": "06/29/26 - 07/28/26",
+    "availability_date": "06/26/26 - 07/20/26",
     "base_price": 41495,
     "dealer_accessories": [
       {
@@ -337,7 +319,7 @@
   {
     "adjustments": null,
     "availability_date": "7/25/2026",
-    "base_price": 42895,
+    "base_price": 38466,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Toyota of Puyallup",
@@ -354,8 +336,20 @@
         "price": 339
       },
       {
+        "name": "All-Weather Liner Package",
+        "price": 339
+      },
+      {
         "name": "Alloy Wheel Locks: Black Chrome",
         "price": 90
+      },
+      {
+        "name": "Alloy Wheel Locks: Black Chrome",
+        "price": 90
+      },
+      {
+        "name": "Door Panel Scuff Protectors",
+        "price": 130
       },
       {
         "name": "Door Panel Scuff Protectors",
@@ -366,8 +360,20 @@
         "price": 330
       },
       {
+        "name": "Illuminated Front Badge",
+        "price": 330
+      },
+      {
         "name": "JBL\u00ae Premium Audio Package",
         "price": 620
+      },
+      {
+        "name": "JBL\u00ae Premium Audio Package",
+        "price": 620
+      },
+      {
+        "name": "Low Profile Cross Bars",
+        "price": 320
       },
       {
         "name": "Low Profile Cross Bars",
@@ -378,8 +384,20 @@
         "price": 700
       },
       {
+        "name": "Panoramic Moonroof Package",
+        "price": 700
+      },
+      {
         "name": "Premium Paint",
         "price": 475
+      },
+      {
+        "name": "Premium Paint",
+        "price": 475
+      },
+      {
+        "name": "Rear Bumper Protector",
+        "price": 130
       },
       {
         "name": "Rear Bumper Protector",
@@ -390,8 +408,20 @@
         "price": 500
       },
       {
+        "name": "Two-Tone Exterior Paint",
+        "price": 500
+      },
+      {
         "name": "Weather Package",
         "price": 375
+      },
+      {
+        "name": "Weather Package",
+        "price": 375
+      },
+      {
+        "name": "XSE Driver Assist Package",
+        "price": 420
       },
       {
         "name": "XSE Driver Assist Package",
@@ -400,7 +430,7 @@
     ],
     "status": "Sale Pending - In Production",
     "stock_number": "TW23H317",
-    "total_packages_price": 4429,
+    "total_packages_price": 8858,
     "total_price": 47324,
     "trim": "XSE",
     "vin": "2T36CRAV0TW23H317",
@@ -1057,54 +1087,6 @@
   },
   {
     "adjustments": null,
-    "availability_date": null,
-    "base_price": 42750,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
-    "dealer_name": "Toyota of Lake City",
-    "dealer_url": "https://www.toyotaoflakecity.com/searchnew.aspx?yearrange=2026-2026&Make=Toyota&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=2",
-    "detail_url": "https://www.toyotaoflakecity.com/new-Seattle-2026-Toyota-RAV4-XSE-2T36CRAV1TW043178",
-    "drivetrain": "AWD",
-    "exterior_color": "Meteor Shower With Midnight Black Metallic Roof",
-    "interior_color": "Black/Blue Softex Mixed Media",
-    "model_code": "4530",
-    "msrp": 45704,
-    "packages": [
-      {
-        "name": "All-Weather Liner Package",
-        "price": 339
-      },
-      {
-        "name": "JBL\u00ae Premium Audio Package",
-        "price": 620
-      },
-      {
-        "name": "Panoramic Moonroof Package",
-        "price": 700
-      },
-      {
-        "name": "Two-Tone Exterior Paint",
-        "price": 500
-      },
-      {
-        "name": "Weather Package",
-        "price": 375
-      },
-      {
-        "name": "XSE Driver Assist Package",
-        "price": 420
-      }
-    ],
-    "status": "In Stock",
-    "stock_number": "69679",
-    "total_packages_price": 2954,
-    "total_price": 45704,
-    "trim": "XSE",
-    "vin": "2T36CRAV1TW043178",
-    "year": "2026"
-  },
-  {
-    "adjustments": null,
     "availability_date": "06/01/26 - 06/04/26",
     "base_price": 42750,
     "dealer_accessories": [
@@ -1480,7 +1462,7 @@
   {
     "adjustments": null,
     "availability_date": "7/30/2026",
-    "base_price": 41495,
+    "base_price": 38966,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Toyota of Puyallup",
@@ -1497,8 +1479,20 @@
         "price": 90
       },
       {
+        "name": "Alloy Wheel Locks: Black Chrome",
+        "price": 90
+      },
+      {
         "name": "Blackout Emblem Overlays",
         "price": 65
+      },
+      {
+        "name": "Blackout Emblem Overlays",
+        "price": 65
+      },
+      {
+        "name": "Illuminated Door Sills",
+        "price": 395
       },
       {
         "name": "Illuminated Door Sills",
@@ -1509,8 +1503,20 @@
         "price": 850
       },
       {
+        "name": "Moonroof Package",
+        "price": 850
+      },
+      {
         "name": "Mudguards",
         "price": 160
+      },
+      {
+        "name": "Mudguards",
+        "price": 160
+      },
+      {
+        "name": "Paint Protection Film: Hood, Fenders, Mirror Backs & Door Cups",
+        "price": 439
       },
       {
         "name": "Paint Protection Film: Hood, Fenders, Mirror Backs & Door Cups",
@@ -1521,13 +1527,21 @@
         "price": 425
       },
       {
+        "name": "Rear Cargo Lamps",
+        "price": 425
+      },
+      {
+        "name": "Toyota Multimedia Screen Protector",
+        "price": 105
+      },
+      {
         "name": "Toyota Multimedia Screen Protector",
         "price": 105
       }
     ],
     "status": "In Production",
     "stock_number": "TW24E874",
-    "total_packages_price": 2529,
+    "total_packages_price": 5058,
     "total_price": 44024,
     "trim": "Woodland",
     "vin": "2T36CRAV1TW24E874",
@@ -1729,7 +1743,7 @@
   {
     "adjustments": null,
     "availability_date": "7/8/2026",
-    "base_price": 39095,
+    "base_price": 38381,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Toyota of Puyallup",
@@ -1746,13 +1760,21 @@
         "price": 339
       },
       {
+        "name": "All-Weather Liner Package",
+        "price": 339
+      },
+      {
+        "name": "Weather Package",
+        "price": 375
+      },
+      {
         "name": "Weather Package",
         "price": 375
       }
     ],
     "status": "Sale Pending - In Production",
     "stock_number": "TC22I667",
-    "total_packages_price": 714,
+    "total_packages_price": 1428,
     "total_price": 39809,
     "trim": "XLE Premium",
     "vin": "2T36CRAV2TC22I667",
@@ -2198,6 +2220,46 @@
     "year": "2026"
   },
   {
+    "adjustments": 200,
+    "availability_date": "08/13/26",
+    "base_price": 37695,
+    "dealer_accessories": null,
+    "dealer_accessories_price": null,
+    "dealer_name": "Doxon Toyota",
+    "dealer_url": "https://www.doxontoyota.com/search/new-2026-toyota-rav4-auburn-wa/?s:pr=1&ct=12&cy=98002&md=309&mk=63&tp=new&yr=2026",
+    "detail_url": "https://www.doxontoyota.com/auto/new-2026-toyota-rav4-auburn-wa/120717485/",
+    "drivetrain": "AWD",
+    "exterior_color": "Midnight Black Metallic",
+    "interior_color": "Black/Blue Fabric",
+    "model_code": "9900",
+    "msrp": 39659,
+    "packages": [
+      {
+        "name": "All-Weather Liner Package",
+        "price": 339
+      },
+      {
+        "name": "Convenience Package",
+        "price": 400
+      },
+      {
+        "name": "Moonroof Package",
+        "price": 850
+      },
+      {
+        "name": "Weather Package",
+        "price": 375
+      }
+    ],
+    "status": "In Production",
+    "stock_number": null,
+    "total_packages_price": 1964,
+    "total_price": 39859,
+    "trim": "SE",
+    "vin": "2T36CRAV2TW26H385",
+    "year": "2026"
+  },
+  {
     "adjustments": null,
     "availability_date": "05/13/26 - 05/17/26",
     "base_price": 38950,
@@ -2559,7 +2621,7 @@
   {
     "adjustments": null,
     "availability_date": "7/26/2026",
-    "base_price": 42895,
+    "base_price": 39681,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Toyota of Puyallup",
@@ -2576,8 +2638,20 @@
         "price": 339
       },
       {
+        "name": "All-Weather Liner Package",
+        "price": 339
+      },
+      {
         "name": "Fog Light Graphics: Matte Black",
         "price": 200
+      },
+      {
+        "name": "Fog Light Graphics: Matte Black",
+        "price": 200
+      },
+      {
+        "name": "JBL\u00ae Premium Audio Package",
+        "price": 620
       },
       {
         "name": "JBL\u00ae Premium Audio Package",
@@ -2588,8 +2662,20 @@
         "price": 320
       },
       {
+        "name": "Low Profile Cross Bars",
+        "price": 320
+      },
+      {
         "name": "Mudguards",
         "price": 160
+      },
+      {
+        "name": "Mudguards",
+        "price": 160
+      },
+      {
+        "name": "Panoramic Moonroof Package",
+        "price": 700
       },
       {
         "name": "Panoramic Moonroof Package",
@@ -2600,13 +2686,21 @@
         "price": 500
       },
       {
+        "name": "Two-Tone Exterior Paint",
+        "price": 500
+      },
+      {
+        "name": "Weather Package",
+        "price": 375
+      },
+      {
         "name": "Weather Package",
         "price": 375
       }
     ],
     "status": "Sale Pending - In Production",
     "stock_number": "TW23I252",
-    "total_packages_price": 3214,
+    "total_packages_price": 6428,
     "total_price": 46109,
     "trim": "XSE",
     "vin": "2T36CRAV3TW23I252",
@@ -2615,7 +2709,7 @@
   {
     "adjustments": null,
     "availability_date": "7/27/2026",
-    "base_price": 37695,
+    "base_price": 35731,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Toyota of Puyallup",
@@ -2632,6 +2726,14 @@
         "price": 339
       },
       {
+        "name": "All-Weather Liner Package",
+        "price": 339
+      },
+      {
+        "name": "Convenience Package",
+        "price": 400
+      },
+      {
         "name": "Convenience Package",
         "price": 400
       },
@@ -2640,13 +2742,21 @@
         "price": 850
       },
       {
+        "name": "Moonroof Package",
+        "price": 850
+      },
+      {
+        "name": "Weather Package",
+        "price": 375
+      },
+      {
         "name": "Weather Package",
         "price": 375
       }
     ],
     "status": "Sale Pending - In Production",
     "stock_number": "TW23J166",
-    "total_packages_price": 1964,
+    "total_packages_price": 3928,
     "total_price": 39659,
     "trim": "SE",
     "vin": "2T36CRAV3TW23J166",
@@ -2655,7 +2765,7 @@
   {
     "adjustments": null,
     "availability_date": "7/25/2026",
-    "base_price": 39095,
+    "base_price": 35202,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Toyota of Puyallup",
@@ -2672,8 +2782,20 @@
         "price": 339
       },
       {
+        "name": "All-Weather Liner Package",
+        "price": 339
+      },
+      {
         "name": "Door Sill Protectors",
         "price": 199
+      },
+      {
+        "name": "Door Sill Protectors",
+        "price": 199
+      },
+      {
+        "name": "Low Profile Cross Bars",
+        "price": 320
       },
       {
         "name": "Low Profile Cross Bars",
@@ -2684,6 +2806,14 @@
         "price": 160
       },
       {
+        "name": "Mudguards",
+        "price": 160
+      },
+      {
+        "name": "Panoramic Moonroof Package",
+        "price": 1850
+      },
+      {
         "name": "Panoramic Moonroof Package",
         "price": 1850
       },
@@ -2692,13 +2822,21 @@
         "price": 375
       },
       {
+        "name": "Weather Package",
+        "price": 375
+      },
+      {
+        "name": "XLE Driver Assist Package",
+        "price": 650
+      },
+      {
         "name": "XLE Driver Assist Package",
         "price": 650
       }
     ],
     "status": "Sale Pending - In Production",
     "stock_number": "TW23J393",
-    "total_packages_price": 3893,
+    "total_packages_price": 7786,
     "total_price": 42988,
     "trim": "XLE Premium",
     "vin": "2T36CRAV3TW23J393",
@@ -3020,12 +3158,12 @@
   },
   {
     "adjustments": 200,
-    "availability_date": "06/22/26",
+    "availability_date": "06/24/26",
     "base_price": 44895,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Doxon Toyota",
-    "dealer_url": "https://www.doxontoyota.com/search/new-2026-toyota-rav4-auburn-wa/?s:pr=1&ct=12&cy=98002&md=309&mk=63&tp=new&yr=2026&p=4",
+    "dealer_url": "https://www.doxontoyota.com/search/new-2026-toyota-rav4-auburn-wa/?s:pr=1&ct=12&cy=98002&md=309&mk=63&tp=new&yr=2026&p=5",
     "detail_url": "https://www.doxontoyota.com/auto/new-2026-toyota-rav4-auburn-wa/121091621/",
     "drivetrain": "AWD",
     "exterior_color": "Meteor Shower",
@@ -3660,7 +3798,7 @@
   {
     "adjustments": null,
     "availability_date": "5/29/2026",
-    "base_price": 42750,
+    "base_price": 40716,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Toyota of Puyallup",
@@ -3677,6 +3815,14 @@
         "price": 339
       },
       {
+        "name": "All-Weather Liner Package",
+        "price": 339
+      },
+      {
+        "name": "JBL\u00ae Premium Audio Package",
+        "price": 620
+      },
+      {
         "name": "JBL\u00ae Premium Audio Package",
         "price": 620
       },
@@ -3685,13 +3831,21 @@
         "price": 700
       },
       {
+        "name": "Panoramic Moonroof Package",
+        "price": 700
+      },
+      {
+        "name": "Weather Package",
+        "price": 375
+      },
+      {
         "name": "Weather Package",
         "price": 375
       }
     ],
     "status": "In Stock",
     "stock_number": "T11104",
-    "total_packages_price": 2034,
+    "total_packages_price": 4068,
     "total_price": 44784,
     "trim": "XSE",
     "vin": "2T36CRAV5TW040817",
@@ -3890,46 +4044,6 @@
     "trim": "SE",
     "vin": "2T36CRAV5TW23G521",
     "year": 2026
-  },
-  {
-    "adjustments": 200,
-    "availability_date": "07/25/26",
-    "base_price": 37695,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
-    "dealer_name": "Doxon Toyota",
-    "dealer_url": "https://www.doxontoyota.com/search/new-2026-toyota-rav4-auburn-wa/?s:pr=1&ct=12&cy=98002&md=309&mk=63&tp=new&yr=2026",
-    "detail_url": "https://www.doxontoyota.com/auto/new-2026-toyota-rav4-auburn-wa/120111098/",
-    "drivetrain": "AWD",
-    "exterior_color": "Midnight Black Metallic",
-    "interior_color": "Black/Blue Fabric",
-    "model_code": "9900",
-    "msrp": 39659,
-    "packages": [
-      {
-        "name": "All-Weather Liner Package",
-        "price": 339
-      },
-      {
-        "name": "Convenience Package",
-        "price": 400
-      },
-      {
-        "name": "Moonroof Package",
-        "price": 850
-      },
-      {
-        "name": "Weather Package",
-        "price": 375
-      }
-    ],
-    "status": "In Production",
-    "stock_number": null,
-    "total_packages_price": 1964,
-    "total_price": 39859,
-    "trim": "SE",
-    "vin": "2T36CRAV5TW23G907",
-    "year": "2026"
   },
   {
     "adjustments": null,
@@ -4785,7 +4899,7 @@
   {
     "adjustments": 200,
     "availability_date": "7/16/2026",
-    "base_price": 39095,
+    "base_price": 38381,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Toyota of Puyallup",
@@ -4802,13 +4916,21 @@
         "price": 339
       },
       {
+        "name": "All-Weather Liner Package",
+        "price": 339
+      },
+      {
+        "name": "Weather Package",
+        "price": 375
+      },
+      {
         "name": "Weather Package",
         "price": 375
       }
     ],
     "status": "Sale Pending - In Production",
     "stock_number": "TC23I384",
-    "total_packages_price": 714,
+    "total_packages_price": 1428,
     "total_price": 40009,
     "trim": "XLE Premium",
     "vin": "2T36CRAV7TC23I384",
@@ -7074,7 +7196,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "06/04/26",
+    "availability_date": "06/03/26",
     "base_price": 42750,
     "dealer_accessories": [
       {
@@ -7196,7 +7318,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "07/24/26",
+    "availability_date": "07/19/26",
     "base_price": 42895,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -7411,6 +7533,46 @@
     "trim": "SE",
     "vin": "2T36CRAV9TW24J250",
     "year": "2026"
+  },
+  {
+    "adjustments": null,
+    "availability_date": "8/3/2026",
+    "base_price": 37695,
+    "dealer_accessories": null,
+    "dealer_accessories_price": null,
+    "dealer_name": "Toyota of Puyallup",
+    "dealer_url": "https://www.toyotaofpuyallup.com/inventory/new/toyota/rav4?paymenttype=cash&years=2026&sorttype=priceltoh&instock=true&intransit=true&inproduction=true&page=2",
+    "detail_url": "https://www.toyotaofpuyallup.com/viewdetails/new/2t36crav9tw25e360/2026-toyota-rav4-sport-utility?type=cash",
+    "drivetrain": "AWD",
+    "exterior_color": "Storm Cloud",
+    "interior_color": "Black/Blue Fabric",
+    "model_code": "4524",
+    "msrp": 39659,
+    "packages": [
+      {
+        "name": "All-Weather Liner Package",
+        "price": 339
+      },
+      {
+        "name": "Convenience Package",
+        "price": 400
+      },
+      {
+        "name": "Moonroof Package",
+        "price": 850
+      },
+      {
+        "name": "Weather Package",
+        "price": 375
+      }
+    ],
+    "status": "In Production",
+    "stock_number": "TW25E360",
+    "total_packages_price": 1964,
+    "total_price": 39659,
+    "trim": "SE",
+    "vin": "2T36CRAV9TW25E360",
+    "year": 2026
   },
   {
     "adjustments": null,
@@ -8113,46 +8275,6 @@
     "year": "2026"
   },
   {
-    "adjustments": null,
-    "availability_date": "5/18/2026",
-    "base_price": 37695,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
-    "dealer_name": "Toyota of Puyallup",
-    "dealer_url": "https://www.toyotaofpuyallup.com/inventory/new/toyota/rav4?paymenttype=cash&years=2026&sorttype=priceltoh&instock=true&intransit=true&inproduction=true&page=2",
-    "detail_url": "https://www.toyotaofpuyallup.com/viewdetails/new/jtm6crav0td318634/2026-toyota-rav4-sport-utility?type=cash",
-    "drivetrain": "AWD",
-    "exterior_color": "Storm Cloud",
-    "interior_color": "Black/Blue Fabric",
-    "model_code": "4524",
-    "msrp": 39659,
-    "packages": [
-      {
-        "name": "All-Weather Liner Package",
-        "price": 339
-      },
-      {
-        "name": "Convenience Package",
-        "price": 400
-      },
-      {
-        "name": "Moonroof Package",
-        "price": 850
-      },
-      {
-        "name": "Weather Package",
-        "price": 375
-      }
-    ],
-    "status": "In Stock",
-    "stock_number": "T11143",
-    "total_packages_price": 1964,
-    "total_price": 39659,
-    "trim": "SE",
-    "vin": "JTM6CRAV0TD318634",
-    "year": 2026
-  },
-  {
     "adjustments": 200,
     "availability_date": null,
     "base_price": 39095,
@@ -8250,8 +8372,8 @@
   },
   {
     "adjustments": null,
-    "availability_date": "7/21/2026",
-    "base_price": 37695,
+    "availability_date": "7/2/2026",
+    "base_price": 36981,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Toyota of Puyallup",
@@ -8268,13 +8390,21 @@
         "price": 339
       },
       {
+        "name": "All-Weather Liner Package",
+        "price": 339
+      },
+      {
+        "name": "Weather Package",
+        "price": 375
+      },
+      {
         "name": "Weather Package",
         "price": 375
       }
     ],
     "status": "Sale Pending - In Production",
     "stock_number": "5082",
-    "total_packages_price": 714,
+    "total_packages_price": 1428,
     "total_price": 38409,
     "trim": "SE",
     "vin": "JTM6CRAV0TD325678",
@@ -8282,8 +8412,8 @@
   },
   {
     "adjustments": null,
-    "availability_date": "7/20/2026",
-    "base_price": 37695,
+    "availability_date": "7/14/2026",
+    "base_price": 36981,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Toyota of Puyallup",
@@ -8300,17 +8430,61 @@
         "price": 339
       },
       {
+        "name": "All-Weather Liner Package",
+        "price": 339
+      },
+      {
+        "name": "Weather Package",
+        "price": 375
+      },
+      {
         "name": "Weather Package",
         "price": 375
       }
     ],
     "status": "In Production",
     "stock_number": "5086",
-    "total_packages_price": 714,
+    "total_packages_price": 1428,
     "total_price": 38409,
     "trim": "SE",
     "vin": "JTM6CRAV0TD326443",
     "year": 2026
+  },
+  {
+    "adjustments": null,
+    "availability_date": "07/14/26",
+    "base_price": 44895,
+    "dealer_accessories": null,
+    "dealer_accessories_price": null,
+    "dealer_name": "Toyota of Lake City",
+    "dealer_url": "https://www.toyotaoflakecity.com/searchnew.aspx?yearrange=2026-2026&Make=Toyota&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=2",
+    "detail_url": "https://www.toyotaoflakecity.com/new-Seattle-2026-Toyota-RAV4-Limited-JTM6CRAV0TD326846",
+    "drivetrain": "AWD",
+    "exterior_color": "Blueprint",
+    "interior_color": "Light Gray Softex",
+    "model_code": "4534",
+    "msrp": 46154,
+    "packages": [
+      {
+        "name": "10-In. Color Head-Up Display (HUD)",
+        "price": 600
+      },
+      {
+        "name": "All-Weather Liner Package",
+        "price": 339
+      },
+      {
+        "name": "Low Profile Cross Bars",
+        "price": 320
+      }
+    ],
+    "status": "In Production",
+    "stock_number": "70139",
+    "total_packages_price": 1259,
+    "total_price": 46154,
+    "trim": "Limited",
+    "vin": "JTM6CRAV0TD326846",
+    "year": "2026"
   },
   {
     "adjustments": null,
@@ -8416,7 +8590,7 @@
   {
     "adjustments": null,
     "availability_date": "7/1/2026",
-    "base_price": 42895,
+    "base_price": 39811,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Toyota of Puyallup",
@@ -8433,8 +8607,20 @@
         "price": 339
       },
       {
+        "name": "All-Weather Liner Package",
+        "price": 339
+      },
+      {
         "name": "Door Edge Guards",
         "price": 165
+      },
+      {
+        "name": "Door Edge Guards",
+        "price": 165
+      },
+      {
+        "name": "JBL\u00ae Premium Audio Package",
+        "price": 620
       },
       {
         "name": "JBL\u00ae Premium Audio Package",
@@ -8445,8 +8631,20 @@
         "price": 25
       },
       {
+        "name": "Key Glove",
+        "price": 25
+      },
+      {
         "name": "Mudguards",
         "price": 160
+      },
+      {
+        "name": "Mudguards",
+        "price": 160
+      },
+      {
+        "name": "Premium Paint",
+        "price": 475
       },
       {
         "name": "Premium Paint",
@@ -8457,8 +8655,20 @@
         "price": 425
       },
       {
+        "name": "Rear Cargo Lamps",
+        "price": 425
+      },
+      {
         "name": "Two-Tone Exterior Paint",
         "price": 500
+      },
+      {
+        "name": "Two-Tone Exterior Paint",
+        "price": 500
+      },
+      {
+        "name": "Weather Package",
+        "price": 375
       },
       {
         "name": "Weather Package",
@@ -8467,47 +8677,11 @@
     ],
     "status": "Sale Pending - In Production",
     "stock_number": "5122",
-    "total_packages_price": 3084,
+    "total_packages_price": 6168,
     "total_price": 45979,
     "trim": "XSE",
     "vin": "JTM6CRAV0TJ009909",
     "year": 2026
-  },
-  {
-    "adjustments": null,
-    "availability_date": "07/19/26",
-    "base_price": 44895,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
-    "dealer_name": "Toyota of Lake City",
-    "dealer_url": "https://www.toyotaoflakecity.com/searchnew.aspx?yearrange=2026-2026&Make=Toyota&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=2",
-    "detail_url": "https://www.toyotaoflakecity.com/new-Seattle-2026-Toyota-RAV4-Limited-JTM6CRAV1T121BH08",
-    "drivetrain": "AWD",
-    "exterior_color": "Blueprint",
-    "interior_color": "Light Gray Softex",
-    "model_code": "4534",
-    "msrp": 46154,
-    "packages": [
-      {
-        "name": "10-In. Color Head-Up Display (HUD)",
-        "price": 600
-      },
-      {
-        "name": "All-Weather Liner Package",
-        "price": 339
-      },
-      {
-        "name": "Low Profile Cross Bars",
-        "price": 320
-      }
-    ],
-    "status": "In Production",
-    "stock_number": null,
-    "total_packages_price": 1259,
-    "total_price": 46154,
-    "trim": "Limited",
-    "vin": "JTM6CRAV1T121BH08",
-    "year": "2026"
   },
   {
     "adjustments": null,
@@ -8717,7 +8891,7 @@
   },
   {
     "adjustments": 200,
-    "availability_date": "06/16/26",
+    "availability_date": "06/12/26",
     "base_price": 44895,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -8857,12 +9031,12 @@
   },
   {
     "adjustments": 200,
-    "availability_date": "07/05/26",
+    "availability_date": "07/02/26",
     "base_price": 44895,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Doxon Toyota",
-    "dealer_url": "https://www.doxontoyota.com/search/new-2026-toyota-rav4-auburn-wa/?s:pr=1&ct=12&cy=98002&md=309&mk=63&tp=new&yr=2026&p=5",
+    "dealer_url": "https://www.doxontoyota.com/search/new-2026-toyota-rav4-auburn-wa/?s:pr=1&ct=12&cy=98002&md=309&mk=63&tp=new&yr=2026&p=4",
     "detail_url": "https://www.doxontoyota.com/auto/new-2026-toyota-rav4-auburn-wa/120912512/",
     "drivetrain": "AWD",
     "exterior_color": "Blueprint",
@@ -8889,7 +9063,7 @@
   },
   {
     "adjustments": 200,
-    "availability_date": "07/11/26",
+    "availability_date": "07/02/26",
     "base_price": 37695,
     "dealer_accessories": [
       {
@@ -8950,7 +9124,7 @@
   },
   {
     "adjustments": 200,
-    "availability_date": "07/12/26",
+    "availability_date": "07/03/26",
     "base_price": 37695,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -9310,7 +9484,7 @@
   },
   {
     "adjustments": 200,
-    "availability_date": "07/31/26",
+    "availability_date": "07/15/26",
     "base_price": 42895,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -9423,7 +9597,7 @@
   {
     "adjustments": null,
     "availability_date": "7/1/2026",
-    "base_price": 44895,
+    "base_price": 42322,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Toyota of Puyallup",
@@ -9440,8 +9614,20 @@
         "price": 600
       },
       {
+        "name": "10-In. Color Head-Up Display (HUD)",
+        "price": 600
+      },
+      {
         "name": "All-Weather Liner Package",
         "price": 339
+      },
+      {
+        "name": "All-Weather Liner Package",
+        "price": 339
+      },
+      {
+        "name": "Blackout Emblem Overlays",
+        "price": 89
       },
       {
         "name": "Blackout Emblem Overlays",
@@ -9452,8 +9638,20 @@
         "price": 165
       },
       {
+        "name": "Door Edge Guards",
+        "price": 165
+      },
+      {
         "name": "Low Profile Cross Bars",
         "price": 320
+      },
+      {
+        "name": "Low Profile Cross Bars",
+        "price": 320
+      },
+      {
+        "name": "Mudguards",
+        "price": 160
       },
       {
         "name": "Mudguards",
@@ -9464,13 +9662,21 @@
         "price": 475
       },
       {
+        "name": "Premium Paint",
+        "price": 475
+      },
+      {
+        "name": "Rear Cargo Lamps",
+        "price": 425
+      },
+      {
         "name": "Rear Cargo Lamps",
         "price": 425
       }
     ],
     "status": "In Production",
     "stock_number": "5121",
-    "total_packages_price": 2573,
+    "total_packages_price": 5146,
     "total_price": 47468,
     "trim": "Limited",
     "vin": "JTM6CRAV3TD323908",
@@ -9478,7 +9684,7 @@
   },
   {
     "adjustments": 200,
-    "availability_date": "07/04/26",
+    "availability_date": "07/02/26",
     "base_price": 37695,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -9526,7 +9732,7 @@
   },
   {
     "adjustments": 200,
-    "availability_date": "07/12/26",
+    "availability_date": "07/03/26",
     "base_price": 44895,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -9578,82 +9784,6 @@
     "total_price": 47327,
     "trim": "Limited",
     "vin": "JTM6CRAV3TD325805",
-    "year": "2026"
-  },
-  {
-    "adjustments": 200,
-    "availability_date": null,
-    "base_price": 39095,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
-    "dealer_name": "Doxon Toyota",
-    "dealer_url": "https://www.doxontoyota.com/search/new-2026-toyota-rav4-auburn-wa/?s:pr=1&ct=12&cy=98002&md=309&mk=63&tp=new&yr=2026&p=2",
-    "detail_url": "https://www.doxontoyota.com/auto/new-2026-toyota-rav4-auburn-wa/119473634/",
-    "drivetrain": "AWD",
-    "exterior_color": "Midnight Black Metallic",
-    "interior_color": "Black Softex",
-    "model_code": "9900",
-    "msrp": 39898,
-    "packages": [
-      {
-        "name": "All-Weather Liner Package",
-        "price": 339
-      },
-      {
-        "name": "Blackout Emblem Overlays",
-        "price": 89
-      },
-      {
-        "name": "Weather Package",
-        "price": 375
-      }
-    ],
-    "status": "Sale Pending - In Stock",
-    "stock_number": "42374",
-    "total_packages_price": 803,
-    "total_price": 40098,
-    "trim": "XLE Premium",
-    "vin": "JTM6CRAV3TJ008494",
-    "year": "2026"
-  },
-  {
-    "adjustments": null,
-    "availability_date": null,
-    "base_price": 44895,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
-    "dealer_name": "Toyota of Lake City",
-    "dealer_url": "https://www.toyotaoflakecity.com/searchnew.aspx?yearrange=2026-2026&Make=Toyota&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=3",
-    "detail_url": "https://www.toyotaoflakecity.com/new-Seattle-2026-Toyota-RAV4-Limited-JTM6CRAV3TJ008558",
-    "drivetrain": "AWD",
-    "exterior_color": "Ruby Flare Pearl",
-    "interior_color": "Black Softex",
-    "model_code": "4534",
-    "msrp": 47549,
-    "packages": [
-      {
-        "name": "10-In. Color Head-Up Display (HUD)",
-        "price": 600
-      },
-      {
-        "name": "20-In. Wheel Package",
-        "price": 1240
-      },
-      {
-        "name": "All-Weather Liner Package",
-        "price": 339
-      },
-      {
-        "name": "Premium Paint",
-        "price": 475
-      }
-    ],
-    "status": "In Stock",
-    "stock_number": "70112",
-    "total_packages_price": 2654,
-    "total_price": 47549,
-    "trim": "Limited",
-    "vin": "JTM6CRAV3TJ008558",
     "year": "2026"
   },
   {
@@ -9739,7 +9869,7 @@
   },
   {
     "adjustments": 200,
-    "availability_date": "07/20/26",
+    "availability_date": "07/14/26",
     "base_price": 42895,
     "dealer_accessories": [
       {
@@ -9824,8 +9954,8 @@
   },
   {
     "adjustments": null,
-    "availability_date": "7/20/2026",
-    "base_price": 37695,
+    "availability_date": "7/14/2026",
+    "base_price": 36981,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Toyota of Puyallup",
@@ -9842,13 +9972,21 @@
         "price": 339
       },
       {
+        "name": "All-Weather Liner Package",
+        "price": 339
+      },
+      {
+        "name": "Weather Package",
+        "price": 375
+      },
+      {
         "name": "Weather Package",
         "price": 375
       }
     ],
     "status": "In Production",
     "stock_number": "5108",
-    "total_packages_price": 714,
+    "total_packages_price": 1428,
     "total_price": 38409,
     "trim": "SE",
     "vin": "JTM6CRAV3TJ010536",
@@ -9889,7 +10027,7 @@
   {
     "adjustments": null,
     "availability_date": "7/1/2026",
-    "base_price": 39095,
+    "base_price": 37906,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Toyota of Puyallup",
@@ -9906,8 +10044,20 @@
         "price": 339
       },
       {
+        "name": "All-Weather Liner Package",
+        "price": 339
+      },
+      {
         "name": "Premium Paint",
         "price": 475
+      },
+      {
+        "name": "Premium Paint",
+        "price": 475
+      },
+      {
+        "name": "Weather Package",
+        "price": 375
       },
       {
         "name": "Weather Package",
@@ -9916,7 +10066,7 @@
     ],
     "status": "Sale Pending - In Production",
     "stock_number": "4881",
-    "total_packages_price": 1189,
+    "total_packages_price": 2378,
     "total_price": 40284,
     "trim": "XLE Premium",
     "vin": "JTM6CRAV4TD323237",
@@ -9956,12 +10106,12 @@
   },
   {
     "adjustments": 200,
-    "availability_date": "07/03/26",
+    "availability_date": "07/02/26",
     "base_price": 44895,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Doxon Toyota",
-    "dealer_url": "https://www.doxontoyota.com/search/new-2026-toyota-rav4-auburn-wa/?s:pr=1&ct=12&cy=98002&md=309&mk=63&tp=new&yr=2026&p=5",
+    "dealer_url": "https://www.doxontoyota.com/search/new-2026-toyota-rav4-auburn-wa/?s:pr=1&ct=12&cy=98002&md=309&mk=63&tp=new&yr=2026&p=4",
     "detail_url": "https://www.doxontoyota.com/auto/new-2026-toyota-rav4-auburn-wa/120854057/",
     "drivetrain": "AWD",
     "exterior_color": "Storm Cloud",
@@ -9988,7 +10138,7 @@
   },
   {
     "adjustments": 200,
-    "availability_date": "07/11/26",
+    "availability_date": "07/02/26",
     "base_price": 37695,
     "dealer_accessories": [
       {
@@ -10045,7 +10195,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "07/19/26",
+    "availability_date": "07/03/26",
     "base_price": 44895,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -10089,8 +10239,8 @@
   },
   {
     "adjustments": null,
-    "availability_date": "7/20/2026",
-    "base_price": 37695,
+    "availability_date": "7/14/2026",
+    "base_price": 37121,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Toyota of Puyallup",
@@ -10107,13 +10257,21 @@
         "price": 199
       },
       {
+        "name": "All Weather Floor Liners",
+        "price": 199
+      },
+      {
+        "name": "Weather Package",
+        "price": 375
+      },
+      {
         "name": "Weather Package",
         "price": 375
       }
     ],
     "status": "In Production",
     "stock_number": "TD326610",
-    "total_packages_price": 574,
+    "total_packages_price": 1148,
     "total_price": 38269,
     "trim": "SE",
     "vin": "JTM6CRAV4TD326610",
@@ -10225,50 +10383,6 @@
     "year": "2026"
   },
   {
-    "adjustments": 200,
-    "availability_date": null,
-    "base_price": 41495,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
-    "dealer_name": "Burien Toyota",
-    "dealer_url": "https://www.burientoyota.com/new-vehicles/?model=RAV4&yr=2026",
-    "detail_url": "https://www.burientoyota.com/vehicle/New/2026/Toyota/RAV4/JTM6CRAV5TD009709/",
-    "drivetrain": "AWD",
-    "exterior_color": "Everest",
-    "interior_color": "Black SofTex",
-    "model_code": "4437",
-    "msrp": 43355,
-    "packages": [
-      {
-        "name": "Body Side Moldings",
-        "price": 260
-      },
-      {
-        "name": "Door Edge Guards",
-        "price": 165
-      },
-      {
-        "name": "Moonroof Package",
-        "price": 850
-      },
-      {
-        "name": "Mudguards",
-        "price": 160
-      },
-      {
-        "name": "Rear Cargo Lamps",
-        "price": 425
-      }
-    ],
-    "status": "Sale Pending - In Stock",
-    "stock_number": "50924",
-    "total_packages_price": 1860,
-    "total_price": 43555,
-    "trim": "Woodland",
-    "vin": "JTM6CRAV5TD009709",
-    "year": "2026"
-  },
-  {
     "adjustments": null,
     "availability_date": null,
     "base_price": 42750,
@@ -10331,7 +10445,7 @@
   },
   {
     "adjustments": 200,
-    "availability_date": "06/06/26",
+    "availability_date": null,
     "base_price": 37695,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -10436,8 +10550,8 @@
   },
   {
     "adjustments": null,
-    "availability_date": "7/4/2026",
-    "base_price": 39095,
+    "availability_date": "7/2/2026",
+    "base_price": 38381,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Toyota of Puyallup",
@@ -10454,13 +10568,21 @@
         "price": 339
       },
       {
+        "name": "All-Weather Liner Package",
+        "price": 339
+      },
+      {
+        "name": "Weather Package",
+        "price": 375
+      },
+      {
         "name": "Weather Package",
         "price": 375
       }
     ],
     "status": "In Production",
     "stock_number": "5098",
-    "total_packages_price": 714,
+    "total_packages_price": 1428,
     "total_price": 39809,
     "trim": "XLE Premium",
     "vin": "JTM6CRAV5TD324753",
@@ -10468,8 +10590,8 @@
   },
   {
     "adjustments": null,
-    "availability_date": "7/4/2026",
-    "base_price": 44895,
+    "availability_date": "7/2/2026",
+    "base_price": 43152,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Toyota of Puyallup",
@@ -10486,8 +10608,20 @@
         "price": 600
       },
       {
+        "name": "10-In. Color Head-Up Display (HUD)",
+        "price": 600
+      },
+      {
         "name": "All-Weather Liner Package",
         "price": 339
+      },
+      {
+        "name": "All-Weather Liner Package",
+        "price": 339
+      },
+      {
+        "name": "Alloy Wheel Locks: Chrome",
+        "price": 90
       },
       {
         "name": "Alloy Wheel Locks: Chrome",
@@ -10498,8 +10632,20 @@
         "price": 89
       },
       {
+        "name": "Blackout Emblem Overlays",
+        "price": 89
+      },
+      {
         "name": "Fog Light Graphics: Matte Black",
         "price": 200
+      },
+      {
+        "name": "Fog Light Graphics: Matte Black",
+        "price": 200
+      },
+      {
+        "name": "Rear Cargo Lamps",
+        "price": 425
       },
       {
         "name": "Rear Cargo Lamps",
@@ -10508,7 +10654,7 @@
     ],
     "status": "In Production",
     "stock_number": "5119",
-    "total_packages_price": 1743,
+    "total_packages_price": 3486,
     "total_price": 46638,
     "trim": "Limited",
     "vin": "JTM6CRAV5TD325174",
@@ -10516,7 +10662,7 @@
   },
   {
     "adjustments": 200,
-    "availability_date": "07/05/26",
+    "availability_date": "07/02/26",
     "base_price": 39095,
     "dealer_accessories": [
       {
@@ -10585,12 +10731,12 @@
   },
   {
     "adjustments": 200,
-    "availability_date": "07/11/26",
+    "availability_date": "07/02/26",
     "base_price": 39095,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Doxon Toyota",
-    "dealer_url": "https://www.doxontoyota.com/search/new-2026-toyota-rav4-auburn-wa/?s:pr=1&ct=12&cy=98002&md=309&mk=63&tp=new&yr=2026&p=3",
+    "dealer_url": "https://www.doxontoyota.com/search/new-2026-toyota-rav4-auburn-wa/?s:pr=1&ct=12&cy=98002&md=309&mk=63&tp=new&yr=2026&p=2",
     "detail_url": "https://www.doxontoyota.com/auto/new-2026-toyota-rav4-auburn-wa/121086269/",
     "drivetrain": "AWD",
     "exterior_color": "Ice Cap",
@@ -10937,7 +11083,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "07/05/26",
+    "availability_date": "07/03/26",
     "base_price": 42895,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -11219,7 +11365,7 @@
   {
     "adjustments": null,
     "availability_date": "7/1/2026",
-    "base_price": 44895,
+    "base_price": 42532,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Toyota of Puyallup",
@@ -11236,8 +11382,20 @@
         "price": 600
       },
       {
+        "name": "10-In. Color Head-Up Display (HUD)",
+        "price": 600
+      },
+      {
         "name": "All-Weather Liner Package",
         "price": 339
+      },
+      {
+        "name": "All-Weather Liner Package",
+        "price": 339
+      },
+      {
+        "name": "Blackout Emblem Overlays",
+        "price": 89
       },
       {
         "name": "Blackout Emblem Overlays",
@@ -11248,8 +11406,20 @@
         "price": 165
       },
       {
+        "name": "Door Edge Guards",
+        "price": 165
+      },
+      {
         "name": "Door Panel Scuff Protectors",
         "price": 130
+      },
+      {
+        "name": "Door Panel Scuff Protectors",
+        "price": 130
+      },
+      {
+        "name": "First Aid Kit",
+        "price": 30
       },
       {
         "name": "First Aid Kit",
@@ -11260,6 +11430,14 @@
         "price": 320
       },
       {
+        "name": "Low Profile Cross Bars",
+        "price": 320
+      },
+      {
+        "name": "Mudguards",
+        "price": 160
+      },
+      {
         "name": "Mudguards",
         "price": 160
       },
@@ -11268,13 +11446,21 @@
         "price": 425
       },
       {
+        "name": "Rear Cargo Lamps",
+        "price": 425
+      },
+      {
+        "name": "Toyota Multimedia Screen Protector",
+        "price": 105
+      },
+      {
         "name": "Toyota Multimedia Screen Protector",
         "price": 105
       }
     ],
     "status": "Sale Pending - In Production",
     "stock_number": "5123",
-    "total_packages_price": 2363,
+    "total_packages_price": 4726,
     "total_price": 47258,
     "trim": "Limited",
     "vin": "JTM6CRAV6TD324194",
@@ -11282,7 +11468,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "06/18/26 - 07/04/26",
+    "availability_date": "06/17/26 - 07/02/26",
     "base_price": 44895,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -11427,38 +11613,6 @@
   },
   {
     "adjustments": 200,
-    "availability_date": "07/19/26",
-    "base_price": 37695,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
-    "dealer_name": "Doxon Toyota",
-    "dealer_url": "https://www.doxontoyota.com/search/new-2026-toyota-rav4-auburn-wa/?s:pr=1&ct=12&cy=98002&md=309&mk=63&tp=new&yr=2026",
-    "detail_url": "https://www.doxontoyota.com/auto/new-2026-toyota-rav4-auburn-wa/120717122/",
-    "drivetrain": "AWD",
-    "exterior_color": "Midnight Black Metallic",
-    "interior_color": "Black/Blue Fabric",
-    "model_code": "9900",
-    "msrp": 38409,
-    "packages": [
-      {
-        "name": "All-Weather Liner Package",
-        "price": 339
-      },
-      {
-        "name": "Weather Package",
-        "price": 375
-      }
-    ],
-    "status": "In Production",
-    "stock_number": null,
-    "total_packages_price": 714,
-    "total_price": 38609,
-    "trim": "SE",
-    "vin": "JTM6CRAV7T121BG02",
-    "year": "2026"
-  },
-  {
-    "adjustments": 200,
     "availability_date": "06/12/26",
     "base_price": 41495,
     "dealer_accessories": null,
@@ -11503,7 +11657,7 @@
   },
   {
     "adjustments": 290,
-    "availability_date": "06/16/26",
+    "availability_date": "06/12/26",
     "base_price": 37695,
     "dealer_accessories": [
       {
@@ -11621,7 +11775,7 @@
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Doxon Toyota",
-    "dealer_url": "https://www.doxontoyota.com/search/new-2026-toyota-rav4-auburn-wa/?s:pr=1&ct=12&cy=98002&md=309&mk=63&tp=new&yr=2026&p=4",
+    "dealer_url": "https://www.doxontoyota.com/search/new-2026-toyota-rav4-auburn-wa/?s:pr=1&ct=12&cy=98002&md=309&mk=63&tp=new&yr=2026&p=3",
     "detail_url": "https://www.doxontoyota.com/auto/new-2026-toyota-rav4-auburn-wa/120733940/",
     "drivetrain": "AWD",
     "exterior_color": "Wind Chill Pearl",
@@ -11672,7 +11826,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "06/19/26 - 07/04/26",
+    "availability_date": "06/18/26 - 07/03/26",
     "base_price": 44895,
     "dealer_accessories": [
       {
@@ -11717,7 +11871,7 @@
   },
   {
     "adjustments": 200,
-    "availability_date": "07/19/26",
+    "availability_date": "07/02/26",
     "base_price": 42895,
     "dealer_accessories": [
       {
@@ -11967,28 +12121,6 @@
     "year": "2026"
   },
   {
-    "adjustments": null,
-    "availability_date": null,
-    "base_price": 39659,
-    "dealer_accessories_price": null,
-    "dealer_name": "Toyota of Bellevue",
-    "dealer_url": "https://www.toyotaofbellevue.com/searchnew.aspx?year=2026&make=toyota&model=rav4&st=Price+asc&pn=12",
-    "detail_url": "https://www.toyotaofbellevue.com/new-Bellevue-2026-Toyota-RAV4-SE-JTM6CRAV8TD318736",
-    "drivetrain": "AWD",
-    "exterior_color": "Meteor Shower",
-    "interior_color": "Black",
-    "model_code": "4524",
-    "msrp": 39659,
-    "packages": null,
-    "status": "In Stock",
-    "stock_number": "TD318736",
-    "total_packages_price": null,
-    "total_price": 39659,
-    "trim": "SE",
-    "vin": "JTM6CRAV8TD318736",
-    "year": "2026"
-  },
-  {
     "adjustments": 200,
     "availability_date": "06/10/26",
     "base_price": 39095,
@@ -12214,7 +12346,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "06/19/26 - 07/04/26",
+    "availability_date": "06/18/26 - 07/03/26",
     "base_price": 37695,
     "dealer_accessories": [
       {
@@ -12267,7 +12399,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "06/19/26 - 07/15/26",
+    "availability_date": "06/18/26 - 07/03/26",
     "base_price": 37695,
     "dealer_accessories": [
       {
@@ -12312,7 +12444,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "06/18/26 - 07/14/26",
+    "availability_date": "06/17/26 - 07/02/26",
     "base_price": 37695,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -12372,7 +12504,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "07/04/26 - 07/20/26",
+    "availability_date": "06/30/26 - 07/14/26",
     "base_price": 44895,
     "dealer_accessories": [
       {
@@ -12470,78 +12602,6 @@
     "total_price": 47463,
     "trim": "Limited",
     "vin": "JTM6CRAV8TD326643",
-    "year": "2026"
-  },
-  {
-    "adjustments": 200,
-    "availability_date": null,
-    "base_price": 42895,
-    "dealer_accessories": null,
-    "dealer_accessories_price": null,
-    "dealer_name": "Doxon Toyota",
-    "dealer_url": "https://www.doxontoyota.com/search/new-2026-toyota-rav4-auburn-wa/?s:pr=1&ct=12&cy=98002&md=309&mk=63&tp=new&yr=2026&p=5",
-    "detail_url": "https://www.doxontoyota.com/auto/new-2026-toyota-rav4-auburn-wa/119630999/",
-    "drivetrain": "AWD",
-    "exterior_color": "Wind Chill Pearl With Midnight Black Metallic Roof",
-    "interior_color": "Black/Blue Softex Mixed Media",
-    "model_code": "9900",
-    "msrp": 47729,
-    "packages": [
-      {
-        "name": "All-Weather Liner Package",
-        "price": 339
-      },
-      {
-        "name": "Illuminated Door Sills",
-        "price": 395
-      },
-      {
-        "name": "JBL\u00ae Premium Audio Package",
-        "price": 620
-      },
-      {
-        "name": "Low Profile Cross Bars",
-        "price": 320
-      },
-      {
-        "name": "Mudguards",
-        "price": 160
-      },
-      {
-        "name": "Panoramic Moonroof Package",
-        "price": 700
-      },
-      {
-        "name": "Premium Paint",
-        "price": 475
-      },
-      {
-        "name": "Rear Cargo Lamps",
-        "price": 425
-      },
-      {
-        "name": "Toyota Multimedia Screen Protector",
-        "price": 105
-      },
-      {
-        "name": "Two-Tone Exterior Paint",
-        "price": 500
-      },
-      {
-        "name": "Weather Package",
-        "price": 375
-      },
-      {
-        "name": "XSE Driver Assist Package",
-        "price": 420
-      }
-    ],
-    "status": "Sale Pending - In Stock",
-    "stock_number": "42532",
-    "total_packages_price": 4834,
-    "total_price": 47929,
-    "trim": "XSE",
-    "vin": "JTM6CRAV8TJ008796",
     "year": "2026"
   },
   {
@@ -13057,7 +13117,7 @@
   {
     "adjustments": null,
     "availability_date": "6/12/2026",
-    "base_price": 34895,
+    "base_price": 34556,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Toyota of Puyallup",
@@ -13072,11 +13132,15 @@
       {
         "name": "All-Weather Liner Package",
         "price": 339
+      },
+      {
+        "name": "All-Weather Liner Package",
+        "price": 339
       }
     ],
     "status": "Sale Pending - In Transit",
     "stock_number": "T11270",
-    "total_packages_price": 339,
+    "total_packages_price": 678,
     "total_price": 35234,
     "trim": "LE",
     "vin": "JTM6CRAV9TD322147",
@@ -13290,7 +13354,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "06/18/26 - 07/03/26",
+    "availability_date": "06/17/26 - 07/02/26",
     "base_price": 39095,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -13358,8 +13422,8 @@
   },
   {
     "adjustments": null,
-    "availability_date": "7/9/2026",
-    "base_price": 42895,
+    "availability_date": "7/2/2026",
+    "base_price": 39081,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Toyota of Puyallup",
@@ -13376,8 +13440,20 @@
         "price": 339
       },
       {
+        "name": "All-Weather Liner Package",
+        "price": 339
+      },
+      {
         "name": "Alloy Wheel Locks: Black Chrome",
         "price": 90
+      },
+      {
+        "name": "Alloy Wheel Locks: Black Chrome",
+        "price": 90
+      },
+      {
+        "name": "Door Edge Guards",
+        "price": 165
       },
       {
         "name": "Door Edge Guards",
@@ -13388,8 +13464,20 @@
         "price": 200
       },
       {
+        "name": "Fog Light Graphics: Matte Black",
+        "price": 200
+      },
+      {
         "name": "JBL\u00ae Premium Audio Package",
         "price": 620
+      },
+      {
+        "name": "JBL\u00ae Premium Audio Package",
+        "price": 620
+      },
+      {
+        "name": "Low Profile Cross Bars",
+        "price": 320
       },
       {
         "name": "Low Profile Cross Bars",
@@ -13400,8 +13488,20 @@
         "price": 160
       },
       {
+        "name": "Mudguards",
+        "price": 160
+      },
+      {
         "name": "Panoramic Moonroof Package",
         "price": 700
+      },
+      {
+        "name": "Panoramic Moonroof Package",
+        "price": 700
+      },
+      {
+        "name": "Rear Cargo Lamps",
+        "price": 425
       },
       {
         "name": "Rear Cargo Lamps",
@@ -13412,13 +13512,21 @@
         "price": 375
       },
       {
+        "name": "Weather Package",
+        "price": 375
+      },
+      {
+        "name": "XSE Driver Assist Package",
+        "price": 420
+      },
+      {
         "name": "XSE Driver Assist Package",
         "price": 420
       }
     ],
     "status": "In Production",
     "stock_number": "5116",
-    "total_packages_price": 3814,
+    "total_packages_price": 7628,
     "total_price": 46709,
     "trim": "XSE",
     "vin": "JTM6CRAV9TD325579",
@@ -13426,7 +13534,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "06/18/26 - 07/15/26",
+    "availability_date": "06/17/26 - 07/02/26",
     "base_price": 44895,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -13494,7 +13602,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "06/25/26 - 07/18/26",
+    "availability_date": "06/18/26 - 07/03/26",
     "base_price": 39095,
     "dealer_accessories": [
       {
@@ -13539,7 +13647,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "06/24/26 - 07/10/26",
+    "availability_date": "06/18/26 - 07/03/26",
     "base_price": 44895,
     "dealer_accessories": [
       {
@@ -13657,7 +13765,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "07/05/26",
+    "availability_date": "07/03/26",
     "base_price": 42895,
     "dealer_accessories": [
       {
@@ -13746,7 +13854,7 @@
   },
   {
     "adjustments": 200,
-    "availability_date": "07/20/26",
+    "availability_date": "07/14/26",
     "base_price": 37695,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -13774,6 +13882,38 @@
     "total_price": 38609,
     "trim": "SE",
     "vin": "JTM6CRAV9TJ010590",
+    "year": "2026"
+  },
+  {
+    "adjustments": 200,
+    "availability_date": "07/14/26",
+    "base_price": 37695,
+    "dealer_accessories": null,
+    "dealer_accessories_price": null,
+    "dealer_name": "Doxon Toyota",
+    "dealer_url": "https://www.doxontoyota.com/search/new-2026-toyota-rav4-auburn-wa/?s:pr=1&ct=12&cy=98002&md=309&mk=63&tp=new&yr=2026",
+    "detail_url": "https://www.doxontoyota.com/auto/new-2026-toyota-rav4-auburn-wa/121236266/",
+    "drivetrain": "AWD",
+    "exterior_color": "Midnight Black Metallic",
+    "interior_color": "Black/Blue Fabric",
+    "model_code": "9900",
+    "msrp": 38409,
+    "packages": [
+      {
+        "name": "All-Weather Liner Package",
+        "price": 339
+      },
+      {
+        "name": "Weather Package",
+        "price": 375
+      }
+    ],
+    "status": "In Production",
+    "stock_number": null,
+    "total_packages_price": 714,
+    "total_price": 38609,
+    "trim": "SE",
+    "vin": "JTM6CRAV9TJ010654",
     "year": "2026"
   },
   {
@@ -13867,7 +14007,7 @@
   {
     "adjustments": null,
     "availability_date": "7/1/2026",
-    "base_price": 44895,
+    "base_price": 43442,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Toyota of Puyallup",
@@ -13884,6 +14024,14 @@
         "price": 600
       },
       {
+        "name": "10-In. Color Head-Up Display (HUD)",
+        "price": 600
+      },
+      {
+        "name": "All-Weather Liner Package",
+        "price": 339
+      },
+      {
         "name": "All-Weather Liner Package",
         "price": 339
       },
@@ -13892,13 +14040,21 @@
         "price": 89
       },
       {
+        "name": "Blackout Emblem Overlays",
+        "price": 89
+      },
+      {
+        "name": "Rear Cargo Lamps",
+        "price": 425
+      },
+      {
         "name": "Rear Cargo Lamps",
         "price": 425
       }
     ],
     "status": "Sale Pending - In Production",
     "stock_number": "4888",
-    "total_packages_price": 1453,
+    "total_packages_price": 2906,
     "total_price": 46348,
     "trim": "Limited",
     "vin": "JTM6CRAVXTD323632",
@@ -13907,7 +14063,7 @@
   {
     "adjustments": null,
     "availability_date": "7/1/2026",
-    "base_price": 44895,
+    "base_price": 43956,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Toyota of Puyallup",
@@ -13924,13 +14080,21 @@
         "price": 600
       },
       {
+        "name": "10-In. Color Head-Up Display (HUD)",
+        "price": 600
+      },
+      {
+        "name": "All-Weather Liner Package",
+        "price": 339
+      },
+      {
         "name": "All-Weather Liner Package",
         "price": 339
       }
     ],
     "status": "In Production",
     "stock_number": "5183",
-    "total_packages_price": 939,
+    "total_packages_price": 1878,
     "total_price": 45834,
     "trim": "Limited",
     "vin": "JTM6CRAVXTD323775",
@@ -13974,7 +14138,7 @@
   },
   {
     "adjustments": null,
-    "availability_date": "06/19/26 - 07/15/26",
+    "availability_date": "06/18/26 - 07/03/26",
     "base_price": 37695,
     "dealer_accessories": [
       {
@@ -14027,7 +14191,7 @@
   },
   {
     "adjustments": 200,
-    "availability_date": "07/11/26",
+    "availability_date": "07/02/26",
     "base_price": 37695,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
@@ -14087,12 +14251,12 @@
   },
   {
     "adjustments": null,
-    "availability_date": "07/21/26",
+    "availability_date": "07/03/26",
     "base_price": 44895,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
     "dealer_name": "Toyota of Lake City",
-    "dealer_url": "https://www.toyotaoflakecity.com/searchnew.aspx?yearrange=2026-2026&Make=Toyota&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=3",
+    "dealer_url": "https://www.toyotaoflakecity.com/searchnew.aspx?yearrange=2026-2026&Make=Toyota&ModelAndTrim=RAV4&st=Price+asc&pn=12&pt=2",
     "detail_url": "https://www.toyotaoflakecity.com/new-Seattle-2026-Toyota-RAV4-Limited-JTM6CRAVXTD325610",
     "drivetrain": "AWD",
     "exterior_color": "Storm Cloud",
@@ -14244,7 +14408,7 @@
   },
   {
     "adjustments": 200,
-    "availability_date": "06/17/26",
+    "availability_date": "06/12/26",
     "base_price": 37695,
     "dealer_accessories": null,
     "dealer_accessories_price": null,
